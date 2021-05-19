@@ -1104,6 +1104,11 @@ instance CppCast VNode where
                           Signed64   -> do
                             result <- D.castFp (vnode node) 64
                             return $ VNode (vundef node) result Signed64
+                          Unsigned64  -> do
+                            result <- D.castFp (vnode node) 64
+                            return $ VNode (vundef node) result Unsigned64
+                          Double      -> do
+                            return node
                           _          -> error "We only suppor Double to int32 casts rn"
     | is16Bits fromTy = case toTy of
                           Unsigned16 -> return $ VNode (vundef node) (vnode node) Unsigned16
@@ -1242,3 +1247,10 @@ getFpExponent node = do
   zeroExp <- D.i16c 0
   result <- D.cond tiny zeroExp castResultTmp
   return $ VNode (vundef node) result Unsigned16
+
+-- HI IM EVAN I AM EXTENDING DSL :)
+
+cppIsNan :: VNode -> D.Verif VNode
+cppIsNan node = do
+    result <- D.isNan $ vnode node
+    return $ VNode (vundef node) result $ Bool

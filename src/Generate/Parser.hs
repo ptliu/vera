@@ -232,6 +232,19 @@ math_builtin = do
         one_args = map (try . builtin_call_1) math_builtins_1
         two_args = map (try . builtin_call_2) math_builtins_2
 
+-- Added by Evan
+std_builtins_1 :: [(String, SExpr -> SExpr)]
+std_builtins_1 = [
+      ("isnan", IsNan)]
+
+std_builtin :: Parser CExpr
+std_builtin = do
+    reserved "std"
+    reservedOp "::"
+    choice $ one_args
+    where
+        one_args = map (try . builtin_call_1) std_builtins_1
+
 parseExpr :: [Char] -> Either ParseError CExpr
 parseExpr = parse expr ""
 
@@ -285,8 +298,9 @@ paren_expr = do
     try typed_lit
     <|> parens expr
 
+-- modified by evan :)
 term :: Parser CExpr
-term    =  paren_expr <|> float_lit <|> try js_builtin <|> try math_builtin <|> try call <|> var
+term    =  paren_expr <|> float_lit <|> try js_builtin <|> try math_builtin <|> try std_builtin <|> try call <|> var
     <?> "simple expression"
 
 cast :: Parser (CExpr -> CExpr)

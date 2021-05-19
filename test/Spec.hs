@@ -8,6 +8,10 @@ import           Parser
 import           Sanity
 import           Test.Tasty
 
+    {- v8 imports -}
+import           GenV8
+import           V8Sanity
+
 main :: IO ()
 main = defaultMain $ testGroup "All tests" $ map getTest allTests
 
@@ -20,6 +24,7 @@ allTests = [ brokenIntersectTest
            , sanityCheck
            , jsTests1000
            , cppTests1000
+           , v8SanityCheck
            ]
 
 
