@@ -7,106 +7,106 @@
 #define bitset_t uint32_t
 
 // define internal bitset types
-#define OtherUnsigned31     (uint32_t)1 << (uint32_t)1
-#define OtherUnsigned32     (uint32_t)1 << (uint32_t)2
-#define OtherSigned32       (uint32_t)1 << (uint32_t)3
-#define OtherNumber         (uint32_t)1 << (uint32_t)4
-#define OtherString         (uint32_t)1 << (uint32_t)5
+#define kOtherUnsigned31     (uint32_t)1 << (uint32_t)1
+#define kOtherUnsigned32     (uint32_t)1 << (uint32_t)2
+#define kOtherSigned32       (uint32_t)1 << (uint32_t)3
+#define kOtherNumber         (uint32_t)1 << (uint32_t)4
+#define kOtherString         (uint32_t)1 << (uint32_t)5
 
 // define external bitset types
-#define None                     (uint32_t)0
-#define Negative31               (uint32_t)1 << (uint32_t)6
-#define Null                     (uint32_t)1 << (uint32_t)7
-#define Undefined                (uint32_t)1 << (uint32_t)8
-#define Boolean                  (uint32_t)1 << (uint32_t)9
-#define Unsigned30               (uint32_t)1 << (uint32_t)10
-#define MinusZero                (uint32_t)1 << (uint32_t)11
-#define NaN                      (uint32_t)1 << (uint32_t)12
-#define Symbol                   (uint32_t)1 << (uint32_t)13
-#define InternalizedString       (uint32_t)1 << (uint32_t)14
-#define OtherCallable            (uint32_t)1 << (uint32_t)16
-#define OtherObject              (uint32_t)1 << (uint32_t)17
-#define OtherUndetectable        (uint32_t)1 << (uint32_t)18
-#define CallableProxy            (uint32_t)1 << (uint32_t)19
-#define OtherProxy               (uint32_t)1 << (uint32_t)20
-#define Function                 (uint32_t)1 << (uint32_t)21
-#define BoundFunction            (uint32_t)1 << (uint32_t)22
-#define Hole                     (uint32_t)1 << (uint32_t)23
-#define OtherInternal            (uint32_t)1 << (uint32_t)24
-#define ExternalPointer          (uint32_t)1 << (uint32_t)25
-#define Array                    (uint32_t)1 << (uint32_t)26
-#define BigInt                   (uint32_t)1 << (uint32_t)27
+#define kNone                     (uint32_t)0
+#define kNegative31               (uint32_t)1 << (uint32_t)6
+#define kNull                     (uint32_t)1 << (uint32_t)7
+#define kUndefined                (uint32_t)1 << (uint32_t)8
+#define kBoolean                  (uint32_t)1 << (uint32_t)9
+#define kUnsigned30               (uint32_t)1 << (uint32_t)10
+#define kMinusZero                (uint32_t)1 << (uint32_t)11
+#define kNaN                      (uint32_t)1 << (uint32_t)12
+#define kSymbol                   (uint32_t)1 << (uint32_t)13
+#define kInternalizedString       (uint32_t)1 << (uint32_t)14
+#define kOtherCallable            (uint32_t)1 << (uint32_t)16
+#define kOtherObject              (uint32_t)1 << (uint32_t)17
+#define kOtherUndetectable        (uint32_t)1 << (uint32_t)18
+#define kCallableProxy            (uint32_t)1 << (uint32_t)19
+#define kOtherProxy               (uint32_t)1 << (uint32_t)20
+#define kFunction                 (uint32_t)1 << (uint32_t)21
+#define kBoundFunction            (uint32_t)1 << (uint32_t)22
+#define kHole                     (uint32_t)1 << (uint32_t)23
+#define kOtherInternal            (uint32_t)1 << (uint32_t)24
+#define kExternalPointer          (uint32_t)1 << (uint32_t)25
+#define kArray                    (uint32_t)1 << (uint32_t)26
+#define kBigInt                   (uint32_t)1 << (uint32_t)27
   /* TODO(v8:10391): Remove this type once all ExternalPointer usages are */ \
   /* sandbox-ready. */                   \
-#define SandboxedExternalPointer (uint32_t)1 << (uint32_t)28
-#define Signed31                     kUnsigned30 | kNegative31
-#define Signed32                     kSigned31 | kOtherUnsigned31 | \
+#define kSandboxedExternalPointer (uint32_t)1 << (uint32_t)28
+#define kSigned31                     kUnsigned30 | kNegative31
+#define kSigned32                     kSigned31 | kOtherUnsigned31 | \
                                   kOtherSigned32
-#define Signed32OrMinusZero          kSigned32 | kMinusZero
-#define Signed32OrMinusZeroOrNaN     kSigned32 | kMinusZero | kNaN
-#define Negative32                   kNegative31 | kOtherSigned32
-#define Unsigned31                   kUnsigned30 | kOtherUnsigned31
-#define Unsigned32                   kUnsigned30 | kOtherUnsigned31 | \
+#define kSigned32OrMinusZero          kSigned32 | kMinusZero
+#define kSigned32OrMinusZeroOrNaN     kSigned32 | kMinusZero | kNaN
+#define kNegative32                   kNegative31 | kOtherSigned32
+#define kUnsigned31                   kUnsigned30 | kOtherUnsigned31
+#define kUnsigned32                   kUnsigned30 | kOtherUnsigned31 | \
                                   kOtherUnsigned32
-#define Unsigned32OrMinusZero        kUnsigned32 | kMinusZero
-#define Unsigned32OrMinusZeroOrNaN   kUnsigned32 | kMinusZero | kNaN
-#define Integral32                   kSigned32 | kUnsigned32
-#define Integral32OrMinusZero        kIntegral32 | kMinusZero
-#define Integral32OrMinusZeroOrNaN   kIntegral32OrMinusZero | kNaN
-#define PlainNumber                  kIntegral32 | kOtherNumber
-#define OrderedNumber                kPlainNumber | kMinusZero
-#define MinusZeroOrNaN               kMinusZero | kNaN
-#define Number                       kOrderedNumber | kNaN
-#define Numeric                      kNumber | kBigInt
-#define String                       kInternalizedString | kOtherString
-#define UniqueName                   kSymbol | kInternalizedString
-#define Name                         kSymbol | kString
-#define InternalizedStringOrNull     kInternalizedString | kNull
-#define BooleanOrNumber              kBoolean | kNumber
-#define BooleanOrNullOrNumber        kBooleanOrNumber | kNull
-#define BooleanOrNullOrUndefined     kBoolean | kNull | kUndefined
-#define Oddball                      kBooleanOrNullOrUndefined | kHole
-#define NullOrNumber                 kNull | kNumber
-#define NullOrUndefined              kNull | kUndefined
-#define Undetectable                 kNullOrUndefined | kOtherUndetectable
-#define NumberOrHole                 kNumber | kHole
-#define NumberOrOddball              kNumber | kNullOrUndefined | kBoolean | \
+#define kUnsigned32OrMinusZero        kUnsigned32 | kMinusZero
+#define kUnsigned32OrMinusZeroOrNaN   kUnsigned32 | kMinusZero | kNaN
+#define kIntegral32                   kSigned32 | kUnsigned32
+#define kIntegral32OrMinusZero        kIntegral32 | kMinusZero
+#define kIntegral32OrMinusZeroOrNaN   kIntegral32OrMinusZero | kNaN
+#define kPlainNumber                  kIntegral32 | kOtherNumber
+#define kOrderedNumber                kPlainNumber | kMinusZero
+#define kMinusZeroOrNaN               kMinusZero | kNaN
+#define kNumber                       kOrderedNumber | kNaN
+#define kNumeric                      kNumber | kBigInt
+#define kString                       kInternalizedString | kOtherString
+#define kUniqueName                   kSymbol | kInternalizedString
+#define kName                         kSymbol | kString
+#define kInternalizedStringOrNull     kInternalizedString | kNull
+#define kBooleanOrNumber              kBoolean | kNumber
+#define kBooleanOrNullOrNumber        kBooleanOrNumber | kNull
+#define kBooleanOrNullOrUndefined     kBoolean | kNull | kUndefined
+#define kOddball                      kBooleanOrNullOrUndefined | kHole
+#define kNullOrNumber                 kNull | kNumber
+#define kNullOrUndefined              kNull | kUndefined
+#define kUndetectable                 kNullOrUndefined | kOtherUndetectable
+#define kNumberOrHole                 kNumber | kHole
+#define kNumberOrOddball              kNumber | kNullOrUndefined | kBoolean | \
                                      kHole
-#define NumericOrString              kNumeric | kString
-#define NumberOrUndefined            kNumber | kUndefined
-#define NumberOrUndefinedOrNullOrBoolean  \
+#define kNumericOrString              kNumeric | kString
+#define kNumberOrUndefined            kNumber | kUndefined
+#define kNumberOrUndefinedOrNullOrBoolean  \
                                      kNumber | kNullOrUndefined | kBoolean
-#define PlainPrimitive               kNumber | kString | kBoolean | \
+#define kPlainPrimitive               kNumber | kString | kBoolean | \
                                      kNullOrUndefined
-#define NonBigIntPrimitive           kSymbol | kPlainPrimitive
-#define Primitive                    kBigInt | kNonBigIntPrimitive
-#define OtherUndetectableOrUndefined kOtherUndetectable | kUndefined
-#define Proxy                        kCallableProxy | kOtherProxy
-#define ArrayOrOtherObject           kArray | kOtherObject
-#define ArrayOrProxy                 kArray | kProxy
-#define DetectableCallable           kFunction | kBoundFunction | \
+#define kNonBigIntPrimitive           kSymbol | kPlainPrimitive
+#define kPrimitive                    kBigInt | kNonBigIntPrimitive
+#define kOtherUndetectableOrUndefined kOtherUndetectable | kUndefined
+#define kProxy                        kCallableProxy | kOtherProxy
+#define kArrayOrOtherObject           kArray | kOtherObject
+#define kArrayOrProxy                 kArray | kProxy
+#define kDetectableCallable           kFunction | kBoundFunction | \
                                      kOtherCallable | kCallableProxy
-#define Callable                     kDetectableCallable | kOtherUndetectable
-#define NonCallable                  kArray | kOtherObject | kOtherProxy
-#define NonCallableOrNull            kNonCallable | kNull
-#define DetectableObject             kArray | kFunction | kBoundFunction | \
+#define kCallable                     kDetectableCallable | kOtherUndetectable
+#define kNonCallable                  kArray | kOtherObject | kOtherProxy
+#define kNonCallableOrNull            kNonCallable | kNull
+#define kDetectableObject             kArray | kFunction | kBoundFunction | \
                                      kOtherCallable | kOtherObject
-#define DetectableReceiver           kDetectableObject | kProxy
-#define DetectableReceiverOrNull     kDetectableReceiver | kNull
-#define Object                       kDetectableObject | kOtherUndetectable
-#define Receiver                     kObject | kProxy
-#define ReceiverOrUndefined          kReceiver | kUndefined
-#define ReceiverOrNullOrUndefined    kReceiver | kNull | kUndefined
-#define SymbolOrReceiver             kSymbol | kReceiver
-#define StringOrReceiver             kString | kReceiver
-#define Unique                       kBoolean | kUniqueName | kNull | \
+#define kDetectableReceiver           kDetectableObject | kProxy
+#define kDetectableReceiverOrNull     kDetectableReceiver | kNull
+#define kObject                       kDetectableObject | kOtherUndetectable
+#define kReceiver                     kObject | kProxy
+#define kReceiverOrUndefined          kReceiver | kUndefined
+#define kReceiverOrNullOrUndefined    kReceiver | kNull | kUndefined
+#define kSymbolOrReceiver             kSymbol | kReceiver
+#define kStringOrReceiver             kString | kReceiver
+#define kUnique                       kBoolean | kUniqueName | kNull | \
                                      kUndefined | kHole | kReceiver
-#define Internal                     kHole | kExternalPointer | \
+#define kInternal                     kHole | kExternalPointer | \
                                      kSandboxedExternalPointer | kOtherInternal
-#define NonInternal                  kPrimitive | kReceiver
-#define NonBigInt                    kNonBigIntPrimitive | kReceiver
-#define NonNumber                    kBigInt | kUnique | kString | kInternal
-#define Any                          (uint32_t)0xfffffffe
+#define kNonInternal                  kPrimitive | kReceiver
+#define kNonBigInt                    kNonBigIntPrimitive | kReceiver
+#define kNonNumber                    kBigInt | kUnique | kString | kInternal
+#define kAny                          (uint32_t)0xfffffffe
 
 struct limit {
     double min;
