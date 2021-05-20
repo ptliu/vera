@@ -342,6 +342,8 @@ operators = [[postfix $ member]
             ,[binary "&" And AssocLeft]
             ,[binary "^" XOr AssocLeft]
             ,[binary "|" Or AssocLeft]
+            ,[binary "&&" And AssocLeft]
+            ,[binary "||" Or AssocLeft]
             ,[Infix ternary AssocRight]]
 
 ternary :: Parser (CExpr -> CExpr -> CExpr)

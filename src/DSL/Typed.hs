@@ -848,11 +848,6 @@ noopWrapper left right op overflowOp opName = do
   let ty = if isUnsigned (vtype left) && isUnsigned (vtype right) then u else s
   return $ VNode canOverflow result ty 
 
-    {- DEFINEBINOPCLASS(CppBoolAnd, cppLogAnd)
-instance CppBoolAnd VNode VNode where
-    cppBoolAnd left right
-      | //-}
-
 DEFINEUNIOPCLASS(CppNeg, cppNeg)
 instance CppNeg VNode where
   cppNeg node = do
