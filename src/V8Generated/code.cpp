@@ -342,7 +342,7 @@ bool Overlap(v8type const& lhs, v8type const& rhs) {
 // type hierarchy
 bool IsBitset(v8type const& this_) {
     // TODO:
-    return this_.hasRange || this_.isUnion;
+    return ~(this_.hasRange || this_.isUnion);
 }
 
 bool IsRange(v8type const& this_) {
@@ -351,6 +351,10 @@ bool IsRange(v8type const& this_) {
 
 bool IsUnion(v8type const& this_) {
     return this_.isUnion;
+}
+
+bool IsTuple(v8type const& this_) {
+    return false;
 }
 
 // Bitset methods
@@ -476,40 +480,47 @@ bitset_t NumberBits(bitset_t bits) {
     return bits & kPlainNumber;
 }
 
-bitset_t BitsetLub(bitset_t this_) {
+bitset_t BitsetLub(v8type this_) {
   // The smallest bitset subsuming this type, possibly not a proper one.
 
   // DisallowGarbageCollection no_gc;
-  bool mz = this_ & kMinusZero;
 
-  if (BitsetIs(this_, )) {
-    return 
+  if (IsBitset(this_)) {
+    return this_.bitset;
   }
 
-  // if (IsBitset()) return AsBitset();
-
-  // if (IsUnion()) {
-  //   // Take the representation from the first element, which is always
-  //   // a bitset.
-  //   int bitset = AsUnion()->Get(0).BitsetLub();
-  //   for (int i = 0, n = AsUnion()->Length(); i < n; ++i) {
-  //     // Other elements only contribute their semantic part.
-  //     bitset |= AsUnion()->Get(i).BitsetLub();
-  //   }
-  //   return bitset;
-  // }
+  if (IsUnion(this_)) {
+    //   // Take the representation from the first element, which is always
+    //   // a bitset.
+    //   int bitset = AsUnion()->Get(0).BitsetLub();
+    //   for (int i = 0, n = AsUnion()->Length(); i < n; ++i) {
+    //     // Other elements only contribute their semantic part.
+    //     bitset |= AsUnion()->Get(i).BitsetLub();
+    //   }
+    //   return bitset;
+    return this_.bitset;
+  }
 
   // if (IsHeapConstant()) return AsHeapConstant()->Lub();
   // if (IsOtherNumberConstant()) {
   //   return AsOtherNumberConstant()->Lub();
   // }
 
-  if (IsRange()) return AsRange()->Lub();
-  if (IsTuple()) return BitsetType::kOtherInternal;
-  UNREACHABLE();
+  if (IsRange(this_)) {
+    return this_.bitset;
+    // return AsRange()->Lub();
+  }
+
+  if (IsTuple(this_)) {
+    return kOtherInternal;
+  }
+
+  unreachable_ = (bool) 1; //TODO: assert that this is false to enforce 
+                           //that this line is never reached
+  
+  // UNREACHABLE();
 }
 
-}
 
 
 // Type methods
@@ -523,8 +534,7 @@ bitset_t BitsetLub(bitset_t this_) {
   //DCHECK(!this->Is(NaN()));
   if (IsBitset(this_)) {
       return BitsetMin(this_.bitset);
-  }
-  if (this->IsUnion()) {
+ion()) {
     double min = +V8_INFINITY;
     for (int i = 1, n = AsUnion()->Length(); i < n; ++i) {
       min = std::min(min, AsUnion()->Get(i).Min());
