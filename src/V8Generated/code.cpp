@@ -279,34 +279,9 @@ boundary getBoundary(uint32_t index) {
     return bound;
 }
 
-// TODO: MIGHT WANNA DO THIS A DIFF WAy
-boundary minBoundary(bitset_t bits) {
-    // unroll checking loop
-    // TODO: probably clean this up
-    boundary bound;
-    if (Is(kOtherNumber, bits)) {
-    }
-    if (Is(kOtherSigned32, bits)) {
-    }
-    if (Is(kNegative31, bits)) {
-    }
-    if (Is(kUnsigned30, bits)) {
-    }
-    if (Is(kOtherUnsigned31, bits)) {
-    }
-    if (Is(kOtherUnsigned32, bits)) {
-    }
-    if (Is(kOtherNumber, bits)) {
-    }
-
-    // HACK: return wacky bound if nothing matches
-    bound.internal = None;
-    bound.external = None;
-    bound.min = (double)0;
-    return bound;
+uint32_t BoundariesSize() {
+    return (uint32_t)7;
 }
-
-
 
 // Range-related helper functions
 //
@@ -350,7 +325,7 @@ limits Union(limits lhs, limits rhs) {
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=42
-bool Overlap(v8type const& lhs, RangeType const& rhs) {
+bool Overlap(v8type const& lhs, v8type const& rhs) {
   //DisallowGarbageCollection no_gc;
   return !IsEmpty(Intersect(getLimits(lhs),
                     getLimits(rhs)));
@@ -365,14 +340,26 @@ bool Overlap(v8type const& lhs, RangeType const& rhs) {
 
 // Oversimplified IsBitset. Can't do original cause we don't have
 // type hierarchy
-/*bool IsBitset(v8type const& this_) {
+bool IsBitset(v8type const& this_) {
     // TODO:
     return this_.hasRange || this_.isUnion;
-}*/
+}
+
+bool IsRange(v8type const& this_) {
+    return this_.hasRange && !this_.isUnion;
+}
+
+bool IsUnion(v8type const& this_) {
+    return this_.isUnion;
+}
 
 // Bitset methods
 
-bool Is(bitset_t bits1, bitset_t bits2) {
+bool BitsetIsNone(bitset_t bits) {
+    return bits == kNone;
+}
+
+bool BitsetIs(bitset_t bits1, bitset_t bits2) {
     return (bits1 | bits2) == bits2;
 }
 
@@ -388,31 +375,31 @@ double BitsetMin(bitset_t bitset) {
   // DELEGATED TO minBoundary helper, cause we dont got loops...
   // unroll the loop
   boundary min = getBoundary((uint32_t)0);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)1);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)2);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)3);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)4);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)5);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)6);
-  if (Is(min.internal, bits)) {
+  if (BitsetIs(min.internal, bits)) {
     return mz ? math::min(0.0, min.min) : min.min;
   }
 
@@ -420,26 +407,78 @@ double BitsetMin(bitset_t bitset) {
   return (double)0;
 }
 
-double BitsetMax(bitset_t bitset) {
+// https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=453;bpv=0;bpt=1
+double BitsetMax(bitset_t bits) {
   //DisallowGarbageCollection no_gc;
   //DCHECK(Is(bits, kNumber));
   //DCHECK(!Is(bits, kNaN));
   
-  const Boundary* mins = Boundaries();
   bool mz = bits & kMinusZero;
-  if (BitsetType::Is(mins[BoundariesSize() - 1].internal, bits)) {
+
+  if (BitsetType::Is(getBoundary(BoundariesSize() - 1).internal, bits)) {
     return +V8_INFINITY;
   }
-  for (size_t i = BoundariesSize() - 1; i-- > 0;) {
+
+  // unrolled
+  /*for (size_t i = BoundariesSize() - 1; i-- > 0;) {
     if (Is(mins[i].internal, bits)) {
       return mz ? std::max(0.0, mins[i + 1].min - 1) : mins[i + 1].min - 1;
     }
+  }*/
+  uint32_t i = (uint32_t)BoundariesSize() - 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
   }
+  i -= 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+  }
+  i -= 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+  }
+  i -= 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+  }
+  i -= 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+  }
+  i -= 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+  }
+  i -= 1;
+  boundary min = getBoundary(i);
+  if (BitsetIs(min.internal, bits)) {
+    boundary min1 = getBoundary(i+1);
+    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+  }
+
   DCHECK(mz);
   return 0;
 }
 
+bitset_t NumberBits(bitset_t bits) {
+    return bits & kPlainNumber;
+}
+
+
 // Type methods
+
 // Minimum and maximum of a numeric type.
 // These functions do not distinguish between -0 and +0.  NaN is ignored.
 // Only call them on subtypes of Number whose intersection with OrderedNumber
@@ -465,6 +504,98 @@ double BitsetMax(bitset_t bitset) {
 }
 
 //double Max() const;*/
+
+// -----------------------------------------------------------------------------
+// Predicates.
+
+// TODO:
+bool SimplyEquals(v8type this_, v8type that) {
+  /*DisallowGarbageCollection no_gc;
+  if (this->IsHeapConstant()) {
+    return that.IsHeapConstant() &&
+           this->AsHeapConstant()->Value().address() ==
+               that.AsHeapConstant()->Value().address();
+  }
+  if (this->IsOtherNumberConstant()) {
+    return that.IsOtherNumberConstant() &&
+           this->AsOtherNumberConstant()->Value() ==
+               that.AsOtherNumberConstant()->Value();
+  }
+  if (this->IsRange()) {
+    if (that.IsHeapConstant() || that.IsOtherNumberConstant()) return false;
+  }
+  if (this->IsTuple()) {
+    if (!that.IsTuple()) return false;
+    const TupleType* this_tuple = this->AsTuple();
+    const TupleType* that_tuple = that.AsTuple();
+    if (this_tuple->Arity() != that_tuple->Arity()) {
+      return false;
+    }
+    for (int i = 0, n = this_tuple->Arity(); i < n; ++i) {
+      if (!this_tuple->Element(i).Equals(that_tuple->Element(i))) return false;
+    }
+    return true;
+  }*/
+  // I think for us this is always false for now
+  return (bool)0;
+  //UNREACHABLE();
+}
+
+bool Maybe(v8Type this_, v8Type that) {
+  //DisallowGarbageCollection no_gc;
+
+  if (BitsetIsNone(this->BitsetLub() & that.BitsetLub())) return false;
+
+  // TODO: no unions what do?
+  // (T1 \/ ... \/ Tn) overlaps T  if  (T1 overlaps T) \/ ... \/ (Tn overlaps T)
+  /*if (this->IsUnion()) {
+    for (int i = 0, n = this->AsUnion()->Length(); i < n; ++i) {
+      if (this->AsUnion()->Get(i).Maybe(that)) return true;
+    }
+    return false;
+  }*/
+
+  // T overlaps (T1 \/ ... \/ Tn)  if  (T overlaps T1) \/ ... \/ (T overlaps Tn)
+  /*if (that.IsUnion()) {
+    for (int i = 0, n = that.AsUnion()->Length(); i < n; ++i) {
+      if (this->Maybe(that.AsUnion()->Get(i))) return true;
+    }
+    return false;
+  }*/
+
+  // for now, just treat unions as "unbounded union of all types"
+  if (IsUnion(this_)) {
+      return true;
+  }
+
+  if (IsUnion(that_)) {
+    return true;
+  }
+
+  if (IsBitset(this_) && IsBitset(that)) return true;
+
+  if (IsRange(this_)) {
+    if (IsRange(that)) {
+      return Overlap(this_, that);
+    }
+    if (IsBitset(that)) {
+      bitset number_bits = BitsetType::NumberBits(that.bitset);
+      if (number_bits == kNone) {
+        return false;
+      }
+      double min = math::max(BitsetMin(number_bits), Min(this_));
+      double max = math::min(BitsetMax(number_bits), Max(this_));
+      return min <= max;
+    }
+  }
+  if (IsRange(that)) {
+    return Maybe(that, this_);  // This case is handled above.
+  }
+
+  if (IsBitset(this_) || IsBitset(that)) return true;
+
+  return SimplyEquals(this_, that);
+}
 
 
 // DONT EXPRESS NAN PRECONDITION YEET
@@ -603,4 +734,51 @@ v8type MultiplyRanger(double lhs_min, double lhs_max, double rhs_min, double rhs
     type.maybeNaN = (bool)1;
   }
   return type;
+}
+
+// Precondition: input is numbers
+v8type NumberAdd(v8type lhs, v8type rhs) {
+  //DCHECK(lhs.Is(Type::Number()));
+  //DCHECK(rhs.Is(Type::Number()));
+
+  if (lhs.IsNone() || rhs.IsNone()) return Type::None();
+
+  // Addition can return NaN if either input can be NaN or we try to compute
+  // the sum of two infinities of opposite sign.
+  bool maybe_nan = lhs.Maybe(Type::NaN()) || rhs.Maybe(Type::NaN());
+
+  // Addition can yield minus zero only if both inputs can be minus zero.
+  bool maybe_minuszero = true;
+  if (lhs.Maybe(Type::MinusZero())) {
+    lhs = Type::Union(lhs, cache_->kSingletonZero, zone());
+  } else {
+    maybe_minuszero = false;
+  }
+  if (rhs.Maybe(Type::MinusZero())) {
+    rhs = Type::Union(rhs, cache_->kSingletonZero, zone());
+  } else {
+    maybe_minuszero = false;
+  }
+
+  // We can give more precise types for integers.
+  Type type = Type::None();
+  lhs = Type::Intersect(lhs, Type::PlainNumber(), zone());
+  rhs = Type::Intersect(rhs, Type::PlainNumber(), zone());
+  if (!lhs.IsNone() && !rhs.IsNone()) {
+    if (lhs.Is(cache_->kInteger) && rhs.Is(cache_->kInteger)) {
+      type = AddRanger(lhs.Min(), lhs.Max(), rhs.Min(), rhs.Max());
+    } else {
+      if ((lhs.Maybe(minus_infinity_) && rhs.Maybe(infinity_)) ||
+          (rhs.Maybe(minus_infinity_) && lhs.Maybe(infinity_))) {
+        maybe_nan = true;
+      }
+      type = Type::PlainNumber();
+    }
+  }
+
+  // Take into account the -0 and NaN information computed earlier.
+  if (maybe_minuszero) type = Type::Union(type, Type::MinusZero(), zone());
+  if (maybe_nan) type = Type::Union(type, Type::NaN(), zone());
+  return type;
+
 }
