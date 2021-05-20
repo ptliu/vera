@@ -364,7 +364,7 @@ bool BitsetIs(bitset_t bits1, bitset_t bits2) {
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=438
-double BitsetMin(bitset_t bitset) {
+double BitsetMin(bitset_t bits) {
   //DisallowGarbageCollection no_gc;
   //DCHECK(Is(bits, kNumber));
   //DCHECK(!Is(bits, kNaN));
@@ -415,7 +415,7 @@ double BitsetMax(bitset_t bits) {
   
   bool mz = bits & kMinusZero;
 
-  if (BitsetType::Is(getBoundary(BoundariesSize() - 1).internal, bits)) {
+  if (BitsetIs(getBoundary(BoundariesSize() - 1).internal, bits)) {
     return +V8_INFINITY;
   }
 
@@ -474,6 +474,41 @@ double BitsetMax(bitset_t bits) {
 
 bitset_t NumberBits(bitset_t bits) {
     return bits & kPlainNumber;
+}
+
+bitset_t BitsetLub(bitset_t this_) {
+  // The smallest bitset subsuming this type, possibly not a proper one.
+
+  // DisallowGarbageCollection no_gc;
+  bool mz = this_ & kMinusZero;
+
+  if (BitsetIs(this_, )) {
+    return 
+  }
+
+  // if (IsBitset()) return AsBitset();
+
+  // if (IsUnion()) {
+  //   // Take the representation from the first element, which is always
+  //   // a bitset.
+  //   int bitset = AsUnion()->Get(0).BitsetLub();
+  //   for (int i = 0, n = AsUnion()->Length(); i < n; ++i) {
+  //     // Other elements only contribute their semantic part.
+  //     bitset |= AsUnion()->Get(i).BitsetLub();
+  //   }
+  //   return bitset;
+  // }
+
+  // if (IsHeapConstant()) return AsHeapConstant()->Lub();
+  // if (IsOtherNumberConstant()) {
+  //   return AsOtherNumberConstant()->Lub();
+  // }
+
+  if (IsRange()) return AsRange()->Lub();
+  if (IsTuple()) return BitsetType::kOtherInternal;
+  UNREACHABLE();
+}
+
 }
 
 
