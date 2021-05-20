@@ -108,6 +108,14 @@
 #define kNonNumber                    kBigInt | kUnique | kString | kInternal
 #define kAny                          (uint32_t)0xfffffffe
 
+#define UINT32_ONE (uint32_t)1
+#define UINT32_ZERO (uint32_t)0
+#define FALSE (bool)0
+#define TRUE (bool)1 //be careful with this one, don't compare directly against it
+#define DOUBLE_ZERO (double)0
+#define DOUBLE_ONE (double)1
+
+
 struct limit {
     double min;
     double max;
@@ -342,11 +350,11 @@ bool Overlap(v8type const& lhs, v8type const& rhs) {
 // type hierarchy
 bool IsBitset(v8type const& this_) {
     // TODO:
-    return ~(this_.hasRange || this_.isUnion);
+    return ~(this_.hasRange | this_.isUnion); //TODO change to logical when support added
 }
 
 bool IsRange(v8type const& this_) {
-    return this_.hasRange && !this_.isUnion;
+    return this_.hasRange & !this_.isUnion; //TODO change to logical when support added
 }
 
 bool IsUnion(v8type const& this_) {
@@ -380,31 +388,31 @@ double BitsetMin(bitset_t bits) {
   // unroll the loop
   boundary min = getBoundary((uint32_t)0);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)1);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)2);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)3);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)4);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)5);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
   boundary min = getBoundary((uint32_t)6);
   if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min(0.0, min.min) : min.min;
+    return mz ? math::min((double)0, min.min) : min.min;
   }
 
   //DCHECK(mz);
@@ -418,9 +426,8 @@ double BitsetMax(bitset_t bits) {
   //DCHECK(!Is(bits, kNaN));
   
   bool mz = bits & kMinusZero;
-
-  if (BitsetIs(getBoundary(BoundariesSize() - 1).internal, bits)) {
-    return +V8_INFINITY;
+  if (BitsetIs(getBoundary((uint32_t)BoundariesSize() - UINT32_ONE).internal, bits)) {
+    return V8_INFINITY;
   }
 
   // unrolled
@@ -429,51 +436,51 @@ double BitsetMax(bitset_t bits) {
       return mz ? std::max(0.0, mins[i + 1].min - 1) : mins[i + 1].min - 1;
     }
   }*/
-  uint32_t i = (uint32_t)BoundariesSize() - 1;
+  uint32_t i = (uint32_t)BoundariesSize() - UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
-  i -= 1;
+  i -= UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
-  i -= 1;
+  i -= UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
-  i -= 1;
+  i -= UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
-  i -= 1;
+  i -= UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
-  i -= 1;
+  i -= UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
-  i -= 1;
+  i -= UINT32_ONE;
   boundary min = getBoundary(i);
   if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+1);
-    return mz ? math::min(0.0, min1.min - 1) : min1.min - 1;
+    boundary min1 = getBoundary(i+UINT32_ONE);
+    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
   }
 
   DCHECK(mz);
-  return 0;
+  return UINT32_ZERO;
 }
 
 bitset_t NumberBits(bitset_t bits) {
@@ -484,6 +491,8 @@ bitset_t BitsetLub(v8type this_) {
   // The smallest bitset subsuming this type, possibly not a proper one.
 
   // DisallowGarbageCollection no_gc;
+  bool unreachable_ = (bool) 0; //TODO: assert that this is false to enforce
+                                //code is unreachable at bottom
 
   if (IsBitset(this_)) {
     return this_.bitset;
@@ -589,7 +598,7 @@ bool SimplyEquals(v8type this_, v8type that) {
 bool Maybe(v8Type this_, v8Type that) {
   //DisallowGarbageCollection no_gc;
 
-  if (BitsetIsNone(this->BitsetLub() & that.BitsetLub())) return false;
+  if (BitsetIsNone(BitsetLub(this_) & BitsetLub(that))) return false;
 
   // TODO: no unions what do?
   // (T1 \/ ... \/ Tn) overlaps T  if  (T1 overlaps T) \/ ... \/ (Tn overlaps T)
