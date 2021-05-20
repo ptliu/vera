@@ -29,3 +29,6 @@ subtractRanger = fn "SubtractRanger"
 multiplyRanger :: FunctionDef
 multiplyRanger = fn "MultiplyRanger"
 
+isEmpty :: FunctionDef
+isEmpty = fn "isEmpty"
+
