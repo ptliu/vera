@@ -1,19 +1,24 @@
-lejit-0.1.0.0: unregistering (local file changes: src/V8Generated/code.cpp)
 lejit> configure (lib + exe + test)
 Configuring lejit-0.1.0.0...
 lejit> build (lib + exe + test)
 Preprocessing library for lejit-0.1.0.0..
 Building library for lejit-0.1.0.0..
-[19 of 22] Compiling V8Generated.Helpers [src/V8Generated/code.cpp changed]
+[ 8 of 22] Compiling DSL.Typed
+[13 of 22] Compiling Generate.Parser
+[14 of 22] Compiling Generate.QQ [Generate.Parser changed]
+[15 of 22] Compiling IonMonkeyGenerated.Helpers [Generate.QQ changed]
+[17 of 22] Compiling IonMonkeyGenerated.Operations [IonMonkeyGenerated.Helpers changed]
+[18 of 22] Compiling IonMonkeyGenerated.Verify [IonMonkeyGenerated.Helpers changed]
+[19 of 22] Compiling V8Generated.Helpers [Generate.QQ changed]
 
 /home/evan/Research/vera/src/V8Generated/Helpers.hs:20:15: error:
     • Error in: src/V8Generated/code.cpp
 
-189 |     return this_.hasRange || this_.isUnion;
-                                  ^
-    "src/V8Generated/code.cpp" (line 189, column 29):
-    unexpected '|'
-    expecting operator
+262 |   if (BitsetType::Is(getBoundary(BoundariesSize() - 1).internal, bits)) {
+                      ^
+    "src/V8Generated/code.cpp" (line 262, column 17):
+    unexpected ":"
+    expecting statement
 
     • In the quasi-quotation: [progFile|src/V8Generated/code.cpp|]
    |
