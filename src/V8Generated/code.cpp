@@ -220,15 +220,40 @@ v8type newRange(double min, double max) {
 
 v8type nanType() {
     v8type type;
-    type.bitset = (uint32_t)0;
-    type.hasRange = (bool)0;
-    type.max = max;
-    type.min = min;
-    type.maybeNaN = (bool)1;
-    type.maybeMinusZero = (bool)0;
-    type.isUnion = (bool)0;
+    type.bitset = kNaN;
+    type.hasRange = FALSE;
+    type.max = UINT32_ZERO;
+    type.min = UINT32_ZERO;
+    type.maybeNaN = TRUE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
     return type;
 }
+
+v8type noneType() {
+    v8type type;
+    type.bitset = kNone;
+    type.hasRange = FALSE;
+    type.max = UINT32_ZERO;
+    type.min = UINT32_ZERO;
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+    return type;
+}
+
+v8type minusZeroType() {
+    v8type type;
+    type.bitset = kMinusZero;
+    type.hasRange = FALSE;
+    type.max = UINT32_ZERO;
+    type.min = UINT32_ZERO;
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = TRUE;
+    type.isUnion = FALSE;
+    return type;
+}
+
 
 limits copy(limits other) {
     limits result;
@@ -350,11 +375,11 @@ bool Overlap(v8type const& lhs, v8type const& rhs) {
 // type hierarchy
 bool IsBitset(v8type const& this_) {
     // TODO:
-    return ~(this_.hasRange | this_.isUnion); //TODO change to logical when support added
+    return ~(this_.hasRange || this_.isUnion); 
 }
 
 bool IsRange(v8type const& this_) {
-    return this_.hasRange & !this_.isUnion; //TODO change to logical when support added
+    return this_.hasRange && !this_.isUnion; 
 }
 
 bool IsUnion(v8type const& this_) {
@@ -363,6 +388,11 @@ bool IsUnion(v8type const& this_) {
 
 bool IsTuple(v8type const& this_) {
     return false;
+}
+
+// Type methods
+bool TypeIsNone(v8type t){
+  return BitsetIsNone(t.bitset)
 }
 
 // Bitset methods
@@ -633,7 +663,7 @@ bool Maybe(v8Type this_, v8Type that) {
       return Overlap(this_, that);
     }
     if (IsBitset(that)) {
-      bitset number_bits = BitsetType::NumberBits(that.bitset);
+      bitset number_bits = NumberBits(that.bitset);
       if (number_bits == kNone) {
         return false;
       }
@@ -790,35 +820,92 @@ v8type MultiplyRanger(double lhs_min, double lhs_max, double rhs_min, double rhs
   return type;
 }
 
+
+// Type Type::Intersect(Type type1, Type type2, Zone* zone) {
+//   // Fast case: bit sets.
+//   if (type1.IsBitset() && type2.IsBitset()) {
+//     return NewBitset(type1.AsBitset() & type2.AsBitset());
+//   }
+
+//   // Fast case: top or bottom types.
+//   if (type1.IsNone() || type2.IsAny()) return type1;  // Shortcut.
+//   if (type2.IsNone() || type1.IsAny()) return type2;  // Shortcut.
+
+//   // Semi-fast case.
+//   if (type1.Is(type2)) return type1;
+//   if (type2.Is(type1)) return type2;
+
+//   // Slow case: create union.
+
+//   // Semantic subtyping check - this is needed for consistency with the
+//   // semi-fast case above.
+//   if (type1.Is(type2)) {
+//     type2 = Any();
+//   } else if (type2.Is(type1)) {
+//     type1 = Any();
+//   }
+
+//   bitset bits = type1.BitsetGlb() & type2.BitsetGlb();
+//   int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
+//   int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
+//   int size;
+//   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
+//   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
+//   UnionType* result = UnionType::New(size, zone);
+//   size = 0;
+
+//   // Deal with bitsets.
+//   result->Set(size++, NewBitset(bits));
+
+//   RangeType::Limits lims = RangeType::Limits::Empty();
+//   size = IntersectAux(type1, type2, result, size, &lims, zone);
+
+//   // If the range is not empty, then insert it into the union and
+//   // remove the number bits from the bitset.
+//   if (!lims.IsEmpty()) {
+//     size = UpdateRange(Type::Range(lims, zone), result, size, zone);
+
+//     // Remove the number bits.
+//     bitset number_bits = BitsetType::NumberBits(bits);
+//     bits &= ~number_bits;
+//     result->Set(0, NewBitset(bits));
+//   }
+//   return NormalizeUnion(result, size, zone);
+// }
+
+
 // Precondition: input is numbers
 v8type NumberAdd(v8type lhs, v8type rhs) {
   //DCHECK(lhs.Is(Type::Number()));
   //DCHECK(rhs.Is(Type::Number()));
 
-  if (lhs.IsNone() || rhs.IsNone()) return Type::None();
+  if (TypeIsNone(lhs) || TypeIsNone(rhs)) {
+    return noneType();
+  }
+
 
   // Addition can return NaN if either input can be NaN or we try to compute
   // the sum of two infinities of opposite sign.
-  bool maybe_nan = lhs.Maybe(Type::NaN()) || rhs.Maybe(Type::NaN());
+  bool maybe_nan = Maybe(lhs, nanType()) || Maybe(rhs, nanType());
 
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
-  if (lhs.Maybe(Type::MinusZero())) {
+  if (Maybe(lhs, minusZeroType())) {
     lhs = Type::Union(lhs, cache_->kSingletonZero, zone());
   } else {
     maybe_minuszero = false;
   }
-  if (rhs.Maybe(Type::MinusZero())) {
+  if (Maybe(rhs, minusZeroType())) {
     rhs = Type::Union(rhs, cache_->kSingletonZero, zone());
   } else {
     maybe_minuszero = false;
   }
 
   // We can give more precise types for integers.
-  Type type = Type::None();
+  Type type = noneType();
   lhs = Type::Intersect(lhs, Type::PlainNumber(), zone());
   rhs = Type::Intersect(rhs, Type::PlainNumber(), zone());
-  if (!lhs.IsNone() && !rhs.IsNone()) {
+  if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
     if (lhs.Is(cache_->kInteger) && rhs.Is(cache_->kInteger)) {
       type = AddRanger(lhs.Min(), lhs.Max(), rhs.Min(), rhs.Max());
     } else {
