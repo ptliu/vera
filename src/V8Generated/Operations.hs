@@ -1,8 +1,5 @@
 {-# LANGUAGE QuasiQuotes #-}
-module V8Generated.Operations ( addRanger
-                              , subtractRanger
-                              , multiplyRanger
-                                     ) where
+module V8Generated.Operations where
 import           Control.Monad
 import           Data.List                  (find)
 import           DSL.Typed                  (Type (..))
@@ -29,6 +26,16 @@ subtractRanger = fn "SubtractRanger"
 multiplyRanger :: FunctionDef
 multiplyRanger = fn "MultiplyRanger"
 
+-- Limits functions
+
+limitsUnion :: FunctionDef
+limitsUnion = fn "Union"
+
 isEmpty :: FunctionDef
-isEmpty = fn "isEmpty"
+isEmpty = fn "IsEmpty"
+
+copy :: FunctionDef
+copy = fn "copy"
+
+
 

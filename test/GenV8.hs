@@ -1,4 +1,5 @@
 module GenV8 ( genV8Tests
+             , limitUnionTest
              , dumbAddTest
              , dumbSubtractTest
              , dumbMultiplyTest
@@ -25,6 +26,9 @@ genV8Tests = benchTestGroup "V8Verification"
                     , dumbSubtractTest
                     , dumbMultiplyTest
                     ]
+
+limitUnionTest :: BenchTest
+limitUnionTest = benchTestCase "LimitsUnion" $ evalCodegen Nothing $ testLimitUnion $ Set "Union" limitsUnion 
 
 dumbAddTest :: BenchTest
 dumbAddTest = benchTestCase "AddRanger" $ evalCodegen Nothing $ testAddRanger $ Set "AddRanger" addRanger

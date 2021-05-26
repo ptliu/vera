@@ -116,7 +116,7 @@
 #define DOUBLE_ONE (double)1
 
 
-struct limit {
+struct limits {
     double min;
     double max;
 };
@@ -299,15 +299,15 @@ v8type plainNumberType() {
 
 limits copy(limits other) {
     limits result;
-    limits.min = other.min;
-    limits.max = other.max;
+    result.min = other.min;
+    result.max = other.max;
     return result;
 }
 
 limits getLimits(v8type const& t) {
     limits result;
-    limits.min = t.min; // TODO: wrong!
-    limits.max = t.max;
+    result.min = t.min; // TODO: wrong!
+    result.max = t.max;
     return result;
 }
 
@@ -369,7 +369,8 @@ bool IsEmpty(limits this_) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=24
 limits LimitIntersect(limits lhs, limits rhs) {
   //DisallowGarbageCollection no_gc;
-  limits result = copy(lhs);
+  limits result;
+  result = copy(lhs);
 
   if (lhs.min < rhs.min) {
       result.min = rhs.min;
@@ -383,13 +384,14 @@ limits LimitIntersect(limits lhs, limits rhs) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=32
 limits Union(limits lhs, limits rhs) {
   //DisallowGarbageCollection no_gc;
+  limits result;
   if (IsEmpty(lhs)) {
       return rhs;
   }
   if (IsEmpty(rhs)) {
       return lhs;
   }
-  limits result = copy(lhs);
+  result = copy(lhs);
   if (lhs.min > rhs.min) {
     result.min = rhs.min;
   }

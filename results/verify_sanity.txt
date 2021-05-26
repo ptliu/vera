@@ -23,11 +23,9 @@ lejit> test (suite: lejit-test, args: -p V8Sanity)
 
 All tests
   V8Sanity
-    AddRanger:      OK (3.01s)
-    SubtractRanger: OK (3.92s)
-    MultiplyRanger: OK (44.38s)
+    LimitsUnion: OK (19.69s)
 
-All 3 tests passed (51.34s)
+All 1 tests passed (19.69s)
 
 lejit> Test suite lejit-test passed
 Completed 2 action(s).
