@@ -236,8 +236,8 @@ v8type nanType() {
     v8type type;
     type.bitset = kNaN;
     type.hasRange = FALSE;
-    type.max = UINT32_ZERO;
-    type.min = UINT32_ZERO;
+    type.max = DOUBLE_ZERO;
+    type.min = DOUBLE_ZERO;
     type.maybeNaN = TRUE;
     type.maybeMinusZero = FALSE;
     type.isUnion = FALSE;
@@ -248,8 +248,8 @@ v8type noneType() {
     v8type type;
     type.bitset = kNone;
     type.hasRange = FALSE;
-    type.max = UINT32_ZERO;
-    type.min = UINT32_ZERO;
+    type.max = DOUBLE_ZERO;
+    type.min = DOUBLE_ZERO;
     type.maybeNaN = FALSE;
     type.maybeMinusZero = FALSE;
     type.isUnion = FALSE;
@@ -260,14 +260,56 @@ v8type minusZeroType() {
     v8type type;
     type.bitset = kMinusZero;
     type.hasRange = FALSE;
-    type.max = UINT32_ZERO;
-    type.min = UINT32_ZERO;
+    type.max = DOUBLE_ZERO;
+    type.min = DOUBLE_ZERO;
     type.maybeNaN = FALSE;
     type.maybeMinusZero = TRUE;
     type.isUnion = FALSE;
     return type;
 }
 
+v8type AnyType() {
+    v8type type;
+    type.bitset = kAny;
+    type.hasRange = FALSE;
+    type.max = DOUBLE_ZERO;
+    type.min = DOUBLE_ZERO;
+    type.maybeNaN = TRUE;
+    type.maybeMinusZero = TRUE;
+    type.isUnion = FALSE;
+    return type;
+}
+
+v8type minusInfinityType() {
+    v8type type;
+    type.bitset = kOtherNumber;
+    type.max = -V8_INFINITY;
+    type.min = -V8_INFINITY;
+    type.hasRange = TRUE; 
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+}
+
+v8type infinityType() {
+    v8type type;
+    type.bitset = kOtherNumber;
+    type.max = V8_INFINITY;
+    type.min = V8_INFINITY;
+    type.hasRange = TRUE; 
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+}
+
+v8type plainNumberType() { 
+    v8type type;
+    type.bitset = kPlainNumber;
+    type.hasRange = FALSE; 
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+}
 
 limits copy(limits other) {
     limits result;
@@ -339,7 +381,7 @@ bool IsEmpty(limits this_) {
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=24
-limits Intersect(limits lhs, limits rhs) {
+limits LimitIntersect(limits lhs, limits rhs) {
   //DisallowGarbageCollection no_gc;
   limits result = copy(lhs);
 
@@ -374,7 +416,7 @@ limits Union(limits lhs, limits rhs) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=42
 bool Overlap(v8type const& lhs, v8type const& rhs) {
   //DisallowGarbageCollection no_gc;
-  return !IsEmpty(Intersect(getLimits(lhs),
+  return !IsEmpty(LimitIntersect(getLimits(lhs),
                     getLimits(rhs)));
 }
 
@@ -404,9 +446,12 @@ bool IsTuple(v8type const& this_) {
     return false;
 }
 
-// Type methods
 bool TypeIsNone(v8type t){
-  return BitsetIsNone(t.bitset)
+  return BitsetIsNone(t.bitset);
+}
+
+bool TypeIsAny(v8type t) {
+    return t.bitset == kAny;
 }
 
 // Bitset methods
@@ -577,6 +622,27 @@ bitset_t BitsetLub(v8type this_) {
 
 
 // Type methods
+
+// ---
+// Ctors
+v8type NewBitset(bitset_t bitset) {
+    v8type type;
+    type.bitset = bitset;
+    type.hasRange = FALSE;
+    type.max = UINT32_ZERO;
+    type.min = UINT32_ZERO;
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+    return type;
+}
+
+// ----
+// Casts
+
+bitset_t AsBitset(v8type this_) {
+    return this_.bitset;
+}
 
 // Minimum and maximum of a numeric type.
 // These functions do not distinguish between -0 and +0.  NaN is ignored.
@@ -812,80 +878,70 @@ v8type MultiplyRanger(double lhs_min, double lhs_max, double rhs_min, double rhs
       }
   }
   // 0 * V8_INFINITY is NaN, regardless of sign
-  bool cond1 = (bool)0;
-  cond1 |= (lhs_min == -V8_INFINITY);
-  cond1 |= (lhs_max == V8_INFINITY);
-  bool cond2 = (bool)0;
-  cond2 &= (rhs_min <= (double)0.0);
-  cond2 &= ((double)0.0 <= rhs_max);
-  bool outer1 = cond1 & cond2;
-  bool cond3 = (bool)0;
-  cond3 |= (rhs_min == -V8_INFINITY);
-  cond3 |= (rhs_max == V8_INFINITY);
-  bool cond4 = (bool)0;
-  cond4 &= (lhs_min <= (double)0.0);
-  cond4 &= ((double)0.0 <= lhs_max);
-  bool outer2 = cond3 & cond4;
-  bool yeet = outer1 | outer2;
-  if (yeet) {
-      // TODO:
-    type.maybeNaN = (bool)1;
+  if (((lhs_min == -V8_INFINITY || lhs_max == V8_INFINITY) &&
+       (rhs_min <= 0.0 && 0.0 <= rhs_max)) ||
+      ((rhs_min == -V8_INFINITY || rhs_max == V8_INFINITY) &&
+       (lhs_min <= 0.0 && 0.0 <= lhs_max))) {
+    type.maybeNaN = TRUE;
   }
   return type;
 }
 
+// ignore zone
+//Type Type::Intersect(Type type1, Type type2, Zone* zone) {
+v8type Intersect(v8type type1, v8type type2) {
+  // Fast case: bit sets.
+  if (IsBitset(type1) && IsBitset(type2)) {
+    return NewBitset(AsBitset(type1) & AsBitset(type2));
+  }
 
-// Type Type::Intersect(Type type1, Type type2, Zone* zone) {
-//   // Fast case: bit sets.
-//   if (type1.IsBitset() && type2.IsBitset()) {
-//     return NewBitset(type1.AsBitset() & type2.AsBitset());
-//   }
+  // Fast case: top or bottom types.
+  if (TypeIsNone(type1) || TypeIsAny(type2)) return type1;  // Shortcut.
+  if (TypeIsNone(type2) || TypeIsAny(type1)) return type2;  // Shortcut.
 
-//   // Fast case: top or bottom types.
-//   if (type1.IsNone() || type2.IsAny()) return type1;  // Shortcut.
-//   if (type2.IsNone() || type1.IsAny()) return type2;  // Shortcut.
+  // Semi-fast case.
+  if (Is(type1, type2)) return type1;
+  if (Is(type2, type1)) return type2;
 
-//   // Semi-fast case.
-//   if (type1.Is(type2)) return type1;
-//   if (type2.Is(type1)) return type2;
+  // Slow case: create union.
 
-//   // Slow case: create union.
+  // Semantic subtyping check - this is needed for consistency with the
+  // semi-fast case above.
+  if (Is(type1, type2)) {
+    type2 = Any();
+  } else if (Is(type2, type1)) {
+    type1 = Any();
+  }
 
-//   // Semantic subtyping check - this is needed for consistency with the
-//   // semi-fast case above.
-//   if (type1.Is(type2)) {
-//     type2 = Any();
-//   } else if (type2.Is(type1)) {
-//     type1 = Any();
-//   }
+  return AnyType();
 
-//   bitset bits = type1.BitsetGlb() & type2.BitsetGlb();
-//   int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
-//   int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
-//   int size;
-//   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
-//   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
-//   UnionType* result = UnionType::New(size, zone);
-//   size = 0;
+  /*bitset bits = type1.BitsetGlb() & type2.BitsetGlb();
+  int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
+  int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
+  int size;
+  if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
+  if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
+  UnionType* result = UnionType::New(size, zone);
+  size = 0;
 
-//   // Deal with bitsets.
-//   result->Set(size++, NewBitset(bits));
+  // Deal with bitsets.
+  result->Set(size++, NewBitset(bits));
 
-//   RangeType::Limits lims = RangeType::Limits::Empty();
-//   size = IntersectAux(type1, type2, result, size, &lims, zone);
+  RangeType::Limits lims = RangeType::Limits::Empty();
+  size = IntersectAux(type1, type2, result, size, &lims, zone);
 
-//   // If the range is not empty, then insert it into the union and
-//   // remove the number bits from the bitset.
-//   if (!lims.IsEmpty()) {
-//     size = UpdateRange(Type::Range(lims, zone), result, size, zone);
+  // If the range is not empty, then insert it into the union and
+  // remove the number bits from the bitset.
+  if (!lims.IsEmpty()) {
+    size = UpdateRange(Type::Range(lims, zone), result, size, zone);
 
-//     // Remove the number bits.
-//     bitset number_bits = BitsetType::NumberBits(bits);
-//     bits &= ~number_bits;
-//     result->Set(0, NewBitset(bits));
-//   }
-//   return NormalizeUnion(result, size, zone);
-// }
+    // Remove the number bits.
+    bitset number_bits = BitsetType::NumberBits(bits);
+    bits &= ~number_bits;
+    result->Set(0, NewBitset(bits));
+  }
+  return NormalizeUnion(result, size, zone);*/
+}
 
 v8Type Union(v8Type type1, v8Type type2) {
   // Fast case: bit sets.
@@ -946,7 +1002,7 @@ v8Type Union(v8Type type1, v8Type type2) {
 
 
 // Precondition: input is numbers
-v8type NumberAdd(v8type lhs, v8type rhs) {
+/*v8type NumberAdd(v8type lhs, v8type rhs) {
   //DCHECK(lhs.Is(Type::Number()));
   //DCHECK(rhs.Is(Type::Number()));
 
@@ -974,23 +1030,23 @@ v8type NumberAdd(v8type lhs, v8type rhs) {
 
   // We can give more precise types for integers.
   v8type type = noneType();
-  lhs = Type::Intersect(lhs, Type::PlainNumber(), zone());
-  rhs = Type::Intersect(rhs, Type::PlainNumber(), zone());
+  lhs = Type::Intersect(lhs, plainNumberType(), zone());
+  rhs = Type::Intersect(rhs, plainNumberType(), zone());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
     if (lhs.Is(kInteger) && rhs.Is(kInteger)) {
       type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
-      if ((Maybe(lhs, minus_infinity_) && Maybe(rhs, infinity_)) || // minus_infinity_, infinity_ are Types
-          (Maybe(rhs,minus_infinity_) && Maybe(lhs, infinity_))) {
+      if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
+          (Maybe(rhs,minusInfinityType()) && Maybe(lhs, infinityType()))) {
         maybe_nan = true;
       }
-      type = Type::PlainNumber();
+      type = plainNumberType();
     }
   }
 
   // Take into account the -0 and NaN information computed earlier.
-  if (maybe_minuszero) type = Type::Union(type, Type::MinusZero(), zone());
-  if (maybe_nan) type = Type::Union(type, Type::NaN(), zone());
+  if (maybe_minuszero) type = Type::Union(type, minusZeroType(), zone());
+  if (maybe_nan) type = Type::Union(type, nanType(), zone());
   return type;
 
-}
+}*/
