@@ -902,15 +902,15 @@ v8type NumberAdd(v8type lhs, v8type rhs) {
   }
 
   // We can give more precise types for integers.
-  Type type = noneType();
+  v8type type = noneType();
   lhs = Type::Intersect(lhs, Type::PlainNumber(), zone());
   rhs = Type::Intersect(rhs, Type::PlainNumber(), zone());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
     if (lhs.Is(cache_->kInteger) && rhs.Is(cache_->kInteger)) {
-      type = AddRanger(lhs.Min(), lhs.Max(), rhs.Min(), rhs.Max());
+      type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
-      if ((lhs.Maybe(minus_infinity_) && rhs.Maybe(infinity_)) ||
-          (rhs.Maybe(minus_infinity_) && lhs.Maybe(infinity_))) {
+      if ((Maybe(lhs, minus_infinity_) && Maybe(rhs, infinity_)) || // minus_infinity_, infinity_ are Types
+          (Maybe(rhs,minus_infinity_) && Maybe(lhs, infinity_))) {
         maybe_nan = true;
       }
       type = Type::PlainNumber();
