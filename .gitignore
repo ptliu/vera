@@ -9,3 +9,4 @@ lejit.cabal
 tags
 TAGS
 test/GenCpp
+results/verify_sanity
