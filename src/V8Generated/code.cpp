@@ -115,6 +115,8 @@
 #define DOUBLE_ZERO (double)0
 #define DOUBLE_ONE (double)1
 
+#define kSingletonZero newRange(0,0)
+#define kInteger newRange(minusInfinityType(), infinityType())
 
 struct limit {
     double min;
@@ -204,6 +206,18 @@ double max4(double one, double two, double three, double four) {
     }
 
     return max;
+}
+
+v8type newBitset(bitset_t bits) {
+    v8type type;
+    type.bitset = bits;
+    type.hasRange = (bool)1;
+    type.max = max;
+    type.min = min;
+    type.maybeNaN = (bool)0;
+    type.maybeMinusZero = (bool)0;
+    type.isUnion = (bool)0;
+    return type;
 }
 
 v8type newRange(double min, double max) {
@@ -399,6 +413,7 @@ limits Union(limits lhs, limits rhs) {
   return result;
 }
 
+
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=42
 bool Overlap(v8type const& lhs, v8type const& rhs) {
   //DisallowGarbageCollection no_gc;
@@ -562,6 +577,64 @@ bitset_t NumberBits(bitset_t bits) {
     return bits & kPlainNumber;
 }
 
+// https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=418
+bitset_t BitsetTypeGlb(double min, double max) {
+  bitset_t glb = kNone; //NOTE: Type of glb changed from int(int is weird, why is it signed?)
+
+  // DELEGATED TO minBoundary helper, cause we dont got loops...
+  // unroll the loop
+  bool continueLoop = TRUE;
+  if(max <  (double)-1 || min > DOUBLE_ZERO){
+    return glb;
+  }
+
+  boundary mins_1 = getBoundary((uint32_t)1);
+  
+  boundary mins_2 = getBoundary((uint32_t)2);
+  if (min < mins_1.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_2.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_1.external;
+  }
+
+
+  boundary mins_3 = getBoundary((uint32_t)3);
+  if (min < mins_2.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_3.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_2.external;
+  }
+
+  boundary mins_4 = getBoundary((uint32_t)4);
+  if (min < mins_3.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_4.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_3.external;
+  }
+
+  boundary mins_5 = getBoundary((uint32_t)5);
+  if (min < mins_4.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_5.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_5.external;
+  }
+
+  boundary mins_6 = getBoundary((uint32_t)6);
+  if (min < mins_5.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_6.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_5.external;
+  }
+  return glb & ~(kOtherNumber);
+}
+
+
+// https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=114
 bitset_t BitsetLub(v8type this_) {
   // The smallest bitset subsuming this type, possibly not a proper one.
 
@@ -605,6 +678,19 @@ bitset_t BitsetLub(v8type this_) {
   // UNREACHABLE();
 }
 
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=96
+bitset_t BitsetGlb(v8type this_) {
+  if(IsBitset(this_)){
+    return AsBitset(this_);
+  } else if (IsUnion(this_)){
+    //TODO don't handle unions yet
+    return AsBitset(this_);
+  } else if(IsRange(this_)){
+    return BitsetTypeGlb(this_.min, this_.max);
+  } else {
+    return noneType;
+  }
+}
 
 
 // Type methods
@@ -747,6 +833,46 @@ bool Maybe(v8Type this_, v8Type that) {
   return SimplyEquals(this_, that);
 }
 
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=520
+bool SlowIs(v8type this_, v8type that_){
+  if(IsBitset(that_)){
+    return BitsetIs(BitsetLub(this_), AsBitset(that_));
+  }
+
+  if(IsBitset(this_)){
+    return BitsetIs(AsBitset(this_), BitsetGlb(that_));
+  }
+
+  if(IsUnion(this_)){
+    //TODO, for now return true if that_ is a union
+    return IsUnion(that_);
+  } 
+  if(IsUnion(that_)){
+    //TODO, for now return true if this_ is union
+    //this looks redundant but once we handle unions this will actually do something different
+    return IsUnion(this_);
+  }
+  if(IsRange(that_)){
+    return IsRange(this_) && RangeContains(this_, that_);
+  }
+  if(IsRange(this_)){
+    return false;
+  }
+  return SimplyEquals(this_, that_);
+}
+
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=48
+bool RangeContains(v8type lhs, v8type rhs){
+  return lhs.min <= rhs.min && rhs.max <= lhs.max;
+}
+
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.h;l=394
+bool Is(v8type this_, v8type that_){
+  //NOTE this is simplified, the first condition here can actually be pointers to complicated
+  //types but we don't have that yet
+  //TODO: determine whether this matters
+  return this_.bitset == that_.bitset || SlowIs(this_, that_);
+}
 
 // DONT EXPRESS NAN PRECONDITION YEET
 // Rangers
@@ -929,6 +1055,58 @@ v8type Intersect(v8type type1, v8type type2) {
   return NormalizeUnion(result, size, zone);*/
 }
 
+v8Type Union(v8Type type1, v8Type type2) {
+  // Fast case: bit sets.
+  if (IsBitset(type1) && IsBitset(type2)) {
+    return newBitset(type1.bitset | type2.bitset);
+  }
+
+  // Fast case: top or bottom types.
+  if (TypeIsAny(type1) || TypeIsNone(type2)) return type1;
+  if (TypeIsAny(type2)  || TypeIsNone(type1)) return type2;
+
+  // Semi-fast case.
+  if (Is(type1, type2)) return type1;
+  if (Is(type2, type1)) return type2;
+
+  return AnyType();
+
+  //   // Slow case: create union.
+  //   int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
+  //   int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
+  //   int size;
+  //   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
+  //   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
+  //   UnionType* result = UnionType::New(size, zone);
+  //   size = 0;
+
+  //   // Compute the new bitset.
+  //   bitset new_bitset = type1.BitsetGlb() | type2.BitsetGlb();
+
+  //   // Deal with ranges.
+  //   Type range = None();
+  //   Type range1 = type1.GetRange();
+  //   Type range2 = type2.GetRange();
+  //   if (range1 != nullptr && range2 != nullptr) {
+  //     RangeType::Limits lims =
+  //         RangeType::Limits::Union(RangeType::Limits(range1.AsRange()),
+  //                                  RangeType::Limits(range2.AsRange()));
+  //     Type union_range = Type::Range(lims, zone);
+  //     range = NormalizeRangeAndBitset(union_range, &new_bitset, zone);
+  //   } else if (range1 != nullptr) {
+  //     range = NormalizeRangeAndBitset(range1, &new_bitset, zone);
+  //   } else if (range2 != nullptr) {
+  //     range = NormalizeRangeAndBitset(range2, &new_bitset, zone);
+  //   }
+  //   Type bits = NewBitset(new_bitset);
+  //   result->Set(size++, bits);
+  //   if (!range.IsNone()) result->Set(size++, range);
+
+  //   size = AddToUnion(type1, result, size, zone);
+  //   size = AddToUnion(type2, result, size, zone);
+  //   return NormalizeUnion(result, size, zone);
+}
+
 
 // Precondition: input is numbers
 /*v8type NumberAdd(v8type lhs, v8type rhs) {
@@ -947,12 +1125,12 @@ v8type Intersect(v8type type1, v8type type2) {
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
   if (Maybe(lhs, minusZeroType())) {
-    lhs = Type::Union(lhs, cache_->kSingletonZero, zone());
+    lhs = Type::Union(lhs, kSingletonZero, zone());
   } else {
     maybe_minuszero = false;
   }
   if (Maybe(rhs, minusZeroType())) {
-    rhs = Type::Union(rhs, cache_->kSingletonZero, zone());
+    rhs = Type::Union(rhs, kSingletonZero, zone());
   } else {
     maybe_minuszero = false;
   }
@@ -962,7 +1140,7 @@ v8type Intersect(v8type type1, v8type type2) {
   lhs = Type::Intersect(lhs, plainNumberType(), zone());
   rhs = Type::Intersect(rhs, plainNumberType(), zone());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
-    if (lhs.Is(cache_->kInteger) && rhs.Is(cache_->kInteger)) {
+    if (lhs.Is(kInteger) && rhs.Is(kInteger)) {
       type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
       if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
