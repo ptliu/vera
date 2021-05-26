@@ -266,6 +266,36 @@ v8type AnyType() {
     return type;
 }
 
+v8type minusInfinityType() {
+    v8type type;
+    type.bitset = kOtherNumber;
+    type.max = -V8_INFINITY;
+    type.min = -V8_INFINITY;
+    type.hasRange = TRUE; 
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+}
+
+v8type infinityType() {
+    v8type type;
+    type.bitset = kOtherNumber;
+    type.max = V8_INFINITY;
+    type.min = V8_INFINITY;
+    type.hasRange = TRUE; 
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+}
+
+v8type plainNumberType() { 
+    v8type type;
+    type.bitset = kPlainNumber;
+    type.hasRange = FALSE; 
+    type.maybeNaN = FALSE;
+    type.maybeMinusZero = FALSE;
+    type.isUnion = FALSE;
+}
 
 limits copy(limits other) {
     limits result;
@@ -929,23 +959,23 @@ v8type Intersect(v8type type1, v8type type2) {
 
   // We can give more precise types for integers.
   v8type type = noneType();
-  lhs = Type::Intersect(lhs, Type::PlainNumber(), zone());
-  rhs = Type::Intersect(rhs, Type::PlainNumber(), zone());
+  lhs = Type::Intersect(lhs, plainNumberType(), zone());
+  rhs = Type::Intersect(rhs, plainNumberType(), zone());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
     if (lhs.Is(cache_->kInteger) && rhs.Is(cache_->kInteger)) {
       type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
-      if ((Maybe(lhs, minus_infinity_) && Maybe(rhs, infinity_)) || // minus_infinity_, infinity_ are Types
-          (Maybe(rhs,minus_infinity_) && Maybe(lhs, infinity_))) {
+      if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
+          (Maybe(rhs,minusInfinityType()) && Maybe(lhs, infinityType()))) {
         maybe_nan = true;
       }
-      type = Type::PlainNumber();
+      type = plainNumberType();
     }
   }
 
   // Take into account the -0 and NaN information computed earlier.
-  if (maybe_minuszero) type = Type::Union(type, Type::MinusZero(), zone());
-  if (maybe_nan) type = Type::Union(type, Type::NaN(), zone());
+  if (maybe_minuszero) type = Type::Union(type, minusZeroType(), zone());
+  if (maybe_nan) type = Type::Union(type, nanType(), zone());
   return type;
 
 }*/
