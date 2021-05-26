@@ -115,6 +115,8 @@
 #define DOUBLE_ZERO (double)0
 #define DOUBLE_ONE (double)1
 
+#define kSingletonZero newRange(0,0)
+#define kInteger newRange(minusInfinityType(), infinityType())
 
 struct limit {
     double min;
@@ -204,6 +206,18 @@ double max4(double one, double two, double three, double four) {
     }
 
     return max;
+}
+
+v8type newBitset(bitset_t bits) {
+    v8type type;
+    type.bitset = bits;
+    type.hasRange = (bool)1;
+    type.max = max;
+    type.min = min;
+    type.maybeNaN = (bool)0;
+    type.maybeMinusZero = (bool)0;
+    type.isUnion = (bool)0;
+    return type;
 }
 
 v8type newRange(double min, double max) {
@@ -1041,6 +1055,58 @@ v8type Intersect(v8type type1, v8type type2) {
   return NormalizeUnion(result, size, zone);*/
 }
 
+v8Type Union(v8Type type1, v8Type type2) {
+  // Fast case: bit sets.
+  if (IsBitset(type1) && IsBitset(type2)) {
+    return newBitset(type1.bitset | type2.bitset);
+  }
+
+  // Fast case: top or bottom types.
+  if (TypeIsAny(type1) || TypeIsNone(type2)) return type1;
+  if (TypeIsAny(type2)  || TypeIsNone(type1)) return type2;
+
+  // Semi-fast case.
+  if (Is(type1, type2)) return type1;
+  if (Is(type2, type1)) return type2;
+
+  return AnyType();
+
+  //   // Slow case: create union.
+  //   int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
+  //   int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
+  //   int size;
+  //   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
+  //   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
+  //   UnionType* result = UnionType::New(size, zone);
+  //   size = 0;
+
+  //   // Compute the new bitset.
+  //   bitset new_bitset = type1.BitsetGlb() | type2.BitsetGlb();
+
+  //   // Deal with ranges.
+  //   Type range = None();
+  //   Type range1 = type1.GetRange();
+  //   Type range2 = type2.GetRange();
+  //   if (range1 != nullptr && range2 != nullptr) {
+  //     RangeType::Limits lims =
+  //         RangeType::Limits::Union(RangeType::Limits(range1.AsRange()),
+  //                                  RangeType::Limits(range2.AsRange()));
+  //     Type union_range = Type::Range(lims, zone);
+  //     range = NormalizeRangeAndBitset(union_range, &new_bitset, zone);
+  //   } else if (range1 != nullptr) {
+  //     range = NormalizeRangeAndBitset(range1, &new_bitset, zone);
+  //   } else if (range2 != nullptr) {
+  //     range = NormalizeRangeAndBitset(range2, &new_bitset, zone);
+  //   }
+  //   Type bits = NewBitset(new_bitset);
+  //   result->Set(size++, bits);
+  //   if (!range.IsNone()) result->Set(size++, range);
+
+  //   size = AddToUnion(type1, result, size, zone);
+  //   size = AddToUnion(type2, result, size, zone);
+  //   return NormalizeUnion(result, size, zone);
+}
+
 
 // Precondition: input is numbers
 /*v8type NumberAdd(v8type lhs, v8type rhs) {
@@ -1059,12 +1125,12 @@ v8type Intersect(v8type type1, v8type type2) {
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
   if (Maybe(lhs, minusZeroType())) {
-    lhs = Type::Union(lhs, cache_->kSingletonZero, zone());
+    lhs = Type::Union(lhs, kSingletonZero, zone());
   } else {
     maybe_minuszero = false;
   }
   if (Maybe(rhs, minusZeroType())) {
-    rhs = Type::Union(rhs, cache_->kSingletonZero, zone());
+    rhs = Type::Union(rhs, kSingletonZero, zone());
   } else {
     maybe_minuszero = false;
   }
@@ -1074,7 +1140,7 @@ v8type Intersect(v8type type1, v8type type2) {
   lhs = Type::Intersect(lhs, plainNumberType(), zone());
   rhs = Type::Intersect(rhs, plainNumberType(), zone());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
-    if (lhs.Is(cache_->kInteger) && rhs.Is(cache_->kInteger)) {
+    if (lhs.Is(kInteger) && rhs.Is(kInteger)) {
       type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
       if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
