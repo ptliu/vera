@@ -950,55 +950,50 @@ v8Type Union(v8Type type1, v8Type type2) {
   }
 
   // Fast case: top or bottom types.
+  if (TypeIsAny(type1) || TypeIsNone(type2)) return type1;
+  if (TypeIsAny(type2)  || TypeIsNone(type1)) return type2;
 
+  // Semi-fast case.
+  if (Is(type1, type2)) return type1;
+  if (Is(type2, type1)) return type2;
 
-  if (type1.IsAny() || TypeIsNone(type2)) return type1;
-  if (type2.IsAny() || TypeIsNone(type1)) return type2;
+  return AnyType();
+
+  //   // Slow case: create union.
+  //   int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
+  //   int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
+  //   int size;
+  //   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
+  //   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
+  //   UnionType* result = UnionType::New(size, zone);
+  //   size = 0;
+
+  //   // Compute the new bitset.
+  //   bitset new_bitset = type1.BitsetGlb() | type2.BitsetGlb();
+
+  //   // Deal with ranges.
+  //   Type range = None();
+  //   Type range1 = type1.GetRange();
+  //   Type range2 = type2.GetRange();
+  //   if (range1 != nullptr && range2 != nullptr) {
+  //     RangeType::Limits lims =
+  //         RangeType::Limits::Union(RangeType::Limits(range1.AsRange()),
+  //                                  RangeType::Limits(range2.AsRange()));
+  //     Type union_range = Type::Range(lims, zone);
+  //     range = NormalizeRangeAndBitset(union_range, &new_bitset, zone);
+  //   } else if (range1 != nullptr) {
+  //     range = NormalizeRangeAndBitset(range1, &new_bitset, zone);
+  //   } else if (range2 != nullptr) {
+  //     range = NormalizeRangeAndBitset(range2, &new_bitset, zone);
+  //   }
+  //   Type bits = NewBitset(new_bitset);
+  //   result->Set(size++, bits);
+  //   if (!range.IsNone()) result->Set(size++, range);
+
+  //   size = AddToUnion(type1, result, size, zone);
+  //   size = AddToUnion(type2, result, size, zone);
+  //   return NormalizeUnion(result, size, zone);
 }
-
-//   // Fast case: top or bottom types.
-//   if (type1.IsAny() || type2.IsNone()) return type1;
-//   if (type2.IsAny() || type1.IsNone()) return type2;
-
-//   // Semi-fast case.
-//   if (type1.Is(type2)) return type2;
-//   if (type2.Is(type1)) return type1;
-
-//   // Slow case: create union.
-//   int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
-//   int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
-//   int size;
-//   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
-//   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
-//   UnionType* result = UnionType::New(size, zone);
-//   size = 0;
-
-//   // Compute the new bitset.
-//   bitset new_bitset = type1.BitsetGlb() | type2.BitsetGlb();
-
-//   // Deal with ranges.
-//   Type range = None();
-//   Type range1 = type1.GetRange();
-//   Type range2 = type2.GetRange();
-//   if (range1 != nullptr && range2 != nullptr) {
-//     RangeType::Limits lims =
-//         RangeType::Limits::Union(RangeType::Limits(range1.AsRange()),
-//                                  RangeType::Limits(range2.AsRange()));
-//     Type union_range = Type::Range(lims, zone);
-//     range = NormalizeRangeAndBitset(union_range, &new_bitset, zone);
-//   } else if (range1 != nullptr) {
-//     range = NormalizeRangeAndBitset(range1, &new_bitset, zone);
-//   } else if (range2 != nullptr) {
-//     range = NormalizeRangeAndBitset(range2, &new_bitset, zone);
-//   }
-//   Type bits = NewBitset(new_bitset);
-//   result->Set(size++, bits);
-//   if (!range.IsNone()) result->Set(size++, range);
-
-//   size = AddToUnion(type1, result, size, zone);
-//   size = AddToUnion(type2, result, size, zone);
-//   return NormalizeUnion(result, size, zone);
-// }
 
 
 // Precondition: input is numbers
