@@ -474,7 +474,7 @@ double BitsetMin(bitset_t bits) {
   //DCHECK(!Is(bits, kNaN));
   //const Boundary* mins = Boundaries();
   
-  bool mz = bits & kMinusZero;
+  bool mz = ((bool) (bits & kMinusZero));
 
   // DELEGATED TO minBoundary helper, cause we dont got loops...
   // unroll the loop
@@ -572,7 +572,7 @@ double BitsetMax(bitset_t bits) {
   }
 
   DCHECK(mz);
-  return UINT32_ZERO;
+  return DOUBLE_ZERO;
 }
 
 bitset_t NumberBits(bitset_t bits) {
@@ -703,8 +703,8 @@ v8type NewBitset(bitset_t bitset) {
     v8type type;
     type.bitset = bitset;
     type.hasRange = FALSE;
-    type.max = UINT32_ZERO;
-    type.min = UINT32_ZERO;
+    type.max = DOUBLE_ZERO;
+    type.min = DOUBLE_ZERO;
     type.maybeNaN = FALSE;
     type.maybeMinusZero = FALSE;
     type.isUnion = FALSE;
