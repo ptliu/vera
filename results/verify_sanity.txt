@@ -1,0 +1,40 @@
+lejit-0.1.0.0: unregistering (local file changes: src/V8Generated/Verify.hs)
+lejit> configure (lib + exe + test)
+Configuring lejit-0.1.0.0...
+lejit> build (lib + exe + test)
+Preprocessing library for lejit-0.1.0.0..
+Building library for lejit-0.1.0.0..
+[22 of 22] Compiling V8Generated.Verify
+Preprocessing test suite 'lejit-test' for lejit-0.1.0.0..
+Building test suite 'lejit-test' for lejit-0.1.0.0..
+[ 7 of 13] Compiling GenV8 [V8Generated.Verify changed]
+[12 of 13] Compiling V8Sanity [V8Generated.Verify changed]
+Linking .stack-work/dist/x86_64-linux-tinfo6/Cabal-2.4.0.1/build/lejit-test/lejit-test ...
+Preprocessing executable 'lejit-exe' for lejit-0.1.0.0..
+Building executable 'lejit-exe' for lejit-0.1.0.0..
+lejit> copy/register
+Installing library in /home/evan/Research/vera/.stack-work/install/x86_64-linux-tinfo6/5e1db5ff5602796fd7c04ddcfb5da3de3f240409f817a63030f21c79d985b5a3/8.6.5/lib/x86_64-linux-ghc-8.6.5/lejit-0.1.0.0-FFtpRLueRlT9bTIAtJakeN
+Installing executable lejit-exe in /home/evan/Research/vera/.stack-work/install/x86_64-linux-tinfo6/5e1db5ff5602796fd7c04ddcfb5da3de3f240409f817a63030f21c79d985b5a3/8.6.5/bin
+Registering library for lejit-0.1.0.0..
+lejit> test (suite: lejit-test, args: -p V8Sanity)
+
+All tests
+  V8Sanity
+    LimitsUnion:     OK (13.48s)
+    LimitsIntersect: OK (1.27s)
+    BitsetMin:       FAIL
+      Exception: Undeclared variable ty: bitset
+      CallStack (from HasCallStack):
+        error, called at src/Generate/State.hs:269:16 in lejit-0.1.0.0-FFtpRLueRlT9bTIAtJakeN:Generate.State
+    AddRanger:       OK (0.90s)
+    SubtractRanger:  OK (0.88s)
+    MultiplyRanger:  OK (33.44s)
+
+1 out of 6 tests failed (49.98s)
+
+lejit> Test suite lejit-test failed
+Completed 2 action(s).
+Test suite failure for package lejit-0.1.0.0
+    lejit-test:  exited with: ExitFailure 1
+Logs printed to console
+

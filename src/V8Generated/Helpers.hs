@@ -38,3 +38,29 @@ newRange = fn "newRange"
 
 nanType :: FunctionDef
 nanType = fn "nanType"
+
+-- int min and max 
+jsIntMax :: Codegen SExpr
+jsIntMax = n Signed (0x7fffffff)
+
+jsIntMaxS :: String
+jsIntMaxS = [i| ((int32_t) 0x7fffffff) |]
+
+jsIntMin :: Codegen SExpr
+jsIntMin = n Signed (0x80000000)
+
+jsIntMinS :: String
+jsIntMinS = [i| ((int32_t) 0x80000000) |]
+
+jsIntMax64 :: Codegen SExpr
+jsIntMax64 = n Signed64 2147483647
+
+jsIntMax64S :: String
+jsIntMax64S = [i| ((int64_t) 2147483647) |]
+
+jsIntMin64 :: Codegen SExpr
+jsIntMin64 = n Signed64 (-2147483648)
+
+-- bitset types
+kOtherNumber :: Codegen SExpr
+kOtherNumber = n Unsigned (0x10)

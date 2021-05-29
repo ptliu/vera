@@ -118,7 +118,7 @@
 #define kSingletonZero newRange(DOUBLE_ZERO, DOUBLE_ZERO)
 #define kInteger newRange(-V8_INFINITY, V8_INFINITY)
 
-struct limit {
+struct limits {
     double min;
     double max;
 };
@@ -313,15 +313,15 @@ v8type plainNumberType() {
 
 limits copy(limits other) {
     limits result;
-    limits.min = other.min;
-    limits.max = other.max;
+    result.min = other.min;
+    result.max = other.max;
     return result;
 }
 
 limits getLimits(v8type const& t) {
     limits result;
-    limits.min = t.min; // TODO: wrong!
-    limits.max = t.max;
+    result.min = t.min; // TODO: wrong!
+    result.max = t.max;
     return result;
 }
 
@@ -383,7 +383,8 @@ bool IsEmpty(limits this_) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=24
 limits LimitIntersect(limits lhs, limits rhs) {
   //DisallowGarbageCollection no_gc;
-  limits result = copy(lhs);
+  limits result;
+  result = copy(lhs);
 
   if (lhs.min < rhs.min) {
       result.min = rhs.min;
@@ -397,13 +398,14 @@ limits LimitIntersect(limits lhs, limits rhs) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=32
 limits Union(limits lhs, limits rhs) {
   //DisallowGarbageCollection no_gc;
+  limits result;
   if (IsEmpty(lhs)) {
       return rhs;
   }
   if (IsEmpty(rhs)) {
       return lhs;
   }
-  limits result = copy(lhs);
+  result = copy(lhs);
   if (lhs.min > rhs.min) {
     result.min = rhs.min;
   }
@@ -412,6 +414,7 @@ limits Union(limits lhs, limits rhs) {
   }
   return result;
 }
+
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=42
 bool Overlap(v8type const& lhs, v8type const& rhs) {
@@ -576,6 +579,64 @@ bitset_t NumberBits(bitset_t bits) {
     return bits & kPlainNumber;
 }
 
+// https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=418
+bitset_t BitsetTypeGlb(double min, double max) {
+  bitset_t glb = kNone; //NOTE: Type of glb changed from int(int is weird, why is it signed?)
+
+  // DELEGATED TO minBoundary helper, cause we dont got loops...
+  // unroll the loop
+  bool continueLoop = TRUE;
+  if(max <  (double)-1 || min > DOUBLE_ZERO){
+    return glb;
+  }
+
+  boundary mins_1 = getBoundary((uint32_t)1);
+  
+  boundary mins_2 = getBoundary((uint32_t)2);
+  if (min < mins_1.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_2.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_1.external;
+  }
+
+
+  boundary mins_3 = getBoundary((uint32_t)3);
+  if (min < mins_2.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_3.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_2.external;
+  }
+
+  boundary mins_4 = getBoundary((uint32_t)4);
+  if (min < mins_3.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_4.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_3.external;
+  }
+
+  boundary mins_5 = getBoundary((uint32_t)5);
+  if (min < mins_4.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_5.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_5.external;
+  }
+
+  boundary mins_6 = getBoundary((uint32_t)6);
+  if (min < mins_5.min && continueLoop) {
+    if(max + DOUBLE_ONE < mins_6.min){
+      continueLoop = FALSE;
+    }
+    glb = glb | mins_5.external;
+  }
+  return glb & ~(kOtherNumber);
+}
+
+
+// https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=114
 bitset_t BitsetLub(v8type this_) {
   // The smallest bitset subsuming this type, possibly not a proper one.
 
@@ -619,6 +680,19 @@ bitset_t BitsetLub(v8type this_) {
   // UNREACHABLE();
 }
 
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=96
+bitset_t BitsetGlb(v8type this_) {
+  if(IsBitset(this_)){
+    return AsBitset(this_);
+  } else if (IsUnion(this_)){
+    //TODO don't handle unions yet
+    return AsBitset(this_);
+  } else if(IsRange(this_)){
+    return BitsetTypeGlb(this_.min, this_.max);
+  } else {
+    return noneType;
+  }
+}
 
 
 // Type methods
@@ -743,7 +817,7 @@ bool Maybe(v8Type this_, v8Type that) {
       return Overlap(this_, that);
     }
     if (IsBitset(that)) {
-      bitset number_bits = NumberBits(that.bitset);
+      bitset_t number_bits = NumberBits(that.bitset);
       if (number_bits == kNone) {
         return false;
       }
@@ -761,6 +835,46 @@ bool Maybe(v8Type this_, v8Type that) {
   return SimplyEquals(this_, that);
 }
 
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=520
+bool SlowIs(v8type this_, v8type that_){
+  if(IsBitset(that_)){
+    return BitsetIs(BitsetLub(this_), AsBitset(that_));
+  }
+
+  if(IsBitset(this_)){
+    return BitsetIs(AsBitset(this_), BitsetGlb(that_));
+  }
+
+  if(IsUnion(this_)){
+    //TODO, for now return true if that_ is a union
+    return IsUnion(that_);
+  } 
+  if(IsUnion(that_)){
+    //TODO, for now return true if this_ is union
+    //this looks redundant but once we handle unions this will actually do something different
+    return IsUnion(this_);
+  }
+  if(IsRange(that_)){
+    return IsRange(this_) && RangeContains(this_, that_);
+  }
+  if(IsRange(this_)){
+    return false;
+  }
+  return SimplyEquals(this_, that_);
+}
+
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=48
+bool RangeContains(v8type lhs, v8type rhs){
+  return lhs.min <= rhs.min && rhs.max <= lhs.max;
+}
+
+//https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.h;l=394
+bool Is(v8type this_, v8type that_){
+  //NOTE this is simplified, the first condition here can actually be pointers to complicated
+  //types but we don't have that yet
+  //TODO: determine whether this matters
+  return this_.bitset == that_.bitset || SlowIs(this_, that_);
+}
 
 // DONT EXPRESS NAN PRECONDITION YEET
 // Rangers
