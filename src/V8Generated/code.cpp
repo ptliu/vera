@@ -115,8 +115,8 @@
 #define DOUBLE_ZERO (double)0
 #define DOUBLE_ONE (double)1
 
-#define kSingletonZero newRange(0,0)
-#define kInteger newRange(minusInfinityType(), infinityType())
+#define kSingletonZero newRange(DOUBLE_ZERO, DOUBLE_ZERO)
+#define kInteger newRange(-V8_INFINITY, V8_INFINITY)
 
 struct limit {
     double min;
@@ -997,14 +997,13 @@ v8Type Union(v8Type type1, v8Type type2) {
 
 
 // Precondition: input is numbers
-/*v8type NumberAdd(v8type lhs, v8type rhs) {
+v8type NumberAdd(v8type lhs, v8type rhs) {
   //DCHECK(lhs.Is(Type::Number()));
   //DCHECK(rhs.Is(Type::Number()));
 
   if (TypeIsNone(lhs) || TypeIsNone(rhs)) {
     return noneType();
   }
-
 
   // Addition can return NaN if either input can be NaN or we try to compute
   // the sum of two infinities of opposite sign.
@@ -1013,22 +1012,22 @@ v8Type Union(v8Type type1, v8Type type2) {
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
   if (Maybe(lhs, minusZeroType())) {
-    lhs = Type::Union(lhs, kSingletonZero, zone());
+    lhs = Union(lhs, kSingletonZero);
   } else {
     maybe_minuszero = false;
   }
   if (Maybe(rhs, minusZeroType())) {
-    rhs = Type::Union(rhs, kSingletonZero, zone());
+    rhs = Union(rhs, kSingletonZero);
   } else {
     maybe_minuszero = false;
   }
 
   // We can give more precise types for integers.
   v8type type = noneType();
-  lhs = Type::Intersect(lhs, plainNumberType(), zone());
-  rhs = Type::Intersect(rhs, plainNumberType(), zone());
+  lhs = Intersect(lhs, plainNumberType());
+  rhs = Intersect(rhs, plainNumberType());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
-    if (lhs.Is(kInteger) && rhs.Is(kInteger)) {
+    if (Is(lhs, kInteger) && Is(rhs, kInteger)) {
       type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
       if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
@@ -1040,8 +1039,9 @@ v8Type Union(v8Type type1, v8Type type2) {
   }
 
   // Take into account the -0 and NaN information computed earlier.
-  if (maybe_minuszero) type = Type::Union(type, minusZeroType(), zone());
-  if (maybe_nan) type = Type::Union(type, nanType(), zone());
+  if (maybe_minuszero) type = Union(type, minusZeroType());
+  if (maybe_nan) type = Union(type, nanType());
   return type;
+}
 
-}*/
+
