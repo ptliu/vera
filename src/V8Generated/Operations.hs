@@ -31,11 +31,16 @@ multiplyRanger = fn "MultiplyRanger"
 limitsUnion :: FunctionDef
 limitsUnion = fn "Union"
 
+limitsIntersect :: FunctionDef
+limitsIntersect = fn "LimitIntersect"
+
 isEmpty :: FunctionDef
 isEmpty = fn "IsEmpty"
 
 copy :: FunctionDef
 copy = fn "copy"
 
+-- Bitset Functions
 
-
+bitsetMin :: FunctionDef
+bitsetMin = fn "BitsetMin"

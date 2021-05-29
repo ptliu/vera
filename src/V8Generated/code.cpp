@@ -817,7 +817,7 @@ bool Maybe(v8Type this_, v8Type that) {
       return Overlap(this_, that);
     }
     if (IsBitset(that)) {
-      bitset number_bits = NumberBits(that.bitset);
+      bitset_t number_bits = NumberBits(that.bitset);
       if (number_bits == kNone) {
         return false;
       }

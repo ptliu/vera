@@ -1,9 +1,4 @@
-module GenV8 ( genV8Tests
-             , limitUnionTest
-             , dumbAddTest
-             , dumbSubtractTest
-             , dumbMultiplyTest
-             ) where
+module GenV8 where
 
 import           BenchUtils
 import           Control.Monad.State.Strict    (liftIO)
@@ -27,8 +22,18 @@ genV8Tests = benchTestGroup "V8Verification"
                     , dumbMultiplyTest
                     ]
 
+-- limits tests
 limitUnionTest :: BenchTest
 limitUnionTest = benchTestCase "LimitsUnion" $ evalCodegen Nothing $ testLimitUnion $ Set "Union" limitsUnion 
+
+limitIntersectTest :: BenchTest
+limitIntersectTest = benchTestCase "LimitsIntersect" $ evalCodegen Nothing $ testLimitIntersect $ Set "LimitIntersect" limitsIntersect
+
+-- bitset tests
+bitsetMinTest :: BenchTest
+bitsetMinTest = benchTestCase "BitsetMin" $ evalCodegen Nothing $ testBitsetMin $ Set "BitsetMin" bitsetMin
+
+-- ranger tests
 
 dumbAddTest :: BenchTest
 dumbAddTest = benchTestCase "AddRanger" $ evalCodegen Nothing $ testAddRanger $ Set "AddRanger" addRanger

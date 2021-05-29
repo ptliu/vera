@@ -20,6 +20,6 @@ import           Test.Tasty.HUnit
 import           Utils
 import           Utils
 
-v8SanityCheck = benchTestGroup "V8Sanity" [ limitUnionTest , dumbAddTest, dumbSubtractTest
+v8SanityCheck = benchTestGroup "V8Sanity" [ limitUnionTest, limitIntersectTest, bitsetMinTest, dumbAddTest, dumbSubtractTest
                     , dumbMultiplyTest
                                       ]

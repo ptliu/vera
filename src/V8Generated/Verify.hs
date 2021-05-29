@@ -26,6 +26,32 @@ fInLimits =
              ]
   in Function "fInLimits" (t Bool) args body
 
+-- todo(evan): This needs to take nan into account
+    {-fInType :: FunctionDef
+fInType =
+  let args = [ ("fval", t Double)
+             , ("ftype", c "v8type")
+             ]
+      body = [ 
+             -- if has range, value must be in range
+             -- otherwise, must be in bitset range
+             , return_ $ ((v "fval" .=>. (v "frange" .->. "min")) .&&. (v "fval" .<=. (v "frange" .->. "max")))
+             ]
+  in Function "fInLimits" (t Bool) args body-}
+
+-- magic numbers for bitset types
+fInBitset :: FunctionDef
+fInBitset =
+  let args = [ ("fval", t Double)
+             , ("fbitset", t Unsigned)
+             ]
+      body = [ 
+             -- if the bitset doesnt have kOtherNumber, it must be greater than eq to jsMinInt and less than jsMaxInt
+               implies_ (not_ $ (v "fbitset") .&&. kOtherNumber) ((v "fval" .=>. jsIntMin) .&&. (v "fval" .<=. jsIntMax))
+             , return_ $ ((v "fval" .=>. (v "frange" .->. "min")) .&&. (v "fval" .<=. (v "frange" .->. "max")))
+             ]
+  in Function "fInBitset" (t Bool) args body
+
 --
 -- Automatic testing infrastructure
 --
@@ -81,6 +107,56 @@ verifyLimitUnion =
              , pop_
              ]
   in Function "verifyLimitUnion" Void args body
+
+testLimitIntersect :: TestFunction -> Codegen ()
+testLimitIntersect fn = do
+  setupLimitsSet (setOp fn) (testName fn)
+  genBodySMT [vcall "verifyLimitIntersect" [v "isInLeft", v "isInRight", v "isInResult"]]
+
+verifyLimitIntersect :: FunctionDef
+verifyLimitIntersect =
+  let args = [ ("isInLeft", t Bool)
+             , ("isInRight", t Bool)
+             , ("isInResult", t Bool)
+             ]
+      body = [ push_
+             -- assert precond
+             -- assert not postcond
+             -- yay :D
+             , assert_ $ (v "isInLeft") .&&. (v "isInRight")
+             , assert_ $ not_ $ v "isInResult"
+             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify limits Intersect" r
+             , pop_
+             ]
+  in Function "verifyLimitIntersect" Void args body
+
+-- dumb tests for dumb things... mainly to test verification funcs
+
+-- dumb test, checks if MIN in bitset
+testBitsetMin :: TestFunction -> Codegen ()
+testBitsetMin fn = do
+  defineAll (setOp fn)
+  genBodySMT [vcall "verifyBitsetMin" [v "bitset", v "result"]]
+
+verifyBitsetMin :: FunctionDef
+verifyBitsetMin =
+  let args = [ ("bitset", t Unsigned)
+             , ("result", t Bool)
+             ]
+      body = [ push_
+             -- assert precond
+             -- assert not postcond
+             -- yay :D
+             , declare (t Unsigned) "bitset"
+             , declare (t Bool) "result"
+             , declare (t Double) "min"
+             , (v "min") `assign` (call "BitsetMin" [v "bitset"])
+             , expect_ isSat (error "Has to start out SAT")
+             , assert_ $ not_ $ (call "fInBitset" [v "min", v "bitset"])
+             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify bitset min" r
+             , pop_
+             ]
+  in Function "verifyBitsetMin" Void args body
 
 -- isNan test
 
@@ -360,8 +436,28 @@ setupLimitsSet op fnName = do
               ]
   genBodySMT verif
 
+    {-setupDumbBitset :: FunctionDef
+          -> String
+          -> Codegen ()
+setupDumbBitset op fnName = do
+  defineAll op
+  let verif = [ declare (t Int32) "bitset"
+              , declare (d "limits") "rhs"
+              , declare (c "limits") "result_limit"
 
-        
+              , (v "result_limit") `assign` call fnName [v "lhs", v "rhs"]
+
+              , declare (t Double) "elem"
+              , declare (t Bool) "isInRight"
+              , declare (t Bool) "isInLeft"
+              , declare (t Bool) "isInResult"
+
+              , v "isInRight" `assign` (call "fInLimits" [v "elem", v "rhs"])
+              , v "isInLeft" `assign` (call "fInLimits" [v "elem", v "lhs"])
+              , v "isInResult" `assign` (call "fInLimits" [v "elem", v "result_limit"])
+              , expect_ isSat (error "Should be sat")
+              ]
+  genBodySMT verif-}
 
 setupRanger :: FunctionDef
           -> String
@@ -392,6 +488,7 @@ defineAll op = do
   define nanType
   -- limits
   define verifyLimitUnion
+  define verifyLimitIntersect
   define isEmpty
   define copy
   -- checkers
