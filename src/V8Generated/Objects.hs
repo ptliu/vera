@@ -12,6 +12,14 @@ limits = let fields = [ ("min", Double)
                       ]
         in ClassDef "limits" fields []
 
+-- | The boundary object
+boundary :: ClassDef
+boundary = let fields = [ ("internal", Unsigned)
+                        , ("external", Unsigned)
+                        , ("min", Double)
+                        ]
+        in ClassDef "boundary" fields []
+
 -- | The V8 Type object
 v8type :: ClassDef
 v8type = let fields = [ ("bitset", Unsigned)

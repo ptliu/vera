@@ -44,3 +44,6 @@ copy = fn "copy"
 
 bitsetMin :: FunctionDef
 bitsetMin = fn "BitsetMin"
+
+bitsetIs :: FunctionDef
+bitsetIs = fn "BitsetIs"

@@ -329,6 +329,10 @@ limits getLimits(v8type const& t) {
 
 boundary getBoundary(uint32_t index) {
     boundary bound;
+    bound.internal = kOtherNumber;
+    bound.external = kPlainNumber;
+    bound.min = 0.0;
+
     if (index == (uint32_t)0) {
         bound.internal = kOtherNumber;
         bound.external = kPlainNumber;
@@ -470,45 +474,46 @@ bool BitsetIs(bitset_t bits1, bitset_t bits2) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=438
 double BitsetMin(bitset_t bits) {
   //DisallowGarbageCollection no_gc;
-  //DCHECK(Is(bits, kNumber));
-  //DCHECK(!Is(bits, kNaN));
+  //DCHECK(Is(bits, kNumber)); // precond
+  //DCHECK(!Is(bits, kNaN)); // precond
   //const Boundary* mins = Boundaries();
   
-  bool mz = ((bool) (bits & kMinusZero));
+  bool mz = ((bits & kMinusZero) != (bitset_t)0);
 
   // DELEGATED TO minBoundary helper, cause we dont got loops...
   // unroll the loop
-  boundary min = getBoundary((uint32_t)0);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)0);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
-  boundary min = getBoundary((uint32_t)1);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)1);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
-  boundary min = getBoundary((uint32_t)2);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)2);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
-  boundary min = getBoundary((uint32_t)3);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)3);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
-  boundary min = getBoundary((uint32_t)4);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)4);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
-  boundary min = getBoundary((uint32_t)5);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)5);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
-  boundary min = getBoundary((uint32_t)6);
-  if (BitsetIs(min.internal, bits)) {
-    return mz ? math::min((double)0, min.min) : min.min;
+  boundary minBound = getBoundary((uint32_t)6);
+  if (BitsetIs(minBound.internal, bits)) {
+    return mz ? math::min((double)0, minBound.min) : minBound.min;
   }
 
+  // TODO: this fails cause mz
   //DCHECK(mz);
-  return (double)0;
+  return 0.0;
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=453;bpv=0;bpt=1

@@ -42,6 +42,7 @@ library:
   - text
   - unix
   - deepseq
+  - floating-bits >= 0.3.0.0
 
 executables:
   lejit-exe:
