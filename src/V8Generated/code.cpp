@@ -232,6 +232,10 @@ v8type newRange(double min, double max) {
     return type;
 }
 
+v8type newRange(limits lims){
+  return newRange(lims.min, lims.max);
+}
+
 v8type nanType() {
     v8type type;
     type.bitset = kNaN;
@@ -374,6 +378,12 @@ boundary getBoundary(uint32_t index) {
 
 uint32_t BoundariesSize() {
     return (uint32_t)7;
+}
+
+//bit helper functions
+bool SignedAddWouldOverflow32(int_32t lhs, int_32t rhs){
+  uint32_t res = (uint32_t)lhs + (uint32_t)rhs;
+  return ((res ^ lhs) & (res ^ rhs) & ((uint32_t) 1 << (uint32_t)31)) != (uint32_t)0;
 }
 
 // Range-related helper functions
@@ -1006,6 +1016,42 @@ v8type MultiplyRanger(double lhs_min, double lhs_max, double rhs_min, double rhs
   return type;
 }
 
+limits IntersectAux(v8type lhs, v8type rhs, limits incomingLimit){
+  //first two if statements can be ignored since we don't support unions
+  if(BitsetIsNone(BitsetLub(lhs) & BitsetLub(rhs))){
+    return incomingLimit; 
+  }
+
+  if(IsRange(lhs)){
+    if(IsBitset(rhs)){
+
+    } 
+    if(IsRange(rhs)){
+      limits newLimit = LimitIntersect(getLimits(lhs), getLimits(rhs));
+      if(!IsEmpty(newLimit)){
+        return Union(newLimit, incomingLimit); 
+      } else {
+        return incomingLimit;
+      }
+    }
+  }
+  if(IsRange(rhs)){
+    return IntersectAux(rhs, lhs, incomingLimit);
+  }
+
+  //last two cases we don't handle because they involve unions again
+  //TODO is this correct?
+  return incomingLimit;
+}
+
+v8type UpdateRange(v8type range, int32_t size){
+
+}
+
+v8type NormalizeUnion(v8type union){ //this is a no-op currently since we don't support unions
+  return union;
+}
+
 // ignore zone
 //Type Type::Intersect(Type type1, Type type2, Zone* zone) {
 v8type Intersect(v8type type1, v8type type2) {
@@ -1032,12 +1078,42 @@ v8type Intersect(v8type type1, v8type type2) {
     type1 = Any();
   }
 
-  return AnyType();
+ 
 
-  /*bitset bits = type1.BitsetGlb() & type2.BitsetGlb();
-  int size1 = type1.IsUnion() ? type1.AsUnion()->Length() : 1;
-  int size2 = type2.IsUnion() ? type2.AsUnion()->Length() : 1;
-  int size;
+  bitset_t bits = BitsetGlb(type1) & BitsetGlb(type2);
+  int32_t size1 = (int32_t)1; //we don't support unions so this is just 1
+
+  int32_t size2 = (int32_t)1; //also changed from int to int32_t
+
+  if(SignedAddWouldOverflow32(size1, size2)){
+    return AnyType();
+  }
+
+  int32_t size = size1 + size2;
+ 
+  if(SignedAddWouldOverflow32(size, (int32_t)2)){
+    return AnyType();
+  }
+
+  v8type result; //was a union but we don't support them :)
+  result.bitset = bits;
+
+  size = size + (int32_t)1;
+
+  limits empty = getLimits(noneType());
+  limits lims = IntersectAux(type1, type2, empty);
+  //update result, normally done in IntersectAux but lack of pointers means we do it this way
+  result = newRange(lims);
+
+  if(!IsEmpty(lims)){
+    //don't need UpdateRange because we don't support unions
+    bitset_t number_bits = NumberBits(bits);
+    bits = bits & ~number_bits;
+    result.bitset = bits;
+  }
+  
+  return AnyType();
+  /*
   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
   UnionType* result = UnionType::New(size, zone);
