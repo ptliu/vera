@@ -310,7 +310,27 @@ verifyMultiplyRanger =
 
 -- Float verification conditions
 
+-- number verification conditions
+testNumberAdd :: TestFunction -> Codegen ()
+testNumberAdd fn = do
+    {-setupAllFloat fn-}
+  setupNumberAdd (binaryCppOp fn) (testName fn) (binaryJSOp fn)
+  genBodySMT [vcall "verifyNumberAdd" [v "numberadd_js_result", v "numberadd_result_type"]]
 
+verifyNumberAdd :: FunctionDef
+verifyNumberAdd =
+  let args = [ ("numberadd_js_result", t Double)
+             , ("numberadd_result_type", c "v8type")
+             ]
+      body = [ push_
+             -- assert precond
+             -- assert not postcond
+             -- yay :D
+             , assert_ $ not_ $ call "fInType" [v "numberadd_js_result", v "numberadd_result_type"]
+             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify NumberAdd" r
+             , pop_
+             ]
+  in Function "verifyNumberAdd" Void args body
 
 
 
@@ -578,6 +598,27 @@ setupRanger op fnName = do
               ]
   genBodySMT verif
 
+setupNumberAdd :: FunctionDef
+          -> String
+          -> (Codegen SExpr -> Codegen SExpr -> Codegen SExpr)
+          -> Codegen ()
+setupNumberAdd op fnName fn = do
+  defineAll op
+  let verif = [ declare (c "v8type") "numberadd_lhs"
+              , declare (t Double) "numberadd_js_left"
+              , declare (c "v8type") "numberadd_rhs"
+              , declare (t Double) "numberadd_js_right"
+              , declare (c "v8type") "numberadd_result_type"
+              , declare (t Double) "numberadd_js_result"
+              , (v "numberadd_result_type") `assign` call fnName [v "numberadd_lhs", v "numberadd_rhs"]
+              -- Actually perform the JS operation
+              , assert_ $ call "fInType" [v "numberadd_js_left", v "numberadd_lhs"]              
+              , assert_ $ call "fInType" [v "numberadd_js_right", v "numberadd_rhs"]
+              , (v "numberadd_js_result") `assign` (v "numberadd_js_left" `fn` v "numberadd_js_right")
+              , expect_ isSat (error "Should be sat")
+              ]
+  genBodySMT verif
+
 defineAll op = do
   class_ v8type
   class_ limits
@@ -597,6 +638,7 @@ defineAll op = do
   define max4
   define newRange
   define nanType
+  define minusZeroType
   define getBoundary
   define anyType
   define noneType

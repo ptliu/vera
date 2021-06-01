@@ -1074,7 +1074,7 @@ v8type MultiplyRanger(double multiplyranger_lhs_min, double multiplyranger_lhs_m
   v8type multiplyranger_type = newRange(multiplyranger_min, multiplyranger_max);
   // HACK: no && allowed .... :(
   if (multiplyranger_min <= (double)0.0) {
-      if ((double)0.0 <=multiplyranger_max) {
+      if ((double)0.0 <= multiplyranger_max) {
           if (multiplyranger_lhs_min < (double)0.0) {
             multiplyranger_type.maybeMinusZero = (bool)1;
           } 
@@ -1293,17 +1293,21 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
 
   // Addition can return NaN if either input can be NaN or we try to compute
   // the sum of two infinities of opposite sign.
-  bool maybe_nan = Maybe(numberadd_lhs, nanType()) || Maybe(numberadd_rhs, nanType());
+  v8type numberadd_nantype = nanType();
+  v8type numberadd_minuszerotype = minusZeroType();
+  v8type numberadd_singletonZero = kSingletonZero;
+  v8type numberadd_integer = kInteger;
+  bool maybe_nan = Maybe(numberadd_lhs, numberadd_nantype) || Maybe(numberadd_rhs, numberadd_nantype);
 
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
-  if (Maybe(numberadd_lhs, minusZeroType())) {
-    numberadd_lhs = TypeUnion(numberadd_lhs, kSingletonZero); //we don't do unions yet so just merge ranges
+  if (Maybe(numberadd_lhs, numberadd_minuszerotype)) {
+    numberadd_lhs = TypeUnion(numberadd_lhs, numberadd_singletonZero); //we don't do unions yet so just merge ranges
   } else {
     maybe_minuszero = false;
   }
-  if (Maybe(numberadd_rhs, minusZeroType())) {
-    numberadd_rhs = TypeUnion(numberadd_rhs, kSingletonZero);
+  if (Maybe(numberadd_rhs, numberadd_minuszerotype)) {
+    numberadd_rhs = TypeUnion(numberadd_rhs, numberadd_singletonZero);
   } else {
     maybe_minuszero = false;
   }
@@ -1313,7 +1317,7 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   numberadd_lhs = Intersect(numberadd_lhs, plainNumberType());
   numberadd_rhs = Intersect(numberadd_rhs, plainNumberType());
   if (!TypeIsNone(numberadd_lhs) && !TypeIsNone(numberadd_rhs)) {
-    if (Is(numberadd_lhs, kInteger) && Is(numberadd_rhs, kInteger)) {
+    if (Is(numberadd_lhs, numberadd_integer) && Is(numberadd_rhs, numberadd_integer)) {
       type = AddRanger(numberadd_lhs.min, numberadd_lhs.max, numberadd_rhs.min, numberadd_rhs.max);
     } else {
       if ((Maybe(numberadd_lhs, minusInfinityType()) && Maybe(numberadd_rhs, infinityType())) || // minus_infinity_, infinity_ are Types
@@ -1326,10 +1330,10 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
 
   // Take into account the -0 and NaN information computed earlier.
   if (maybe_minuszero) {
-    type = TypeUnion(type, minusZeroType());
+    type = TypeUnion(type, numberadd_minuszerotype);
   }
   if (maybe_nan) {
-    type = TypeUnion(type,nanType());
+    type = TypeUnion(type,numberadd_nantype);
   }
   return type;
 }

@@ -33,6 +33,7 @@ subtractRanger = fn "SubtractRanger"
 multiplyRanger :: FunctionDef
 multiplyRanger = fn "MultiplyRanger"
 
+
 -- Limits functions
 
 limitsUnion :: FunctionDef
@@ -119,3 +120,7 @@ simplyEquals = fn "SimplyEquals"
 
 getLimits :: FunctionDef
 getLimits = fn "getLimits"
+
+-- Number Operations
+numberAdd :: FunctionDef
+numberAdd = fn "NumberAdd"

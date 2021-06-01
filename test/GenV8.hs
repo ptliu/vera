@@ -20,6 +20,7 @@ genV8Tests = benchTestGroup "V8Verification"
                     [ dumbAddTest
                     , dumbSubtractTest
                     , dumbMultiplyTest
+                    , numberAddTest
                     ]
 
 -- limits tests
@@ -50,6 +51,10 @@ typeIntersectTest = benchTestCase "TypeIntersect" $ evalCodegen Nothing $ testTy
 
 dumbTestTest :: BenchTest
 dumbTestTest = benchTestCase "DumbTestTest" $ evalCodegen Nothing $ testTest $ Set "test2" test2
+
+-- operation tests
+numberAddTest :: BenchTest
+numberAddTest = benchTestCase "NumberAdd" $ evalCodegen Nothing $ testNumberAdd $ Binary "NumberAdd" numberAdd jsAdd
 
     {-mkFloatTests :: String -> String -> TestFunction -> BenchTest
 mkFloatTests outerName testGroupName testFn =
