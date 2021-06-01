@@ -115,7 +115,7 @@
 #define DOUBLE_ZERO (double)0
 #define DOUBLE_ONE (double)1
 
-#define kSingletonZero newRange(0,0)
+#define kSingletonZero newRange((double)0,(double)0)
 #define kInteger newRange(minusInfinityType(), infinityType())
 
 struct limits {
@@ -1163,7 +1163,8 @@ v8type Intersect(v8type const& type1, v8type const& type2) {
   return NormalizeUnion(result, size, zone);*/
 }
 
-v8Type Union(v8Type type1, v8Type type2) {
+v8Type TypeUnion(v8Type type1, v8Type type2) {
+  //TODO, need to handle ranges at least a little bit probably
   // Fast case: bit sets.
   if (IsBitset(type1) && IsBitset(type2)) {
     return newBitset(type1.bitset | type2.bitset);
@@ -1217,7 +1218,7 @@ v8Type Union(v8Type type1, v8Type type2) {
 
 
 // Precondition: input is numbers
-/*v8type NumberAdd(v8type lhs, v8type rhs) {
+v8type NumberAdd(v8type lhs, v8type rhs) {
   //DCHECK(lhs.Is(Type::Number()));
   //DCHECK(rhs.Is(Type::Number()));
 
@@ -1233,22 +1234,22 @@ v8Type Union(v8Type type1, v8Type type2) {
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
   if (Maybe(lhs, minusZeroType())) {
-    lhs = Type::Union(lhs, kSingletonZero, zone());
+    lhs = TypeUnion(lhs, kSingletonZero); //we don't do unions yet so just merge ranges
   } else {
     maybe_minuszero = false;
   }
   if (Maybe(rhs, minusZeroType())) {
-    rhs = Type::Union(rhs, kSingletonZero, zone());
+    rhs = TypeUnion(rhs, kSingletonZero);
   } else {
     maybe_minuszero = false;
   }
 
   // We can give more precise types for integers.
   v8type type = noneType();
-  lhs = Type::Intersect(lhs, plainNumberType(), zone());
-  rhs = Type::Intersect(rhs, plainNumberType(), zone());
+  lhs = Intersect(lhs, plainNumberType());
+  rhs = Intersect(rhs, plainNumberType());
   if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
-    if (lhs.Is(kInteger) && rhs.Is(kInteger)) {
+    if (Is(lhs, kInteger) && Is(rhs, kInteger)) {
       type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
     } else {
       if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
@@ -1260,8 +1261,12 @@ v8Type Union(v8Type type1, v8Type type2) {
   }
 
   // Take into account the -0 and NaN information computed earlier.
-  if (maybe_minuszero) type = Type::Union(type, minusZeroType(), zone());
-  if (maybe_nan) type = Type::Union(type, nanType(), zone());
+  if (maybe_minuszero) {
+    type = TypeUnion(type, minusZeroType());
+  }
+  if (maybe_nan) {
+    type = TypeUnion(type,nanType());
+  }
   return type;
 
-}*/
+}
