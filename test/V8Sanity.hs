@@ -28,4 +28,5 @@ v8SanityCheck = benchTestGroup "V8Sanity" [
                                               , dumbAddTest
                                           , dumbSubtractTest
                                           , dumbMultiplyTest
+                                          , numberAddTest
                                           ]

@@ -40,6 +40,9 @@ newRange = fn "newRange"
 nanType :: FunctionDef
 nanType = fn "nanType"
 
+minusZeroType :: FunctionDef
+minusZeroType = fn "minusZeroType"
+
 getBoundary:: FunctionDef
 getBoundary = fn "getBoundary"
 
