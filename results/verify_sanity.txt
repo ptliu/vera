@@ -1,36 +1,50 @@
-lejit-0.1.0.0: unregistering (local file changes: src/V8Generated/Verify.hs)
+lejit-0.1.0.0: unregistering (local file changes: test/V8Sanity.hs)
 lejit> configure (lib + exe + test)
 Configuring lejit-0.1.0.0...
 lejit> build (lib + exe + test)
 Preprocessing library for lejit-0.1.0.0..
 Building library for lejit-0.1.0.0..
-[22 of 22] Compiling V8Generated.Verify
 Preprocessing test suite 'lejit-test' for lejit-0.1.0.0..
 Building test suite 'lejit-test' for lejit-0.1.0.0..
-[ 7 of 13] Compiling GenV8 [V8Generated.Verify changed]
-[12 of 13] Compiling V8Sanity [V8Generated.Verify changed]
+[12 of 13] Compiling V8Sanity
+[13 of 13] Compiling Main [V8Sanity changed]
 Linking .stack-work/dist/x86_64-linux-tinfo6/Cabal-2.4.0.1/build/lejit-test/lejit-test ...
 Preprocessing executable 'lejit-exe' for lejit-0.1.0.0..
 Building executable 'lejit-exe' for lejit-0.1.0.0..
 lejit> copy/register
-Installing library in /home/evan/Research/vera/.stack-work/install/x86_64-linux-tinfo6/5e1db5ff5602796fd7c04ddcfb5da3de3f240409f817a63030f21c79d985b5a3/8.6.5/lib/x86_64-linux-ghc-8.6.5/lejit-0.1.0.0-FFtpRLueRlT9bTIAtJakeN
-Installing executable lejit-exe in /home/evan/Research/vera/.stack-work/install/x86_64-linux-tinfo6/5e1db5ff5602796fd7c04ddcfb5da3de3f240409f817a63030f21c79d985b5a3/8.6.5/bin
+Installing library in /home/evan/Research/vera/.stack-work/install/x86_64-linux-tinfo6/322a6d0b4387c75f67319338a9df0fd509928b553263893a3d16023007b1ad78/8.6.5/lib/x86_64-linux-ghc-8.6.5/lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp
+Installing executable lejit-exe in /home/evan/Research/vera/.stack-work/install/x86_64-linux-tinfo6/322a6d0b4387c75f67319338a9df0fd509928b553263893a3d16023007b1ad78/8.6.5/bin
 Registering library for lejit-0.1.0.0..
 lejit> test (suite: lejit-test, args: -p V8Sanity)
 
 All tests
   V8Sanity
-    LimitsUnion:     OK (13.48s)
-    LimitsIntersect: OK (1.27s)
+    LimitsUnion:     OK (12.20s)
+    LimitsIntersect: OK (0.94s)
     BitsetMin:       FAIL
-      Exception: Undeclared variable ty: bitset
+      Exception: Failed to verify bitset min
+      MinusZeroCheck_1 : 0.0
+      NaNCheck_1 : 1.0
+      bitset_0 : 40b4000000000000
+      bitset_1 : 40b4000000000000
+      fbitset_1 : 40b4000000000000
+      fval_1 : -0.0
+      kNegative31Bounds_1 : 1.0
+      kOtherNumberBounds_1 : 1.0
+      kOtherSigned32Bounds_1 : 1.0
+      kOtherUnsigned31Bounds_1 : 1.0
+      kOtherUnsigned32Bounds_1 : 1.0
+      kUnsigned30Bounds_1 : 1.0
+      result_min_1 : -0.0
+      result_min_2 : -0.0
+      
       CallStack (from HasCallStack):
-        error, called at src/Generate/State.hs:269:16 in lejit-0.1.0.0-FFtpRLueRlT9bTIAtJakeN:Generate.State
-    AddRanger:       OK (0.90s)
-    SubtractRanger:  OK (0.88s)
-    MultiplyRanger:  OK (33.44s)
+        error, called at src/V8Generated/Verify.hs:736:10 in lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp:V8Generated.Verify
+    AddRanger:       OK (0.86s)
+    SubtractRanger:  OK (0.81s)
+    MultiplyRanger:  OK (0.27s)
 
-1 out of 6 tests failed (49.98s)
+1 out of 6 tests failed (21.09s)
 
 lejit> Test suite lejit-test failed
 Completed 2 action(s).

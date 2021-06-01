@@ -2,6 +2,7 @@
 module V8Generated.Helpers where
 import           Data.List
 import           Data.String.Interpolate
+import           Data.Bits               (shiftL)
 import           DSL.Typed               (Type (..))
 import           Generate.Lang
 import           Generate.QQ
@@ -39,6 +40,9 @@ newRange = fn "newRange"
 nanType :: FunctionDef
 nanType = fn "nanType"
 
+getBoundary:: FunctionDef
+getBoundary = fn "getBoundary"
+
 -- int min and max 
 jsIntMax :: Codegen SExpr
 jsIntMax = n Signed (0x7fffffff)
@@ -61,6 +65,33 @@ jsIntMax64S = [i| ((int64_t) 2147483647) |]
 jsIntMin64 :: Codegen SExpr
 jsIntMin64 = n Signed64 (-2147483648)
 
+jsUIntMax :: Codegen SExpr
+jsUIntMax = n Unsigned (0x80000000)
+
+jsUIntMin :: Codegen SExpr
+jsUIntMin = n Unsigned (0)
+
 -- bitset types
 kOtherNumber :: Codegen SExpr
 kOtherNumber = n Unsigned (0x10)
+
+kOtherSigned32 :: Codegen SExpr
+kOtherSigned32 = n Unsigned (0x08)
+
+kNegative31 :: Codegen SExpr
+kNegative31 = n Unsigned (0x40)
+
+kUnsigned30 :: Codegen SExpr
+kUnsigned30 = n Unsigned (0x400)
+
+kOtherUnsigned31 :: Codegen SExpr
+kOtherUnsigned31 = n Unsigned (0x2)
+
+kOtherUnsigned32 :: Codegen SExpr
+kOtherUnsigned32 = n Unsigned (0x4)
+
+kMinusZero :: Codegen SExpr
+kMinusZero = n Unsigned (1 `shiftL` 11)
+
+kNaN :: Codegen SExpr
+kNaN = n Unsigned (1 `shiftL` 12)

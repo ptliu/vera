@@ -4,6 +4,8 @@ import           Control.Monad.State.Strict    (liftIO)
 import           Data.List                     (isInfixOf)
 import qualified Data.Map                      as M
 import           Data.Maybe                    (catMaybes)
+import           Data.Bits.Floating            (coerceToWord)
+import           Numeric                       (showHex)
 import           DSL.DSL                       (isSat, isUnsat)
 import           DSL.Typed                     (SMTResult (..), Type (..))
 import           Generate.Lang
@@ -27,7 +29,7 @@ fInLimits =
   in Function "fInLimits" (t Bool) args body
 
 -- todo(evan): This needs to take nan into account
-    {-fInType :: FunctionDef
+fInType :: FunctionDef
 fInType =
   let args = [ ("fval", t Double)
              , ("ftype", c "v8type")
@@ -35,9 +37,15 @@ fInType =
       body = [ 
              -- if has range, value must be in range
              -- otherwise, must be in bitset range
-             , return_ $ ((v "fval" .=>. (v "frange" .->. "min")) .&&. (v "fval" .<=. (v "frange" .->. "max")))
+               declare (t Bool) "InRangeChecK"
+             , v "InRangeCheck" `assign` (testImplies (v "ftype" .->. "hasRange") ((v "fval" .=>. (v "ftype" .->. "min")) .&&. (v "fval" .<=. (v "ftype" .->. "max"))))
+             -- must also be in the bitset always
+             , declare (t Bool) "InBitsetCheck"
+             , v "InBitsetCheck" `assign` (call "fInBitset" [v "fval", v "ftype" .->. "bitset"])
+
+             , return_ $ v "InRangeCheck" .&&. v "InBitsetCheck" 
              ]
-  in Function "fInLimits" (t Bool) args body-}
+  in Function "fInType" (t Bool) args body
 
 -- magic numbers for bitset types
 fInBitset :: FunctionDef
@@ -46,9 +54,38 @@ fInBitset =
              , ("fbitset", t Unsigned)
              ]
       body = [ 
-             -- if the bitset doesnt have kOtherNumber, it must be greater than eq to jsMinInt and less than jsMaxInt
-               implies_ (not_ $ (v "fbitset") .&&. kOtherNumber) ((v "fval" .=>. jsIntMin) .&&. (v "fval" .<=. jsIntMax))
-             , return_ $ ((v "fval" .=>. (v "frange" .->. "min")) .&&. (v "fval" .<=. (v "frange" .->. "max")))
+             -- TODO: nan makes this always false, handle with full type thing
+             -- if the bitset doesn't have kNaN, value can't be minus zero...
+               declare (t Bool) "NaNCheck"
+             , v "NaNCheck" `assign` (testImplies ((v "fbitset" .&&. kNaN) .==. n Unsigned 0) (not_ $ isNan $ v "fval"))
+             -- if the bitset doesn't have kMinusZero, value can't be minus zero...
+             , declare (t Bool) "MinusZeroCheck"
+             , v "MinusZeroCheck" `assign` (testImplies ((v "fbitset" .&&. kMinusZero) .==. n Unsigned 0) (not_ $ isNegZero $ v "fval"))
+             -- if the bitset doesnt have kOtherNumber, it must be greater than eq to jsMinInt and less than jsUIntMax (unsigned check later...)
+             -- i.e. jsMinInt <= val <= jsUIntMax
+             , declare (t Bool) "kOtherNumberBounds"
+             , v "kOtherNumberBounds" `assign` (testImplies ((v "fbitset" .&&. kOtherNumber) .==. n Unsigned 0) ((v "fval" .=>. (cast (jsIntMin) Double)) .&&. (v "fval" .<=. (cast (jsUIntMax) Double))))
+             -- if doesn't have kOtherUnsigned32 set, must be outside of the range [2^31, 2^32-1]
+             -- i.e. x < 2^31 || x >= 2^32
+             , declare (t Bool) "kOtherUnsigned32Bounds"
+             , v "kOtherUnsigned32Bounds" `assign` (testImplies ((v "fbitset" .&&. kOtherUnsigned32) .==. n Unsigned 0) ((v "fval" .<. (cast (n Unsigned (0x80000000)) Double)) .||. (v "fval" .=>. (cast (n Unsigned64 (0x100000000)) Double))))
+             -- if doesn't have kOtherUnsigned31 set, must be outside of the range [2^30, 2^31-1]
+             -- i.e. x < 2^30 || x >= 2^31
+             , declare (t Bool) "kOtherUnsigned31Bounds"
+             , v "kOtherUnsigned31Bounds" `assign` (testImplies ((v "fbitset" .&&. kOtherUnsigned31) .==. n Unsigned 0) ((v "fval" .<. (cast (n Unsigned (0x40000000)) Double)) .||. (v "fval" .=>. (cast (n Unsigned64 (0x80000000)) Double))))
+             -- if doesn't have kUnsigned30 set, must be outside of the range [0, 2^30-1]
+             -- i.e. x < 0 || x >= 2^30
+             , declare (t Bool) "kUnsigned30Bounds"
+             , v "kUnsigned30Bounds" `assign` (testImplies ((v "fbitset" .&&. kUnsigned30) .==. n Unsigned 0) ((v "fval" .<. (cast (n Unsigned (0)) Double)) .||. (v "fval" .=>. (cast (n Unsigned (0x40000000)) Double))))
+             -- if doesn't have kNegative30 set, must be outside of the range [-2^30, -1]
+             -- i.e. x < -2^30 || x >= 0
+             , declare (t Bool) "kNegative31Bounds"
+             , v "kNegative31Bounds" `assign` (testImplies ((v "fbitset" .&&. kNegative31) .==. n Unsigned 0) ((v "fval" .<. (cast (n Signed (0x40000000)) Double)) .||. (v "fval" .=>. (cast (n Signed (0)) Double))))
+             -- if doesn't have kOtherSigned32 set, must be outside of the range [-2^31, 2^30-1]
+             -- i.e. x < -2^31 || x >= -2^30
+             , declare (t Bool) "kOtherSigned32Bounds"
+             , v "kOtherSigned32Bounds" `assign` (testImplies ((v "fbitset" .&&. kOtherSigned32) .==. n Unsigned 0) ((v "fval" .<. (cast (jsIntMin) Double)) .||. (v "fval" .=>. (cast (n Signed (0xC0000000)) Double))))
+             , return_ $ v "MinusZeroCheck" .&&. v "kOtherNumberBounds" .&&. v "kOtherUnsigned32Bounds" .&&. v "kOtherUnsigned31Bounds" .&&. v "kUnsigned30Bounds" .&&. v "kNegative31Bounds" .&&. v "kOtherSigned32Bounds"
              ]
   in Function "fInBitset" (t Bool) args body
 
@@ -132,31 +169,27 @@ verifyLimitIntersect =
 
 -- dumb tests for dumb things... mainly to test verification funcs
 
--- dumb test, checks if MIN in bitset
-testBitsetMin :: TestFunction -> Codegen ()
+-- dumb test, checks if MIN in bitset.. BROKEN
+    {-testBitsetMin :: TestFunction -> Codegen ()
 testBitsetMin fn = do
-  defineAll (setOp fn)
-  genBodySMT [vcall "verifyBitsetMin" [v "bitset", v "result"]]
+  setupDumbBitset (setOp fn) (testName fn)
+  genBodySMT [vcall "verifyBitsetMin" [v "bitset", v "result_min"]]
 
 verifyBitsetMin :: FunctionDef
 verifyBitsetMin =
   let args = [ ("bitset", t Unsigned)
-             , ("result", t Bool)
+             , ("result_min", t Double)
              ]
       body = [ push_
              -- assert precond
              -- assert not postcond
              -- yay :D
-             , declare (t Unsigned) "bitset"
-             , declare (t Bool) "result"
-             , declare (t Double) "min"
-             , (v "min") `assign` (call "BitsetMin" [v "bitset"])
-             , expect_ isSat (error "Has to start out SAT")
-             , assert_ $ not_ $ (call "fInBitset" [v "min", v "bitset"])
+             , assert_ $ not_ $ (call "fInBitset" [v "result_min", v "bitset"])
              , expect_ isUnsat $ \r -> showInt32Result "Failed to verify bitset min" r
              , pop_
-             ]
-  in Function "verifyBitsetMin" Void args body
+             ] in Function "verifyBitsetMin" Void args body-}
+
+
 
 -- isNan test
 
@@ -436,28 +469,18 @@ setupLimitsSet op fnName = do
               ]
   genBodySMT verif
 
-    {-setupDumbBitset :: FunctionDef
+setupDumbBitset :: FunctionDef
           -> String
           -> Codegen ()
 setupDumbBitset op fnName = do
   defineAll op
-  let verif = [ declare (t Int32) "bitset"
-              , declare (d "limits") "rhs"
-              , declare (c "limits") "result_limit"
-
-              , (v "result_limit") `assign` call fnName [v "lhs", v "rhs"]
-
-              , declare (t Double) "elem"
-              , declare (t Bool) "isInRight"
-              , declare (t Bool) "isInLeft"
-              , declare (t Bool) "isInResult"
-
-              , v "isInRight" `assign` (call "fInLimits" [v "elem", v "rhs"])
-              , v "isInLeft" `assign` (call "fInLimits" [v "elem", v "lhs"])
-              , v "isInResult" `assign` (call "fInLimits" [v "elem", v "result_limit"])
-              , expect_ isSat (error "Should be sat")
+  let verif = [ 
+               declare (t Unsigned) "bitset"
+             , declare (t Double) "result_min"
+             , (v "result_min") `assign` call "BitsetMin" [v "bitset"]
+             , expect_ isSat (error "Has to start out SAT")
               ]
-  genBodySMT verif-}
+  genBodySMT verif
 
 setupRanger :: FunctionDef
           -> String
@@ -478,17 +501,26 @@ setupRanger op fnName = do
 defineAll op = do
   class_ v8type
   class_ limits
+  class_ boundary
   define op
+  -- predicates
+  define fInBitset
+  -- rangers
   define verifyAddRanger
   define verifySubtractRanger
   define verifyMultiplyRanger
+  -- helpers
   define min4
   define max4
   define newRange
   define nanType
+  define getBoundary
   -- limits
   define verifyLimitUnion
   define verifyLimitIntersect
+  -- bitsets
+  define verifyBitsetMin
+  define bitsetIs
   define isEmpty
   define copy
   -- checkers
@@ -712,6 +744,11 @@ getIntList fls = catMaybes $ map (\(str, fl) ->
                          _ | "undef" `isInfixOf` str -> Nothing
                          _ | "value"  `isInfixOf` str -> sstr str fl
                          _ | "result"  `isInfixOf` str -> sstr str fl
+                         _ | "bitset" `isInfixOf` str -> Just $ unwords [str, ":", showHex (coerceToWord fl) ""]
+                         _ | "result_min" `isInfixOf` str -> sstr str fl
+                         _ | "Bounds" `isInfixOf` str -> sstr str fl
+                         _ | "Check" `isInfixOf` str -> sstr str fl
+                         _ | "fval" `isInfixOf` str -> sstr str fl
                          _ -> Nothing
                      ) $ M.toList fls
   where

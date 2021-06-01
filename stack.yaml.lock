@@ -7,9 +7,6 @@ packages:
 - completed:
     size: 69078
     url: https://github.com/PLSysSec/haskell-z3/archive/df55d066238c09720491409f93153687a42141f4.tar.gz
-    cabal-file:
-      size: 4116
-      sha256: 980e6e2d63104c25a8660c2f50c6dda760a9c600cc001c9179d618ceb1cf7850
     name: z3
     version: '408.0'
     sha256: f78e1ef91fccd3fdf305ded3c96e404786c5d3871506deef995c18af553c8594
@@ -18,6 +15,13 @@ packages:
       sha256: 76532b2cd766ed0ea2f10e0aa9e85a8db695182c49223e9b4b417d9e895ceb19
   original:
     url: https://github.com/PLSysSec/haskell-z3/archive/df55d066238c09720491409f93153687a42141f4.tar.gz
+- completed:
+    hackage: floating-bits-0.3.0.0@sha256:742bcfcbc21b8daffc995990ee2399ab49550e8f4dd0dff1732d18f57a064c83,2442
+    pantry-tree:
+      size: 639
+      sha256: 7781f2d8996de5910f986272598eda640372a953b21153804eb2712194653c1f
+  original:
+    hackage: floating-bits-0.3.0.0@sha256:742bcfcbc21b8daffc995990ee2399ab49550e8f4dd0dff1732d18f57a064c83,2442
 snapshots:
 - completed:
     size: 524127
