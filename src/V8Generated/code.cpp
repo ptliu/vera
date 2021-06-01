@@ -115,8 +115,8 @@
 #define DOUBLE_ZERO (double)0
 #define DOUBLE_ONE (double)1
 
-#define kSingletonZero newRange(DOUBLE_ZERO, DOUBLE_ZERO)
-#define kInteger newRange(minusInfinityType(), infinityType())
+#define kSingletonZero newRange(DOUBLE_ZERO, DOUBLE_ZERO) //this makes it unsat for some reason
+#define kInteger newRange(minusInfinityType(), infinityType()) //TODO this is illegal
 
 struct limits {
     double min;
@@ -1290,13 +1290,22 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   if (TypeIsNone(numberadd_lhs) || TypeIsNone(numberadd_rhs)) {
     return noneType();
   }
-
+  
   // Addition can return NaN if either input can be NaN or we try to compute
   // the sum of two infinities of opposite sign.
+
   v8type numberadd_nantype = nanType();
+  
   v8type numberadd_minuszerotype = minusZeroType();
+  
   v8type numberadd_singletonZero = kSingletonZero;
+  return AnyType();
+  /*
   v8type numberadd_integer = kInteger;
+  v8type numberadd_minusinfinitytype = minusInfinityType();
+  v8type numberadd_infinitytype = infinityType();
+  v8type numberadd_plainnumbertype = plainNumberType();
+  
   bool maybe_nan = Maybe(numberadd_lhs, numberadd_nantype) || Maybe(numberadd_rhs, numberadd_nantype);
 
   // Addition can yield minus zero only if both inputs can be minus zero.
@@ -1313,28 +1322,29 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   }
 
   // We can give more precise types for integers.
-  v8type type = noneType();
-  numberadd_lhs = Intersect(numberadd_lhs, plainNumberType());
-  numberadd_rhs = Intersect(numberadd_rhs, plainNumberType());
+  v8type numberadd_type = noneType();
+  numberadd_lhs = Intersect(numberadd_lhs, numberadd_plainnumbertype);
+  numberadd_rhs = Intersect(numberadd_rhs, numberadd_plainnumbertype);
   if (!TypeIsNone(numberadd_lhs) && !TypeIsNone(numberadd_rhs)) {
     if (Is(numberadd_lhs, numberadd_integer) && Is(numberadd_rhs, numberadd_integer)) {
-      type = AddRanger(numberadd_lhs.min, numberadd_lhs.max, numberadd_rhs.min, numberadd_rhs.max);
+      numberadd_type = AddRanger(numberadd_lhs.min, numberadd_lhs.max, numberadd_rhs.min, numberadd_rhs.max);
     } else {
-      if ((Maybe(numberadd_lhs, minusInfinityType()) && Maybe(numberadd_rhs, infinityType())) || // minus_infinity_, infinity_ are Types
-          (Maybe(numberadd_rhs,minusInfinityType()) && Maybe(numberadd_lhs, infinityType()))) {
+      if ((Maybe(numberadd_lhs, numberadd_minusinfinitytype) && Maybe(numberadd_rhs, numberadd_infinitytype)) || // minus_infinity_, infinity_ are Types
+          (Maybe(numberadd_rhs,numberadd_minusinfinitytype) && Maybe(numberadd_lhs, numberadd_infinitytype))) {
         maybe_nan = true;
       }
-      type = plainNumberType();
+      numberadd_type = numberadd_plainnumbertype;
     }
   }
 
   // Take into account the -0 and NaN information computed earlier.
   if (maybe_minuszero) {
-    type = TypeUnion(type, numberadd_minuszerotype);
+    numberadd_type = TypeUnion(numberadd_type, numberadd_minuszerotype);
   }
   if (maybe_nan) {
-    type = TypeUnion(type,numberadd_nantype);
+    numberadd_type = TypeUnion(numberadd_type,numberadd_nantype);
   }
-  return type;
+  return numberadd_type;
+  */
 }
 

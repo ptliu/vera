@@ -80,7 +80,7 @@ fInBitset =
              -- if doesn't have kNegative30 set, must be outside of the range [-2^30, -1]
              -- i.e. x < -2^30 || x >= 0
              , declare (t Bool) "kNegative31Bounds"
-             , v "kNegative31Bounds" `assign` (testImplies ((v "fbitset" .&&. kNegative31) .==. n Unsigned 0) ((v "fval" .<. (cast (n Signed (0x40000000)) Double)) .||. (v "fval" .=>. (cast (n Signed (0)) Double))))
+             , v "kNegative31Bounds" `assign` (testImplies ((v "fbitset" .&&. kNegative31) .==. n Unsigned 0) ((v "fval" .<. (cast (n Signed (0xc0000000)) Double)) .||. (v "fval" .=>. (cast (n Signed (0)) Double))))
              -- if doesn't have kOtherSigned32 set, must be outside of the range [-2^31, 2^30-1]
              -- i.e. x < -2^31 || x >= -2^30
              , declare (t Bool) "kOtherSigned32Bounds"
@@ -615,7 +615,7 @@ setupNumberAdd op fnName fn = do
               , assert_ $ call "fInType" [v "numberadd_js_left", v "numberadd_lhs"]              
               , assert_ $ call "fInType" [v "numberadd_js_right", v "numberadd_rhs"]
               , (v "numberadd_js_result") `assign` (v "numberadd_js_left" `fn` v "numberadd_js_right")
-              , expect_ isSat (error "Should be sat")
+              , expect_ isSat $ \r -> showInt32Result "Should be sat" r
               ]
   genBodySMT verif
 
@@ -639,6 +639,9 @@ defineAll op = do
   define newRange
   define nanType
   define minusZeroType
+  define minusInfinityType
+  define infinityType
+  define plainNumberType
   define getBoundary
   define anyType
   define noneType
@@ -674,6 +677,8 @@ defineAll op = do
   define getLimits
   -- checkers
   define fInLimits
+  -- numbers
+  define verifyNumberAdd
 
 ---
 --- Printing
@@ -900,6 +905,7 @@ getIntList fls = catMaybes $ map (\(str, fl) ->
                          _ | "fval" `isInfixOf` str -> sstr str fl
                          _ | "type" `isInfixOf` str -> sstr str fl
                          _ | "intersect" `isInfixOf` str -> sstr str fl
+                         _ | "js" `isInfixOf` str -> sstr str fl
                          _ -> Nothing
                      ) $ M.toList fls
   where

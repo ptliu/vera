@@ -43,6 +43,15 @@ nanType = fn "nanType"
 minusZeroType :: FunctionDef
 minusZeroType = fn "minusZeroType"
 
+minusInfinityType :: FunctionDef
+minusInfinityType = fn "minusInfinityType"
+
+infinityType :: FunctionDef
+infinityType = fn "infinityType"
+
+plainNumberType :: FunctionDef
+plainNumberType = fn "plainNumberType"
+
 getBoundary:: FunctionDef
 getBoundary = fn "getBoundary"
 
