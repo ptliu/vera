@@ -223,8 +223,8 @@ v8type newBitset(bitset_t newbitset_bits) {
     v8type newbitset_type;
     newbitset_type.bitset = newbitset_bits;
     newbitset_type.hasRange = (bool)1;
-    newbitset_type.max = max;
-    newbitset_type.min = min;
+    newbitset_type.max = DOUBLE_ZERO;
+    newbitset_type.min = DOUBLE_ZERO;
     newbitset_type.maybeNaN = (bool)0;
     newbitset_type.maybeMinusZero = (bool)0;
     newbitset_type.isUnion = (bool)0;
@@ -233,10 +233,10 @@ v8type newBitset(bitset_t newbitset_bits) {
 
 v8type newRange(double newrange_min, double newrange_max) {
     v8type newrange_type;
-    newrange_type.bitset = (uint32_t)0;
+    newrange_type.bitset = BitsetTypeLub(newrange_min, newrange_max);
     newrange_type.hasRange = (bool)1;
-    newrange_type.max = max;
-    newrange_type.min = min;
+    newrange_type.max = newrange_max;
+    newrange_type.min = newrange_min;
     newrange_type.maybeNaN = (bool)0;
     newrange_type.maybeMinusZero = (bool)0;
     newrange_type.isUnion = (bool)0;
@@ -599,6 +599,75 @@ double BitsetMax(bitset_t bitsetmax_bits) {
 
 bitset_t NumberBits(bitset_t numberbits_bits) {
     return numberbits_bits & kPlainNumber;
+}
+
+bitset_t BitsetTypeLub(double bitsettypelub_min, double bitsettypelub_max) {
+//Type::bitset BitsetType::Lub(double min, double max) {
+  //DisallowGarbageCollection no_gc;
+  //int lub = kNone;
+  bitset_t lub = kNone;
+  //const Boundary* mins = Boundaries();
+
+  // unrolled...
+  /*for (size_t i = 1; i < BoundariesSize(); ++i) {
+    if (min < mins[i].min) {
+      lub |= mins[i - 1].internal;
+      if (max < mins[i].min) return lub;
+    }
+  }*/
+  boundary bitsettypelub_mins_1 = getBoundary((uint32_t)1);
+  if (bitsettypelub_min < bitsettypelub_mins_1.min) {
+      lub |= bitsettypelub_mins_1.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_1.min) {
+          return lub;
+      }
+  }
+  boundary bitsettypelub_mins_2 = getBoundary((uint32_t)2);
+  if (bitsettypelub_min < bitsettypelub_mins_2.min) {
+      lub |= bitsettypelub_mins_2.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_2.min) {
+          return lub;
+      }
+  }
+  boundary bitsettypelub_mins_3 = getBoundary((uint32_t)3);
+  if (bitsettypelub_min < bitsettypelub_mins_3.min) {
+      lub |= bitsettypelub_mins_3.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_3.min) {
+          return lub;
+      }
+  }
+  boundary bitsettypelub_mins_4 = getBoundary((uint32_t)4);
+  if (bitsettypelub_min < bitsettypelub_mins_4.min) {
+      lub |= bitsettypelub_mins_4.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_4.min) {
+          return lub;
+      }
+  }
+  boundary bitsettypelub_mins_5 = getBoundary((uint32_t)5);
+  if (bitsettypelub_min < bitsettypelub_mins_5.min) {
+      lub |= bitsettypelub_mins_5.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_5.min) {
+          return lub;
+      }
+  }
+  boundary bitsettypelub_mins_6 = getBoundary((uint32_t)6);
+  if (bitsettypelub_min < bitsettypelub_mins_6.min) {
+      lub |= bitsettypelub_mins_6.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_6.min) {
+          return lub;
+      }
+  }
+  boundary bitsettypelub_mins_7 = getBoundary((uint32_t)7);
+  if (bitsettypelub_min < bitsettypelub_mins_7.min) {
+      lub |= bitsettypelub_mins_7.internal;
+      if (bitsettypelub_max < bitsettypelub_mins_7.min) {
+          return lub;
+      }
+  }
+
+  // return lub | mins[BoundariesSize() - 1].internal;
+  lub |= bitsettypelub_mins_7.internal;
+  return lub;
 }
 
 // TODO: rename this...
@@ -1005,7 +1074,7 @@ v8type MultiplyRanger(double multiplyranger_lhs_min, double multiplyranger_lhs_m
   v8type multiplyranger_type = newRange(multiplyranger_min, multiplyranger_max);
   // HACK: no && allowed .... :(
   if (multiplyranger_min <= (double)0.0) {
-      if ((double)0.0 <=multiplyranger_ max) {
+      if ((double)0.0 <=multiplyranger_max) {
           if (multiplyranger_lhs_min < (double)0.0) {
             multiplyranger_type.maybeMinusZero = (bool)1;
           } 
@@ -1073,7 +1142,7 @@ v8type NormalizeUnion(v8type normalizeunion_union){ //this is a no-op currently 
 // ignore zone
 //Type Type::Intersect(Type type1, Type type2, Zone* zone) {
 v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
-  return noneType();
+  //return noneType();
   // Fast case: bit sets.
   if (IsBitset(intersect_type1) && IsBitset(intersect_type2)) {
     return NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
@@ -1101,7 +1170,6 @@ v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
 
   bitset_t intersect_bits = BitsetGlb(intersect_type1) & BitsetGlb(intersect_type2);
   int32_t intersect_size1 = (int32_t)1; //we don't support unions so this is just 1
-
   int32_t intersect_size2 = (int32_t)1; //also changed from int to int32_t
 
   if(SignedAddWouldOverflow32(intersect_size1, intersect_size2)){
@@ -1125,13 +1193,13 @@ v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
   //update result, normally done in IntersectAux but lack of pointers means we do it this way
   v8type intersect_result = newRange(intersect_lims.min, intersect_lims.max);
 
-  bitset_t intersect_number_bits = UINT32_ZERO;
+  /*bitset_t intersect_number_bits = UINT32_ZERO;
   if(!IsEmpty(intersect_lims)){
     //don't need UpdateRange because we don't support unions
     intersect_number_bits = NumberBits(intersect_bits);
     intersect_bits = intersect_bits & ~intersect_number_bits;
     intersect_result.bitset = intersect_bits;
-  }
+  }*/
   
   return intersect_result;
   //return AnyType();

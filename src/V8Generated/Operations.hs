@@ -64,8 +64,8 @@ bitsetLub = fn "BitsetLub"
 bitsetGlb :: FunctionDef
 bitsetGlb = fn "BitsetGlb"
 
-    {-bitsetTypeLub :: FunctionDef
-bitsetTypeLub = fn "BitsetTypeLub"-}
+bitsetTypeLub :: FunctionDef
+bitsetTypeLub = fn "BitsetTypeLub"
 
 bitsetTypeGlb :: FunctionDef
 bitsetTypeGlb = fn "BitsetTypeGlb"

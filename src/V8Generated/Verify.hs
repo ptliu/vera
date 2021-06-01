@@ -610,7 +610,7 @@ defineAll op = do
   define bitsetIsNone
   define bitsetLub
   define bitsetGlb
-  --define bitsetTypeLub
+  define bitsetTypeLub
   define bitsetTypeGlb
   define numberBits
   define copy
@@ -856,6 +856,8 @@ getIntList fls = catMaybes $ map (\(str, fl) ->
                          _ | "Bounds" `isInfixOf` str -> sstr str fl
                          _ | "Check" `isInfixOf` str -> sstr str fl
                          _ | "fval" `isInfixOf` str -> sstr str fl
+                         _ | "type" `isInfixOf` str -> sstr str fl
+                         _ | "intersect" `isInfixOf` str -> sstr str fl
                          _ -> Nothing
                      ) $ M.toList fls
   where
