@@ -178,209 +178,209 @@ struct boundary {
 // 1. MUST ANNOTATE MAGIC NUMBERS WITH TYPES OR WILL REE AT U
 
 double test(double test_input) {
-    double yeet = test_input;
+    double test_yeet = test_input;
     return 0.0;
 }
 
 double test2(double test2_input) {
-    double yeet = 0.0;
+    double test2_yeet = 0.0;
     test(1.0);
-    return yeet;
+    return test2_yeet;
 }
 
 // Helpers
-double min4(double one, double two, double three, double four) {
-    double min = one;
-    if (two < min) {
-        min = two;
+double min4(double min4_one, double min4_two, double min4_three, double min4_four) {
+    double min4_min = min4_one;
+    if (min4_two < min4_min) {
+        min4_min = min4_two;
     }
-    if (three < min) {
-        min = three;
+    if (min4_three < min4_min) {
+        min4_min = min4_three;
     } 
-    if (four < min) {
-        min = four;
+    if (min4_four < min4_min) {
+        min4_min = min4_four;
     }
 
-    return min;
+    return min4_min;
 }
 
-double max4(double one, double two, double three, double four) {
-    double max = one;
-    if (two > max) {
-        max = two;
+double max4(double max4_one, double max4_two, double max4_three, double max4_four) {
+    double max4_max = max4_one;
+    if (max4_two > max4_max) {
+        max4_max = max4_two;
     }
-    if (three > max) {
-        max = three;
+    if (max4_three > max4_max) {
+        max4_max = max4_three;
     } 
-    if (four > max) {
-        max = four;
+    if (max4_four > max4_max) {
+        max4_max = max4_four;
     }
 
-    return max;
+    return max4_max;
 }
 
-v8type newBitset(bitset_t bits) {
-    v8type type;
-    type.bitset = bits;
-    type.hasRange = (bool)1;
-    type.max = max;
-    type.min = min;
-    type.maybeNaN = (bool)0;
-    type.maybeMinusZero = (bool)0;
-    type.isUnion = (bool)0;
-    return type;
+v8type newBitset(bitset_t newbitset_bits) {
+    v8type newbitset_type;
+    newbitset_type.bitset = newbitset_bits;
+    newbitset_type.hasRange = (bool)1;
+    newbitset_type.max = max;
+    newbitset_type.min = min;
+    newbitset_type.maybeNaN = (bool)0;
+    newbitset_type.maybeMinusZero = (bool)0;
+    newbitset_type.isUnion = (bool)0;
+    return newbitset_type;
 }
 
-v8type newRange(double min, double max) {
-    v8type type;
-    type.bitset = (uint32_t)0;
-    type.hasRange = (bool)1;
-    type.max = max;
-    type.min = min;
-    type.maybeNaN = (bool)0;
-    type.maybeMinusZero = (bool)0;
-    type.isUnion = (bool)0;
-    return type;
+v8type newRange(double newrange_min, double newrange_max) {
+    v8type newrange_type;
+    newrange_type.bitset = (uint32_t)0;
+    newrange_type.hasRange = (bool)1;
+    newrange_type.max = max;
+    newrange_type.min = min;
+    newrange_type.maybeNaN = (bool)0;
+    newrange_type.maybeMinusZero = (bool)0;
+    newrange_type.isUnion = (bool)0;
+    return newrange_type;
 }
 
 v8type nanType() {
-    v8type type;
-    type.bitset = kNaN;
-    type.hasRange = FALSE;
-    type.max = DOUBLE_ZERO;
-    type.min = DOUBLE_ZERO;
-    type.maybeNaN = TRUE;
-    type.maybeMinusZero = FALSE;
-    type.isUnion = FALSE;
-    return type;
+    v8type nantype_type;
+    nantype_type.bitset = kNaN;
+    nantype_type.hasRange = FALSE;
+    nantype_type.max = DOUBLE_ZERO;
+    nantype_type.min = DOUBLE_ZERO;
+    nantype_type.maybeNaN = TRUE;
+    nantype_type.maybeMinusZero = FALSE;
+    nantype_type.isUnion = FALSE;
+    return nantype_type;
 }
 
 v8type noneType() {
-    v8type type;
-    type.bitset = kNone;
-    type.hasRange = FALSE;
-    type.max = DOUBLE_ZERO;
-    type.min = DOUBLE_ZERO;
-    type.maybeNaN = FALSE;
-    type.maybeMinusZero = FALSE;
-    type.isUnion = FALSE;
-    return type;
+    v8type nonetype_type;
+    nonetype_type.bitset = kNone;
+    nonetype_type.hasRange = FALSE;
+    nonetype_type.max = DOUBLE_ZERO;
+    nonetype_type.min = DOUBLE_ZERO;
+    nonetype_type.maybeNaN = FALSE;
+    nonetype_type.maybeMinusZero = FALSE;
+    nonetype_type.isUnion = FALSE;
+    return nonetype_type;
 }
 
 v8type minusZeroType() {
-    v8type type;
-    type.bitset = kMinusZero;
-    type.hasRange = FALSE;
-    type.max = DOUBLE_ZERO;
-    type.min = DOUBLE_ZERO;
-    type.maybeNaN = FALSE;
-    type.maybeMinusZero = TRUE;
-    type.isUnion = FALSE;
-    return type;
+    v8type minuszerotype_type;
+    minuszerotype_type.bitset = kMinusZero;
+    minuszerotype_type.hasRange = FALSE;
+    minuszerotype_type.max = DOUBLE_ZERO;
+    minuszerotype_type.min = DOUBLE_ZERO;
+    minuszerotype_type.maybeNaN = FALSE;
+    minuszerotype_type.maybeMinusZero = TRUE;
+    minuszerotype_type.isUnion = FALSE;
+    return minuszerotype_type;
 }
 
 v8type AnyType() {
-    v8type type;
-    type.bitset = kAny;
-    type.hasRange = FALSE;
-    type.max = DOUBLE_ZERO;
-    type.min = DOUBLE_ZERO;
-    type.maybeNaN = TRUE;
-    type.maybeMinusZero = TRUE;
-    type.isUnion = FALSE;
-    return type;
+    v8type anytype_type;
+    anytype_type.bitset = kAny;
+    anytype_type.hasRange = FALSE;
+    anytype_type.max = DOUBLE_ZERO;
+    anytype_type.min = DOUBLE_ZERO;
+    anytype_type.maybeNaN = TRUE;
+    anytype_type.maybeMinusZero = TRUE;
+    anytype_type.isUnion = FALSE;
+    return anytype_type;
 }
 
 v8type minusInfinityType() {
-    v8type type;
-    type.bitset = kOtherNumber;
-    type.max = -V8_INFINITY;
-    type.min = -V8_INFINITY;
-    type.hasRange = TRUE; 
-    type.maybeNaN = FALSE;
-    type.maybeMinusZero = FALSE;
-    type.isUnion = FALSE;
+    v8type minusinfinitytype_type;
+    minusinfinitytype_type.bitset = kOtherNumber;
+    minusinfinitytype_type.max = -V8_INFINITY;
+    minusinfinitytype_type.min = -V8_INFINITY;
+    minusinfinitytype_type.hasRange = TRUE; 
+    minusinfinitytype_type.maybeNaN = FALSE;
+    minusinfinitytype_type.maybeMinusZero = FALSE;
+    minusinfinitytype_type.isUnion = FALSE;
 }
 
 v8type infinityType() {
-    v8type type;
-    type.bitset = kOtherNumber;
-    type.max = V8_INFINITY;
-    type.min = V8_INFINITY;
-    type.hasRange = TRUE; 
-    type.maybeNaN = FALSE;
-    type.maybeMinusZero = FALSE;
-    type.isUnion = FALSE;
+    v8type infinitytype_type;
+    infinitytype_type.bitset = kOtherNumber;
+    infinitytype_type.max = V8_INFINITY;
+    infinitytype_type.min = V8_INFINITY;
+    infinitytype_type.hasRange = TRUE; 
+    infinitytype_type.maybeNaN = FALSE;
+    infinitytype_type.maybeMinusZero = FALSE;
+    infinitytype_type.isUnion = FALSE;
 }
 
 v8type plainNumberType() { 
-    v8type type;
-    type.bitset = kPlainNumber;
-    type.hasRange = FALSE; 
-    type.maybeNaN = FALSE;
-    type.maybeMinusZero = FALSE;
-    type.isUnion = FALSE;
+    v8type plainnumbertype_type;
+    plainnumbertype_type.bitset = kPlainNumber;
+    plainnumbertype_type.hasRange = FALSE; 
+    plainnumbertype_type.maybeNaN = FALSE;
+    plainnumbertype_type.maybeMinusZero = FALSE;
+    plainnumbertype_type.isUnion = FALSE;
 }
 
-limits copy(limits const& other) {
-    limits lresult;
-    lresult.min = other.min;
-    lresult.max = other.max;
-    return lresult;
+limits copy(limits const& copy_other) {
+    limits copy_lresult;
+    copy_lresult.min = copy_other.min;
+    copy_lresult.max = copy_other.max;
+    return copy_lresult;
 }
 
-limits getLimits(v8type const& t) {
-    limits lresult;
-    lresult.min = t.min; // TODO: wrong!
-    lresult.max = t.max;
-    return lresult;
+limits getLimits(v8type const& getlimits_ty) {
+    limits getlimits_lresult;
+    getlimits_lresult.min = getlimits_ty.min; // TODO: wrong!
+    getlimits_lresult.max = getlimits_ty.max;
+    return getlimits_lresult;
 }
 
 // boundary helpers
 
-boundary getBoundary(uint32_t index) {
-    boundary bound;
-    bound.internal = kOtherNumber;
-    bound.external = kPlainNumber;
-    bound.min = 0.0;
+boundary getBoundary(uint32_t getboundary_index) {
+    boundary getboundary_bound;
+    getboundary_bound.internal = kOtherNumber;
+    getboundary_bound.external = kPlainNumber;
+    getboundary_bound.min = 0.0;
 
-    if (index == (uint32_t)0) {
-        bound.internal = kOtherNumber;
-        bound.external = kPlainNumber;
-        bound.min = (double)-V8_INFINITY;
+    if (getboundary_index == (uint32_t)0) {
+        getboundary_bound.internal = kOtherNumber;
+        getboundary_bound.external = kPlainNumber;
+        getboundary_bound.min = (double)-V8_INFINITY;
     }
-    if (index == (uint32_t)1) {
-        bound.internal = kOtherSigned32;
-        bound.external = kNegative32;
-        bound.min = (double)kMinInt;
+    if (getboundary_index == (uint32_t)1) {
+        getboundary_bound.internal = kOtherSigned32;
+        getboundary_bound.external = kNegative32;
+        getboundary_bound.min = (double)kMinInt;
     }
-    if (index == (uint32_t)2) {
-        bound.internal = kNegative31;
-        bound.external = kNegative31;
-        bound.min = (double)-1073741824;
+    if (getboundary_index == (uint32_t)2) {
+        getboundary_bound.internal = kNegative31;
+        getboundary_bound.external = kNegative31;
+        getboundary_bound.min = (double)-1073741824;
     }
-    if (index == (uint32_t)3) {
-        bound.internal = kUnsigned30;
-        bound.external = kUnsigned30;
-        bound.min = (double)0;
+    if (getboundary_index == (uint32_t)3) {
+        getboundary_bound.internal = kUnsigned30;
+        getboundary_bound.external = kUnsigned30;
+        getboundary_bound.min = (double)0;
     }
-    if (index == (uint32_t)4) {
-        bound.internal = kOtherUnsigned31;
-        bound.external = kUnsigned31;
-        bound.min = (double)1073741824;
+    if (getboundary_index == (uint32_t)4) {
+        getboundary_bound.internal = kOtherUnsigned31;
+        getboundary_bound.external = kUnsigned31;
+        getboundary_bound.min = (double)1073741824;
     }
-    if (index == (uint32_t)5) {
-        bound.internal = kOtherUnsigned32;
-        bound.external = kUnsigned32;
-        bound.min = (double)2147483648;
+    if (getboundary_index == (uint32_t)5) {
+        getboundary_bound.internal = kOtherUnsigned32;
+        getboundary_bound.external = kUnsigned32;
+        getboundary_bound.min = (double)2147483648;
     }
-    if (index == (uint32_t)6) {
-        bound.internal = kOtherNumber;
-        bound.external = kPlainNumber;
-        bound.min = (double)kMaxUInt32 + (double)1;
+    if (getboundary_index == (uint32_t)6) {
+        getboundary_bound.internal = kOtherNumber;
+        getboundary_bound.external = kPlainNumber;
+        getboundary_bound.min = (double)kMaxUInt32 + (double)1;
     }
 
-    return bound;
+    return getboundary_bound;
 }
 
 uint32_t BoundariesSize() {
@@ -388,9 +388,9 @@ uint32_t BoundariesSize() {
 }
 
 //bit helper functions
-bool SignedAddWouldOverflow32(int32_t ulhs, int32_t urhs){
-  uint32_t res = (uint32_t)ulhs + (uint32_t)urhs;
-  return ((res ^ ulhs) & (res ^ urhs) & ((uint32_t) 1 << (uint32_t)31)) != (uint32_t)0;
+bool SignedAddWouldOverflow32(int32_t signedaddaouldaverflow32_ulhs, int32_t signedaddaouldaverflow32_urhs){
+  uint32_t signedaddaouldaverflow32_res = (uint32_t)signedaddaouldaverflow32_ulhs + (uint32_t)signedaddaouldaverflow32_urhs;
+  return ((signedaddaouldaverflow32_res ^ signedaddaouldaverflow32_ulhs) & (signedaddaouldaverflow32_res ^ signedaddaouldaverflow32_urhs) & ((uint32_t) 1 << (uint32_t)31)) != (uint32_t)0;
 }
 
 // Range-related helper functions
@@ -398,51 +398,51 @@ bool SignedAddWouldOverflow32(int32_t ulhs, int32_t urhs){
 
 // must use lthis_ because this_ would interfere with v8type funcs, as param declarations are shared...
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=22
-bool IsEmpty(limits lthis_) { 
-    return lthis_.min > lthis_.max;
+bool IsEmpty(limits isempty_lthis_) { 
+    return isempty_lthis_.min > isempty_lthis_.max;
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=24
-limits LimitIntersect(limits const& llhs, limits const& lrhs) {
+limits LimitIntersect(limits const& limitintersect_llhs, limits const& limitintersect_lrhs) {
   //DisallowGarbageCollection no_gc;
-  limits lresult;
-  lresult = copy(llhs);
+  limits limitintersect_lresult;
+  limitintersect_lresult = copy(limitintersect_llhs);
 
-  if (llhs.min < lrhs.min) {
-      lresult.min = lrhs.min;
+  if (limitintersect_llhs.min < limitintersect_lrhs.min) {
+      limitintersect_lresult.min = limitintersect_lrhs.min;
   }
-  if (llhs.max > lrhs.max) { 
-      lresult.max = lrhs.max;
+  if (limitintersect_llhs.max > limitintersect_lrhs.max) { 
+      limitintersect_lresult.max = limitintersect_lrhs.max;
   }
-  return lresult;
+  return limitintersect_lresult;
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=32
-limits Union(limits const& llhs, limits const& lrhs) {
+limits Union(limits const& union_llhs, limits const& union_lrhs) {
   //DisallowGarbageCollection no_gc;
-  limits lresult;
-  if (IsEmpty(llhs)) {
-      return lrhs;
+  limits union_lresult;
+  if (IsEmpty(union_llhs)) {
+      return union_lrhs;
   }
-  if (IsEmpty(lrhs)) {
-      return llhs;
+  if (IsEmpty(union_lrhs)) {
+      return union_llhs;
   }
-  lresult = copy(llhs);
-  if (llhs.min > lrhs.min) {
-    lresult.min = lrhs.min;
+  union_lresult = copy(union_llhs);
+  if (union_llhs.min > union_lrhs.min) {
+    union_lresult.min = union_lrhs.min;
   }
-  if (llhs.max < lrhs.max) {
-      lresult.max = lrhs.max;
+  if (union_llhs.max < union_lrhs.max) {
+      union_lresult.max = union_lrhs.max;
   }
-  return lresult;
+  return union_lresult;
 }
 
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=42
-bool Overlap(v8type const& lhs, v8type const& rhs) {
+bool Overlap(v8type const& overlap_lhs, v8type const& overlap_rhs) {
   //DisallowGarbageCollection no_gc;
-  return !IsEmpty(LimitIntersect(getLimits(lhs),
-                    getLimits(rhs)));
+  return !IsEmpty(LimitIntersect(getLimits(overlap_lhs),
+                    getLimits(overlap_rhs)));
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=49
@@ -454,79 +454,79 @@ bool Overlap(v8type const& lhs, v8type const& rhs) {
 
 // Oversimplified IsBitset. Can't do original cause we don't have
 // type hierarchy
-bool IsBitset(v8type const& this_) {
+bool IsBitset(v8type const& isbitset_this_) {
     // TODO:
-    return !(this_.hasRange || this_.isUnion); 
+    return !(isbitset_this_.hasRange || isbitset_this_.isUnion); 
 }
 
-bool IsRange(v8type const& this_) {
-    return this_.hasRange && !this_.isUnion; 
+bool IsRange(v8type const& isrange_this_) {
+    return isrange_this_.hasRange && !isrange_this_.isUnion; 
 }
 
-bool IsUnion(v8type const& this_) {
-    return this_.isUnion;
+bool IsUnion(v8type const& isunion_this_) {
+    return isunion_this_.isUnion;
 }
 
-bool IsTuple(v8type const& this_) {
+bool IsTuple(v8type const& istuple_this_) {
     return FALSE;
 }
 
-bool TypeIsNone(v8type t){
-  return BitsetIsNone(t.bitset);
+bool TypeIsNone(v8type typeisnone_ty){
+  return BitsetIsNone(typeisnone_ty.bitset);
 }
 
-bool TypeIsAny(v8type t) {
-    return t.bitset == kAny;
+bool TypeIsAny(v8type typeisany_ty) {
+    return typeisany_ty.bitset == kAny;
 }
 
 // Bitset methods
 
-bool BitsetIsNone(bitset_t bits) {
-    return bits == kNone;
+bool BitsetIsNone(bitset_t bitsetisnone_bits) {
+    return bitsetisnone_bits == kNone;
 }
 
-bool BitsetIs(bitset_t bits1, bitset_t bits2) {
-    return (bits1 | bits2) == bits2;
+bool BitsetIs(bitset_t bitsetis_bits1, bitset_t bitsetis_bits2) {
+    return (bitsetis_bits1 | bitsetis_bits2) == bitsetis_bits2;
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=438
-double BitsetMin(bitset_t bits) {
+double BitsetMin(bitset_t bitsetmin_bits) {
   //DisallowGarbageCollection no_gc;
   //DCHECK(Is(bits, kNumber)); // precond
   //DCHECK(!Is(bits, kNaN)); // precond
   //const Boundary* mins = Boundaries();
   
-  bool mz = ((bits & kMinusZero) != (bitset_t)0);
+  bool bitsetmin_mz = ((bitsetmin_bits & kMinusZero) != (bitset_t)0);
 
   // DELEGATED TO minBoundary helper, cause we dont got loops...
   // unroll the loop
-  boundary minBound = getBoundary((uint32_t)0);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)0);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
-  boundary minBound = getBoundary((uint32_t)1);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)1);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
-  boundary minBound = getBoundary((uint32_t)2);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)2);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
-  boundary minBound = getBoundary((uint32_t)3);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)3);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
-  boundary minBound = getBoundary((uint32_t)4);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)4);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
-  boundary minBound = getBoundary((uint32_t)5);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)5);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
-  boundary minBound = getBoundary((uint32_t)6);
-  if (BitsetIs(minBound.internal, bits)) {
-    return mz ? math::min((double)0, minBound.min) : minBound.min;
+  boundary bitsetmin_minBound = getBoundary((uint32_t)6);
+  if (BitsetIs(bitsetmin_minBound.internal, bitsetmin_bits)) {
+    return bitsetmin_mz ? math::min((double)0, bitsetmin_minBound.min) : bitsetmin_minBound.min;
   }
 
   // TODO: this fails cause mz
@@ -535,13 +535,13 @@ double BitsetMin(bitset_t bits) {
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=453;bpv=0;bpt=1
-double BitsetMax(bitset_t bits) {
+double BitsetMax(bitset_t bitsetmax_bits) {
   //DisallowGarbageCollection no_gc;
   //DCHECK(Is(bits, kNumber));
   //DCHECK(!Is(bits, kNaN));
   
-  bool mz = bits & kMinusZero;
-  if (BitsetIs(getBoundary((uint32_t)BoundariesSize() - UINT32_ONE).internal, bits)) {
+  bool bitsetmax_mz = bitsetmax_bits & kMinusZero;
+  if (BitsetIs(getBoundary((uint32_t)BoundariesSize() - UINT32_ONE).internal, bitsetmax_bits)) {
     return V8_INFINITY;
   }
 
@@ -552,127 +552,126 @@ double BitsetMax(bitset_t bits) {
     }
   }*/
   uint32_t i = (uint32_t)BoundariesSize() - UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
   i -= UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
   i -= UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
   i -= UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
   i -= UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
   i -= UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
   i -= UINT32_ONE;
-  boundary min = getBoundary(i);
-  if (BitsetIs(min.internal, bits)) {
-    boundary min1 = getBoundary(i+UINT32_ONE);
-    return mz ? math::min((double)0, min1.min - UINT32_ONE) : min1.min - UINT32_ONE;
+  boundary bitsetmax_min = getBoundary(i);
+  if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
+    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
   }
 
-  DCHECK(mz);
   return DOUBLE_ZERO;
 }
 
-bitset_t NumberBits(bitset_t bits) {
-    return bits & kPlainNumber;
+bitset_t NumberBits(bitset_t numberbits_bits) {
+    return numberbits_bits & kPlainNumber;
 }
 
 // TODO: rename this...
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=418
-bitset_t BitsetTypeGlb(double min, double max) {
-  bitset_t glb = kNone; //NOTE: Type of glb changed from int(int is weird, why is it signed?)
+bitset_t BitsetTypeGlb(double bitsettypeglb_min, double bitsettypeglb_max) {
+  bitset_t bitsettypeglb_glb = kNone; //NOTE: Type of glb changed from int(int is weird, why is it signed?)
 
   // DELEGATED TO minBoundary helper, cause we dont got loops...
   // unroll the loop
-  bool continueLoop = TRUE;
-  if(max <  (double)-1 || min > DOUBLE_ZERO){
-    return glb;
+  bool bitsettypeglb_continueLoop = TRUE;
+  if(bitsettypeglb_max <  (double)-1 || bitsettypeglb_min > DOUBLE_ZERO){
+    return bitsettypeglb_glb;
   }
 
-  boundary mins_1 = getBoundary((uint32_t)1);
+  boundary bitsettypeglb_mins_1 = getBoundary((uint32_t)1);
   
-  boundary mins_2 = getBoundary((uint32_t)2);
-  if (min < mins_1.min && continueLoop) {
-    if(max + DOUBLE_ONE < mins_2.min){
-      continueLoop = FALSE;
+  boundary bitsettypeglb_mins_2 = getBoundary((uint32_t)2);
+  if (bitsettypeglb_min < bitsettypeglb_mins_1.min && bitsettypeglb_continueLoop) {
+    if(bitsettypeglb_max + DOUBLE_ONE < bitsettypeglb_mins_2.min){
+      bitsettypeglb_continueLoop = FALSE;
     }
-    glb = glb | mins_1.external;
+    bitsettypeglb_glb = bitsettypeglb_glb | bitsettypeglb_mins_1.external;
   }
 
 
-  boundary mins_3 = getBoundary((uint32_t)3);
-  if (min < mins_2.min && continueLoop) {
-    if(max + DOUBLE_ONE < mins_3.min){
-      continueLoop = FALSE;
+  boundary bitsettypeglb_mins_3 = getBoundary((uint32_t)3);
+  if (bitsettypeglb_min < bitsettypeglb_mins_2.min && bitsettypeglb_continueLoop) {
+    if(bitsettypeglb_max + DOUBLE_ONE < bitsettypeglb_mins_3.min){
+      bitsettypeglb_continueLoop = FALSE;
     }
-    glb = glb | mins_2.external;
+    bitsettypeglb_glb = bitsettypeglb_glb | bitsettypeglb_mins_2.external;
   }
 
-  boundary mins_4 = getBoundary((uint32_t)4);
-  if (min < mins_3.min && continueLoop) {
-    if(max + DOUBLE_ONE < mins_4.min){
-      continueLoop = FALSE;
+  boundary bitsettypeglb_mins_4 = getBoundary((uint32_t)4);
+  if (bitsettypeglb_min < bitsettypeglb_mins_3.min && bitsettypeglb_continueLoop) {
+    if(bitsettypeglb_max + DOUBLE_ONE < bitsettypeglb_mins_4.min){
+      bitsettypeglb_continueLoop = FALSE;
     }
-    glb = glb | mins_3.external;
+    bitsettypeglb_glb = bitsettypeglb_glb | bitsettypeglb_mins_3.external;
   }
 
-  boundary mins_5 = getBoundary((uint32_t)5);
-  if (min < mins_4.min && continueLoop) {
-    if(max + DOUBLE_ONE < mins_5.min){
-      continueLoop = FALSE;
+  boundary bitsettypeglb_mins_5 = getBoundary((uint32_t)5);
+  if (bitsettypeglb_min < bitsettypeglb_mins_4.min && bitsettypeglb_continueLoop) {
+    if(bitsettypeglb_max + DOUBLE_ONE < bitsettypeglb_mins_5.min){
+      bitsettypeglb_continueLoop = FALSE;
     }
-    glb = glb | mins_5.external;
+    bitsettypeglb_glb = bitsettypeglb_glb | bitsettypeglb_mins_5.external;
   }
 
-  boundary mins_6 = getBoundary((uint32_t)6);
-  if (min < mins_5.min && continueLoop) {
-    if(max + DOUBLE_ONE < mins_6.min){
-      continueLoop = FALSE;
+  boundary bitsettypeglb_mins_6 = getBoundary((uint32_t)6);
+  if (bitsettypeglb_min < bitsettypeglb_mins_5.min && bitsettypeglb_continueLoop) {
+    if(bitsettypeglb_max + DOUBLE_ONE < bitsettypeglb_mins_6.min){
+      bitsettypeglb_continueLoop = FALSE;
     }
-    glb = glb | mins_5.external;
+    bitsettypeglb_glb = bitsettypeglb_glb | bitsettypeglb_mins_5.external;
   }
-  return glb & ~(kOtherNumber);
+  return bitsettypeglb_glb & ~(kOtherNumber);
 }
 
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=114
-bitset_t BitsetLub(v8type this_) {
+bitset_t BitsetLub(v8type bitsetlub_this_) {
   // The smallest bitset subsuming this type, possibly not a proper one.
 
   // DisallowGarbageCollection no_gc;
-  bool unreachable_ = (bool) 0; //TODO: assert that this is false to enforce
+  bool bitsetlub_unreachable_ = (bool) 0; //TODO: assert that this is false to enforce
                                 //code is unreachable at bottom
 
-  if (IsBitset(this_)) {
-    return this_.bitset;
+  if (IsBitset(bitsetlub_this_)) {
+    return bitsetlub_this_.bitset;
   }
 
-  if (IsUnion(this_)) {
+  if (IsUnion(bitsetlub_this_)) {
     //   // Take the representation from the first element, which is always
     //   // a bitset.
     //   int bitset = AsUnion()->Get(0).BitsetLub();
@@ -681,7 +680,7 @@ bitset_t BitsetLub(v8type this_) {
     //     bitset |= AsUnion()->Get(i).BitsetLub();
     //   }
     //   return bitset;
-    return this_.bitset;
+    return bitsetlub_this_.bitset;
   }
 
   // if (IsHeapConstant()) return AsHeapConstant()->Lub();
@@ -689,30 +688,30 @@ bitset_t BitsetLub(v8type this_) {
   //   return AsOtherNumberConstant()->Lub();
   // }
 
-  if (IsRange(this_)) {
-    return this_.bitset;
+  if (IsRange(bitsetlub_this_)) {
+    return bitsetlub_this_.bitset;
     // return AsRange()->Lub();
   }
 
-  if (IsTuple(this_)) {
+  if (IsTuple(bitsetlub_this_)) {
     return kOtherInternal;
   }
 
-  unreachable_ = (bool) 1; //TODO: assert that this is false to enforce 
+  bitsetlub_unreachable_ = (bool) 1; //TODO: assert that this is false to enforce 
                            //that this line is never reached
   
   // UNREACHABLE();
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=96
-bitset_t BitsetGlb(v8type this_) {
-  if(IsBitset(this_)){
-    return AsBitset(this_);
-  } else if (IsUnion(this_)){
+bitset_t BitsetGlb(v8type bitsetglb_this_) {
+  if(IsBitset(bitsetglb_this_)){
+    return AsBitset(bitsetglb_this_);
+  } else if (IsUnion(bitsetglb_this_)){
     //TODO don't handle unions yet
-    return AsBitset(this_);
-  } else if(IsRange(this_)){
-    return BitsetTypeGlb(this_.min, this_.max);
+    return AsBitset(bitsetglb_this_);
+  } else if(IsRange(bitsetglb_this_)){
+    return BitsetTypeGlb(bitsetglb_this_.min, bitsetglb_this_.max);
   } else {
     return kNone;
   }
@@ -723,23 +722,23 @@ bitset_t BitsetGlb(v8type this_) {
 
 // ---
 // Ctors
-v8type NewBitset(bitset_t bitset) {
-    v8type type;
-    type.bitset = bitset;
-    type.hasRange = FALSE;
-    type.max = DOUBLE_ZERO;
-    type.min = DOUBLE_ZERO;
-    type.maybeNaN = FALSE;
-    type.maybeMinusZero = FALSE;
-    type.isUnion = FALSE;
-    return type;
+v8type NewBitset(bitset_t newbitset_bitset) {
+    v8type newbitset_type;
+    newbitset_type.bitset = newbitset_bitset;
+    newbitset_type.hasRange = FALSE;
+    newbitset_type.max = DOUBLE_ZERO;
+    newbitset_type.min = DOUBLE_ZERO;
+    newbitset_type.maybeNaN = FALSE;
+    newbitset_type.maybeMinusZero = FALSE;
+    newbitset_type.isUnion = FALSE;
+    return newbitset_type;
 }
 
 // ----
 // Casts
 
-bitset_t AsBitset(v8type this_) {
-    return this_.bitset;
+bitset_t AsBitset(v8type asbitset_this_) {
+    return asbitset_this_.bitset;
 }
 
 // Minimum and maximum of a numeric type.
@@ -771,7 +770,7 @@ ion()) {
 // Predicates.
 
 // TODO:
-bool SimplyEquals(v8type this_, v8type that) {
+bool SimplyEquals(v8type simplyequals_this_, v8type simplyequals_that) {
   /*DisallowGarbageCollection no_gc;
   if (this->IsHeapConstant()) {
     return that.IsHeapConstant() &&
@@ -803,10 +802,10 @@ bool SimplyEquals(v8type this_, v8type that) {
   //UNREACHABLE();
 }
 
-bool Maybe(v8Type this_, v8Type that) {
+bool Maybe(v8Type maybe_this_, v8Type maybe_that) {
   //DisallowGarbageCollection no_gc;
 
-  if (BitsetIsNone(BitsetLub(this_) & BitsetLub(that))) return false;
+  if (BitsetIsNone(BitsetLub(maybe_this_) & BitsetLub(maybe_that))) return false;
 
   // TODO: no unions what do?
   // (T1 \/ ... \/ Tn) overlaps T  if  (T1 overlaps T) \/ ... \/ (Tn overlaps T)
@@ -826,70 +825,70 @@ bool Maybe(v8Type this_, v8Type that) {
   }*/
 
   // for now, just treat unions as "unbounded union of all types"
-  if (IsUnion(this_)) {
+  if (IsUnion(maybe_this_)) {
       return true;
   }
 
-  if (IsUnion(that_)) {
+  if (IsUnion(maybe_that_)) {
     return true;
   }
 
-  if (IsBitset(this_) && IsBitset(that)) return true;
+  if (IsBitset(maybe_this_) && IsBitset(maybe_that)) return true;
 
-  if (IsRange(this_)) {
-    if (IsRange(that)) {
-      return Overlap(this_, that);
+  if (IsRange(maybe_this_)) {
+    if (IsRange(maybe_that)) {
+      return Overlap(maybe_this_, maybe_that);
     }
-    if (IsBitset(that)) {
-      bitset_t number_bits = NumberBits(that.bitset);
-      if (number_bits == kNone) {
+    if (IsBitset(maybe_that)) {
+      bitset_t maybe_number_bits = NumberBits(maybe_that.bitset);
+      if (maybe_number_bits == kNone) {
         return false;
       }
-      double min = math::max(BitsetMin(number_bits), Min(this_));
-      double max = math::min(BitsetMax(number_bits), Max(this_));
-      return min <= max;
+      double maybe_min = math::max(BitsetMin(maybe_number_bits), Min(maybe_this_));
+      double maybe_max = math::min(BitsetMax(maybe_number_bits), Max(maybe_this_));
+      return maybe_min <= maybe_max;
     }
   }
-  if (IsRange(that)) {
-    return Maybe(that, this_);  // This case is handled above.
+  if (IsRange(maybe_that)) {
+    return Maybe(maybe_that, maybe_this_);  // This case is handled above.
   }
 
-  if (IsBitset(this_) || IsBitset(that)) return true;
+  if (IsBitset(maybe_this_) || IsBitset(maybe_that)) return true;
 
-  return SimplyEquals(this_, that);
+  return SimplyEquals(maybe_this_, maybe_that);
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=520
-bool SlowIs(v8type this_, v8type that_){
-  if(IsBitset(that_)){
-    return BitsetIs(BitsetLub(this_), AsBitset(that_));
+bool SlowIs(v8type slowis_this_, v8type slowis_that_){
+  if(IsBitset(slowis_that_)){
+    return BitsetIs(BitsetLub(slowis_this_), AsBitset(slowis_that_));
   }
 
-  if(IsBitset(this_)){
-    return BitsetIs(AsBitset(this_), BitsetGlb(that_));
+  if(IsBitset(slowis_this_)){
+    return BitsetIs(AsBitset(slowis_this_), BitsetGlb(slowis_that_));
   }
 
-  if(IsUnion(this_)){
+  if(IsUnion(slowis_this_)){
     //TODO, for now return true if that_ is a union
-    return IsUnion(that_);
+    return IsUnion(slowis_that_);
   } 
-  if(IsUnion(that_)){
+  if(IsUnion(slowis_that_)){
     //TODO, for now return true if this_ is union
     //this looks redundant but once we handle unions this will actually do something different
-    return IsUnion(this_);
+    return IsUnion(slowis_this_);
   }
-  if(IsRange(that_)){
-    return IsRange(this_) && RangeContains(this_, that_);
+  if(IsRange(slowis_that_)){
+    return IsRange(slowis_this_) && RangeContains(slowis_this_, slowis_that_);
   }
-  if(IsRange(this_)){
+  if(IsRange(slowis_this_)){
     return FALSE;
   }
-  return SimplyEquals(this_, that_);
+  return SimplyEquals(slowis_this_, slowis_that_);
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=48
-bool RangeContains(v8type lhs, v8type rhs){
-  return lhs.min <= rhs.min && rhs.max <= lhs.max;
+bool RangeContains(v8type rangecontains_lhs, v8type rangecontains_rhs){
+  return rangecontains_lhs.min <= rangecontains_rhs.min && rangecontains_rhs.max <= rangecontains_lhs.max;
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.h;l=394
