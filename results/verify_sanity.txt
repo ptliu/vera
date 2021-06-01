@@ -1,12 +1,16 @@
-lejit-0.1.0.0: unregistering (local file changes: test/V8Sanity.hs)
+lejit-0.1.0.0: unregistering (local file changes: src/V8Generated/code.cpp)
 lejit> configure (lib + exe + test)
 Configuring lejit-0.1.0.0...
 lejit> build (lib + exe + test)
 Preprocessing library for lejit-0.1.0.0..
 Building library for lejit-0.1.0.0..
+[19 of 22] Compiling V8Generated.Helpers [src/V8Generated/code.cpp changed]
+[21 of 22] Compiling V8Generated.Operations [V8Generated.Helpers changed]
+[22 of 22] Compiling V8Generated.Verify [V8Generated.Helpers changed]
 Preprocessing test suite 'lejit-test' for lejit-0.1.0.0..
 Building test suite 'lejit-test' for lejit-0.1.0.0..
-[12 of 13] Compiling V8Sanity
+[ 7 of 13] Compiling GenV8 [V8Generated.Helpers changed]
+[12 of 13] Compiling V8Sanity [V8Generated.Helpers changed]
 [13 of 13] Compiling Main [V8Sanity changed]
 Linking .stack-work/dist/x86_64-linux-tinfo6/Cabal-2.4.0.1/build/lejit-test/lejit-test ...
 Preprocessing executable 'lejit-exe' for lejit-0.1.0.0..
@@ -19,32 +23,15 @@ lejit> test (suite: lejit-test, args: -p V8Sanity)
 
 All tests
   V8Sanity
-    LimitsUnion:     OK (12.20s)
-    LimitsIntersect: OK (0.94s)
-    BitsetMin:       FAIL
-      Exception: Failed to verify bitset min
-      MinusZeroCheck_1 : 0.0
-      NaNCheck_1 : 1.0
-      bitset_0 : 40b4000000000000
-      bitset_1 : 40b4000000000000
-      fbitset_1 : 40b4000000000000
-      fval_1 : -0.0
-      kNegative31Bounds_1 : 1.0
-      kOtherNumberBounds_1 : 1.0
-      kOtherSigned32Bounds_1 : 1.0
-      kOtherUnsigned31Bounds_1 : 1.0
-      kOtherUnsigned32Bounds_1 : 1.0
-      kUnsigned30Bounds_1 : 1.0
-      result_min_1 : -0.0
-      result_min_2 : -0.0
+    DumbTestTest: FAIL
+      Exception: Failed to verify limits Intersect
+      test_result_1 : 1.0
+      test_result_2 : 1.0
       
       CallStack (from HasCallStack):
-        error, called at src/V8Generated/Verify.hs:736:10 in lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp:V8Generated.Verify
-    AddRanger:       OK (0.86s)
-    SubtractRanger:  OK (0.81s)
-    MultiplyRanger:  OK (0.27s)
+        error, called at src/V8Generated/Verify.hs:844:10 in lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp:V8Generated.Verify
 
-1 out of 6 tests failed (21.09s)
+1 out of 1 tests failed (0.15s)
 
 lejit> Test suite lejit-test failed
 Completed 2 action(s).

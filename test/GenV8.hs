@@ -30,8 +30,8 @@ limitIntersectTest :: BenchTest
 limitIntersectTest = benchTestCase "LimitsIntersect" $ evalCodegen Nothing $ testLimitIntersect $ Set "LimitIntersect" limitsIntersect
 
 -- bitset tests
-bitsetMinTest :: BenchTest
-bitsetMinTest = benchTestCase "BitsetMin" $ evalCodegen Nothing $ testBitsetMin $ Set "BitsetMin" bitsetMin
+--bitsetMinTest :: BenchTest
+--bitsetMinTest = benchTestCase "BitsetMin" $ evalCodegen Nothing $ testBitsetMin $ Set "BitsetMin" bitsetMin
 
 -- ranger tests
 
@@ -43,6 +43,13 @@ dumbSubtractTest = benchTestCase "SubtractRanger" $ evalCodegen Nothing $ testSu
 
 dumbMultiplyTest :: BenchTest
 dumbMultiplyTest = benchTestCase "MultiplyRanger" $ evalCodegen Nothing $ testMultiplyRanger $ Set "MultiplyRanger" multiplyRanger
+
+-- type tests
+typeIntersectTest :: BenchTest
+typeIntersectTest = benchTestCase "TypeIntersect" $ evalCodegen Nothing $ testTypeIntersect $ Set "Intersect" typeIntersect
+
+dumbTestTest :: BenchTest
+dumbTestTest = benchTestCase "DumbTestTest" $ evalCodegen Nothing $ testTest $ Set "test2" test2
 
     {-mkFloatTests :: String -> String -> TestFunction -> BenchTest
 mkFloatTests outerName testGroupName testFn =

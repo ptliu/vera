@@ -16,6 +16,13 @@ in code.cpp
 
 -}
 
+test :: FunctionDef
+test = fn "test"
+
+test2 :: FunctionDef
+test2 = fn "test2"
+
+
 -- TODO -- | https://searchfox.org/mozilla-central/source/js/src/jit/RangeAnalysis.cpp#744
 addRanger :: FunctionDef
 addRanger = fn "AddRanger"
@@ -47,3 +54,68 @@ bitsetMin = fn "BitsetMin"
 
 bitsetIs :: FunctionDef
 bitsetIs = fn "BitsetIs"
+
+bitsetIsNone :: FunctionDef
+bitsetIsNone = fn "BitsetIsNone"
+
+bitsetLub :: FunctionDef
+bitsetLub = fn "BitsetLub"
+
+bitsetGlb :: FunctionDef
+bitsetGlb = fn "BitsetGlb"
+
+    {-bitsetTypeLub :: FunctionDef
+bitsetTypeLub = fn "BitsetTypeLub"-}
+
+bitsetTypeGlb :: FunctionDef
+bitsetTypeGlb = fn "BitsetTypeGlb"
+
+numberBits :: FunctionDef
+numberBits = fn "NumberBits"
+
+-- Type Functions
+
+typeIntersect :: FunctionDef
+typeIntersect = fn "Intersect"
+
+typeIntersectAux :: FunctionDef
+typeIntersectAux = fn "IntersectAux"
+
+isBitset :: FunctionDef
+isBitset = fn "IsBitset"
+
+asBitset :: FunctionDef
+asBitset = fn "AsBitset"
+
+newBitset :: FunctionDef
+newBitset = fn "NewBitset"
+
+typeIs :: FunctionDef
+typeIs = fn "Is"
+
+typeSlowIs :: FunctionDef
+typeSlowIs = fn "SlowIs"
+
+typeIsNone :: FunctionDef
+typeIsNone = fn "TypeIsNone"
+
+typeIsAny :: FunctionDef
+typeIsAny = fn "TypeIsAny"
+
+typeIsUnion :: FunctionDef
+typeIsUnion = fn "IsUnion"
+
+typeIsRange :: FunctionDef
+typeIsRange = fn "IsRange"
+
+typeIsTuple :: FunctionDef
+typeIsTuple = fn "IsTuple"
+
+rangeContains :: FunctionDef
+rangeContains = fn "RangeContains"
+
+simplyEquals :: FunctionDef
+simplyEquals = fn "SimplyEquals"
+
+getLimits :: FunctionDef
+getLimits = fn "getLimits"
