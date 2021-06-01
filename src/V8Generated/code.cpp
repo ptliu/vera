@@ -115,7 +115,7 @@
 #define DOUBLE_ZERO (double)0
 #define DOUBLE_ONE (double)1
 
-#define kSingletonZero newRange((double)0,(double)0)
+#define kSingletonZero newRange(DOUBLE_ZERO, DOUBLE_ZERO)
 #define kInteger newRange(minusInfinityType(), infinityType())
 
 struct limits {
@@ -1226,7 +1226,6 @@ v8type NumberAdd(v8type lhs, v8type rhs) {
     return noneType();
   }
 
-
   // Addition can return NaN if either input can be NaN or we try to compute
   // the sum of two infinities of opposite sign.
   bool maybe_nan = Maybe(lhs, nanType()) || Maybe(rhs, nanType());
@@ -1268,5 +1267,5 @@ v8type NumberAdd(v8type lhs, v8type rhs) {
     type = TypeUnion(type,nanType());
   }
   return type;
-
 }
+
