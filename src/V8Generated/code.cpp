@@ -893,166 +893,166 @@ bool RangeContains(v8type lhs, v8type rhs){
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.h;l=394
-bool Is(v8type this_, v8type that_){
+bool Is(v8type is_this_, v8type is_that_){
   //NOTE this is simplified, the first condition here can actually be pointers to complicated
   //types but we don't have that yet
   //TODO: determine whether this matters
-  return this_.bitset == that_.bitset || SlowIs(this_, that_);
+  return is_this_.bitset == is_that_.bitset || SlowIs(is_this_, is_that_);
 }
 
 // DONT EXPRESS NAN PRECONDITION YEET
 // Rangers
-v8type AddRanger(double lhs_min, double lhs_max, double rhs_min, double rhs_max) {
-  double results_0 = lhs_min + rhs_min;
-  double results_1 = lhs_min + rhs_max;
-  double results_2 = lhs_max + rhs_min;
-  double results_3 = lhs_max + rhs_max;
+v8type AddRanger(double addranger_lhs_min, double addranger_lhs_max, double addranger_rhs_min, double addranger_rhs_max) {
+  double addranger_results_0 = addranger_lhs_min + addranger_rhs_min;
+  double addranger_results_1 = addranger_lhs_min + addranger_rhs_max;
+  double addranger_results_2 = addranger_lhs_max + addranger_rhs_min;
+  double addranger_results_3 = addranger_lhs_max + addranger_rhs_max;
   // Since none of the inputs can be -0, the result cannot be -0 either.
   // However, it can be nan (the sum of two infinities of opposite sign).
   // On the other hand, if none of the "results" above is nan, then the
   // actual result cannot be nan either.
-  uint32_t nans = (uint32_t)0;
-  if (std::isnan(results_0)) {
-      nans += (uint32_t)1;
+  uint32_t addranger_nans = (uint32_t)0;
+  if (std::isnan(addranger_results_0)) {
+      addranger_nans += (uint32_t)1;
   }
-  if (std::isnan(results_1)) {
-      nans += (uint32_t)1;
+  if (std::isnan(addranger_results_1)) {
+      addranger_nans += (uint32_t)1;
   }
-  if (std::isnan(results_2)) {
-      nans += (uint32_t)1;
+  if (std::isnan(addranger_results_2)) {
+      addranger_nans += (uint32_t)1;
   }
-  if (std::isnan(results_3)) {
-      nans += (uint32_t)1;
+  if (std::isnan(addranger_results_3)) {
+      addranger_nans += (uint32_t)1;
   }
-  if (nans == (uint32_t)4) {
+  if (addranger_nans == (uint32_t)4) {
       return nanType();
   }
   //Type type = Type::Range(array_min(results, 4), array_max(results, 4), zone());
-  v8type type = newRange(min4(results_0, results_1, results_2, results_3), max4(results_0, results_1, results_2, results_3));
-  if (nans > (uint32_t)0) {
-      type.maybeNaN = (bool)1;
+  v8type addranger_type = newRange(min4(addranger_results_0, addranger_results_1, addranger_results_2, addranger_results_3), max4(addranger_results_0, addranger_results_1, addranger_results_2, addranger_results_3));
+  if (addranger_nans > (uint32_t)0) {
+      addranger_type.maybeNaN = (bool)1;
   }
   //// Examples:
   ////   [-inf, -inf] + [+inf, +inf] = NaN
   ////   [-inf, -inf] + [n, +inf] = [-inf, -inf] \/ NaN
   ////   [-inf, +inf] + [n, +inf] = [-inf, +inf] \/ NaN
   ////   [-inf, m] + [n, +inf] = [-inf, +inf] \/ NaN
-  return type;
+  return addranger_type;
 }
 
-v8type SubtractRanger(double lhs_min, double lhs_max, double rhs_min, double rhs_max) {
-  double results_0 = lhs_min - rhs_min;
-  double results_1 = lhs_min - rhs_max;
-  double results_2 = lhs_max - rhs_min;
-  double results_3 = lhs_max - rhs_max;
+v8type SubtractRanger(double subtractranger_lhs_min, double subtractranger_lhs_max, double subtractranger_rhs_min, double subtractranger_rhs_max) {
+  double subtractranger_results_0 = subtractranger_lhs_min - subtractranger_rhs_min;
+  double subtractranger_results_1 = subtractranger_lhs_min - subtractranger_rhs_max;
+  double subtractranger_results_2 = subtractranger_lhs_max - subtractranger_rhs_min;
+  double subtractranger_results_3 = subtractranger_lhs_max - subtractranger_rhs_max;
   // Since none of the inputs can be -0, the result cannot be -0 either.
   // However, it can be nan (the sum of two infinities of opposite sign).
   // On the other hand, if none of the "results" above is nan, then the
   // actual result cannot be nan either.
-  uint32_t nans = (uint32_t)0;
-  if (std::isnan(results_0)) {
-      nans += (uint32_t)1;
+  uint32_t subtractranger_nans = (uint32_t)0;
+  if (std::isnan(subtractranger_results_0)) {
+      subtractranger_nans += (uint32_t)1;
   }
-  if (std::isnan(results_1)) {
-      nans += (uint32_t)1;
+  if (std::isnan(subtractranger_results_1)) {
+      subtractranger_nans += (uint32_t)1;
   }
-  if (std::isnan(results_2)) {
-      nans += (uint32_t)1;
+  if (std::isnan(subtractranger_results_2)) {
+      subtractranger_nans += (uint32_t)1;
   }
-  if (std::isnan(results_3)) {
-      nans += (uint32_t)1;
+  if (std::isnan(subtractranger_results_3)) {
+      subtractranger_nans += (uint32_t)1;
   }
-  if (nans == (uint32_t)4) {
+  if (subtractranger_nans == (uint32_t)4) {
       return nanType();
   }
   //Type type = Type::Range(array_min(results, 4), array_max(results, 4), zone());
-  v8type type = newRange(min4(results_0, results_1, results_2, results_3), max4(results_0, results_1, results_2, results_3));
-  if (nans > (uint32_t)0) {
-      type.maybeNaN = (bool)1;
+  v8type subtractranger_type = newRange(min4(subtractranger_results_0, subtractranger_results_1, subtractranger_results_2, subtractranger_results_3), max4(subtractranger_results_0, subtractranger_results_1, subtractranger_results_2, subtractranger_results_3));
+  if (subtractranger_nans > (uint32_t)0) {
+      subtractranger_type.maybeNaN = (bool)1;
   }
   // Examples:
   //   [-inf, +inf] - [-inf, +inf] = [-inf, +inf] \/ NaN
   //   [-inf, -inf] - [-inf, -inf] = NaN
   //   [-inf, -inf] - [n, +inf] = [-inf, -inf] \/ NaN
   //   [m, +inf] - [-inf, n] = [-inf, +inf] \/ NaN
-  return type;
+  return subtractranger_type;
 }
 
-v8type MultiplyRanger(double lhs_min, double lhs_max, double rhs_min, double rhs_max) {
-  double results_0 = lhs_min * rhs_min;
-  double results_1 = lhs_min * rhs_max;
-  double results_2 = lhs_max * rhs_min;
-  double results_3 = lhs_max * rhs_max;
+v8type MultiplyRanger(double multiplyranger_lhs_min, double multiplyranger_lhs_max, double multiplyranger_rhs_min, double multiplyranger_rhs_max) {
+  double multiplyranger_results_0 = multiplyranger_lhs_min * multiplyranger_rhs_min;
+  double multiplyranger_results_1 = multiplyranger_lhs_min * multiplyranger_rhs_max;
+  double multiplyranger_results_2 = multiplyranger_lhs_max * multiplyranger_rhs_min;
+  double multiplyranger_results_3 = multiplyranger_lhs_max * multiplyranger_rhs_max;
   // If the result may be nan, we give up on calculating a precise type,
   // because the discontinuity makes it too complicated.  Note that even if
   // none of the "results" above is nan, the actual result may still be, so we
   // have to do a different check:
   // TODO: change this probably
-  if (std::isnan(results_0)) {
+  if (std::isnan(multiplyranger_results_0)) {
       return nanType();
   }
-  if (std::isnan(results_1)) {
+  if (std::isnan(multiplyranger_results_1)) {
       return nanType();
   }
-  if (std::isnan(results_2)) {
+  if (std::isnan(multiplyranger_results_2)) {
       return nanType();
   }
-  if (std::isnan(results_3)) {
+  if (std::isnan(multiplyranger_results_3)) {
       return nanType();
   }
 
-  double min = min4(results_0, results_1, results_2, results_3);
-  double max = max4(results_0, results_1, results_2, results_3);
-  v8type type = newRange(min, max);
+  double multiplyranger_min = min4(multiplyranger_results_0, multiplyranger_results_1, multiplyranger_results_2, multiplyranger_results_3);
+  double multiplyranger_max = max4(multiplyranger_results_0, multiplyranger_results_1, multiplyranger_results_2, multiplyranger_results_3);
+  v8type multiplyranger_type = newRange(multiplyranger_min, multiplyranger_max);
   // HACK: no && allowed .... :(
-  if (min <= (double)0.0) {
-      if ((double)0.0 <= max) {
-          if (lhs_min < (double)0.0) {
-            type.maybeMinusZero = (bool)1;
+  if (multiplyranger_min <= (double)0.0) {
+      if ((double)0.0 <=multiplyranger_ max) {
+          if (multiplyranger_lhs_min < (double)0.0) {
+            multiplyranger_type.maybeMinusZero = (bool)1;
           } 
-          if (rhs_min < (double)0.0) {
-            type.maybeMinusZero = (bool)1;
+          if (multiplyranger_rhs_min < (double)0.0) {
+            multiplyranger_type.maybeMinusZero = (bool)1;
           }
       }
   }
   // 0 * V8_INFINITY is NaN, regardless of sign
-  if (((lhs_min == -V8_INFINITY || lhs_max == V8_INFINITY) &&
-       (rhs_min <= 0.0 && 0.0 <= rhs_max)) ||
-      ((rhs_min == -V8_INFINITY || rhs_max == V8_INFINITY) &&
-       (lhs_min <= 0.0 && 0.0 <= lhs_max))) {
-    type.maybeNaN = TRUE;
+  if (((multiplyranger_lhs_min == -V8_INFINITY || multiplyranger_lhs_max == V8_INFINITY) &&
+       (multiplyranger_rhs_min <= 0.0 && 0.0 <= multiplyranger_rhs_max)) ||
+      ((multiplyranger_rhs_min == -V8_INFINITY || multiplyranger_rhs_max == V8_INFINITY) &&
+       (multiplyranger_lhs_min <= 0.0 && 0.0 <= multiplyranger_lhs_max))) {
+    multiplyranger_type.maybeNaN = TRUE;
   }
-  return type;
+  return multiplyranger_type;
 }
 
-limits IntersectAux(v8type tlhs, v8type trhs, limits incomingLimit){
+limits IntersectAux(v8type intersectaux_lhs, v8type intersectaux_rhs, limits intersectaux_incomingLimit){
   //first two if statements can be ignored since we don't support unions
-  if(BitsetIsNone(BitsetLub(lhs) & BitsetLub(rhs))){
-    return incomingLimit; 
+  if(BitsetIsNone(BitsetLub(intersectaux_lhs) & BitsetLub(intersectaux_rhs))){
+    return intersectaux_incomingLimit; 
   }
 
   // delcare vars in if statement...
-  limits lhs_lim;
-  limits rhs_lim;
-  limits newLimit;
-  lhs_lim.min = 0.0;
-  lhs_lim.max = 0.0;
-  rhs_lim.min = 0.0;
-  rhs_lim.max = 0.0;
-  newLimit.min = 0.0;
-  newLimit.max = 0.0;
-  if(IsRange(lhs)){
-    if(IsBitset(rhs)){
+  limits intersectaux_lhs_lim;
+  limits intersectaux_rhs_lim;
+  limits intersectaux_newLimit;
+  intersectaux_lhs_lim.min = 0.0;
+  intersectaux_lhs_lim.max = 0.0;
+  intersectaux_rhs_lim.min = 0.0;
+  intersectaux_rhs_lim.max = 0.0;
+  intersectaux_newLimit.min = 0.0;
+  intersectaux_newLimit.max = 0.0;
+  if(IsRange(intersectaux_lhs)){
+    if(IsBitset(intersectaux_rhs)){
 
     } 
-    if(IsRange(rhs)){
-      lhs_lim = getLimits(lhs);
-      rhs_lim = getLimits(rhs);
-      newLimit = LimitIntersect(lhs_lim, rhs_lim);
-      if(!IsEmpty(newLimit)){
-        return Union(newLimit, incomingLimit); 
+    if(IsRange(intersectaux_rhs)){
+      intersectaux_lhs_lim = getLimits(intersectaux_lhs);
+      intersectaux_rhs_lim = getLimits(intersectaux_rhs);
+      intersectaux_newLimit = LimitIntersect(intersectaux_lhs_lim, intersectaux_rhs_lim);
+      if(!IsEmpty(intersectaux_newLimit)){
+        return Union(intersectaux_newLimit, intersectaux_incomingLimit); 
       } else {
-        return incomingLimit;
+        return intersectaux_incomingLimit;
       }
     }
   }
@@ -1063,7 +1063,7 @@ limits IntersectAux(v8type tlhs, v8type trhs, limits incomingLimit){
 
   //last two cases we don't handle because they involve unions again
   //TODO is this correct?
-  return incomingLimit;
+  return intersectaux_incomingLimit;
 }
 
 v8type UpdateRange(v8type range, int32_t size){
