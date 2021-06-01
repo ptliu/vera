@@ -868,6 +868,12 @@ instance CppOr VNode VNode where
     | (isDouble $ vtype left) || (isDouble $ vtype right) = error "No bitwise or for doubles"
     | otherwise = noopWrapper left right D.or Nothing "or"
 
+DEFINEBINOPCLASS(CppXor, cppXor)
+instance CppXor VNode VNode where
+  cppXor left right
+    | (isDouble $ vtype left) || (isDouble $ vtype right) = error "No bitwise xor for doubles"
+    | otherwise = noopWrapper left right D.xor Nothing "or"
+
 DEFINEBINOPCLASS(CppAnd, cppAnd)
 instance CppAnd VNode VNode where
   cppAnd left right
@@ -1216,12 +1222,14 @@ cppAbs node = if isUnsigned $ vtype node
                      result <- D.cond cond negated $ vnode node
                      return $ VNode (vundef node) result $ vtype node
 
-cppXor :: VNode -> VNode -> D.Verif VNode
+-- TODO(evan): Why only support xor bools??
+    {-cppXor :: VNode -> VNode -> D.Verif VNode
 cppXor n1 n2 = do
   unless (isBool (vtype n1) && isBool (vtype n2)) $ error "Only support xor bools"
+  if (isDouble (vtype n1) || isDouble (vtype n2)) 
   result <- D.xor (vnode n1) (vnode n2)
   undef <- D.or (vundef n1) (vundef n2)
-  return $ VNode undef result Bool
+  return $ VNode undef result Bool-}
 
 getFpExponent :: VNode -> D.Verif VNode
 getFpExponent node = do

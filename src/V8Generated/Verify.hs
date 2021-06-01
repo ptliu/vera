@@ -37,7 +37,7 @@ fInType =
       body = [ 
              -- if has range, value must be in range
              -- otherwise, must be in bitset range
-               declare (t Bool) "InRangeChecK"
+               declare (t Bool) "InRangeCheck"
              , v "InRangeCheck" `assign` (testImplies (v "ftype" .->. "hasRange") ((v "fval" .=>. (v "ftype" .->. "min")) .&&. (v "fval" .<=. (v "ftype" .->. "max"))))
              -- must also be in the bitset always
              , declare (t Bool) "InBitsetCheck"
@@ -122,6 +122,25 @@ isSet Set{} = True
 isSet _     = False
 
 -- simple limits sanity tests
+testTest :: TestFunction -> Codegen ()
+testTest fn = do
+  setupTestTest (setOp fn) (testName fn)
+  genBodySMT [vcall "verifyTest" [v "test2_input_test", v "test_result"]]
+
+verifyTest :: FunctionDef
+verifyTest =
+  let args = [ ("test2_input_test", t Double)
+             , ("test_result", t Double)
+             ]
+      body = [ push_
+             -- assert precond
+             -- assert not postcond
+             -- yay :D
+             , assert_ $ (v "test_result" .!=. (d Double 0))
+             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify limits Intersect" r
+             , pop_
+             ]
+  in Function "verifyTest" Void args body
 
 testLimitUnion :: TestFunction -> Codegen ()
 testLimitUnion fn = do
@@ -166,6 +185,28 @@ verifyLimitIntersect =
              , pop_
              ]
   in Function "verifyLimitIntersect" Void args body
+
+testTypeIntersect :: TestFunction -> Codegen ()
+testTypeIntersect fn = do
+  setupTypesSet (setOp fn) (testName fn)
+  genBodySMT [vcall "verifyTypeIntersect" [v "isInLeftType", v "isInRightType", v "isInResultType"]]
+
+verifyTypeIntersect :: FunctionDef
+verifyTypeIntersect =
+  let args = [ ("isInLeftType", t Bool)
+             , ("isInRightType", t Bool)
+             , ("isInResultType", t Bool)
+             ]
+      body = [ push_
+             -- assert precond
+             -- assert not postcond
+             -- yay :D
+             , assert_ $ (v "isInLeftType") .&&. (v "isInRightType")
+             , assert_ $ not_ $ v "isInResultType"
+             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify type Intersect" r
+             , pop_
+             ]
+  in Function "verifyTypeIntersect" Void args body
 
 -- dumb tests for dumb things... mainly to test verification funcs
 
@@ -451,20 +492,59 @@ setupLimitsSet :: FunctionDef
           -> Codegen ()
 setupLimitsSet op fnName = do
   defineAll op
-  let verif = [ declare (c "limits") "lhs"
-              , declare (c "limits") "rhs"
+  let verif = [ declare (c "limits") "left_limit"
+              , declare (c "limits") "right_limit"
               , declare (c "limits") "result_limit"
 
-              , (v "result_limit") `assign` call fnName [v "lhs", v "rhs"]
+              , (v "result_limit") `assign` call fnName [v "left_limit", v "right_limit"]
 
               , declare (t Double) "elem"
               , declare (t Bool) "isInRight"
               , declare (t Bool) "isInLeft"
               , declare (t Bool) "isInResult"
 
-              , v "isInRight" `assign` (call "fInLimits" [v "elem", v "rhs"])
-              , v "isInLeft" `assign` (call "fInLimits" [v "elem", v "lhs"])
+              , v "isInRight" `assign` (call "fInLimits" [v "elem", v "right_limit"])
+              , v "isInLeft" `assign` (call "fInLimits" [v "elem", v "left_limit"])
               , v "isInResult" `assign` (call "fInLimits" [v "elem", v "result_limit"])
+              , expect_ isSat (error "Should be sat")
+              ]
+  genBodySMT verif
+
+setupTypesSet :: FunctionDef
+          -> String
+          -> Codegen ()
+setupTypesSet op fnName = do
+  defineAll op
+  define limitsIntersect -- HACK: vera doesn't expect to call functions we are verifying. so we need to define here instead of below or we get duplicate dfeines...
+  define limitsUnion
+  let verif = [ declare (c "v8type") "type1"
+              , declare (c "v8type") "type2"
+              , declare (c "v8type") "result_type"
+
+              , (v "result_type") `assign` call fnName [v "type1", v "type2"]
+
+              , declare (t Double) "elem_type"
+              , declare (t Bool) "isInRightType"
+              , declare (t Bool) "isInLeftType"
+              , declare (t Bool) "isInResultType"
+
+              , v "isInRightType" `assign` (call "fInType" [v "elem_type", v "type1"])
+              , v "isInLeftType" `assign` (call "fInType" [v "elem_type", v "type2"])
+              , v "isInResultType" `assign` (call "fInType" [v "elem_type", v "result_type"])
+              , expect_ isSat (error "Should be sat")
+              ]
+  genBodySMT verif
+
+setupTestTest :: FunctionDef
+          -> String
+          -> Codegen ()
+setupTestTest op fnName = do
+  defineAll op
+  let verif = [
+                declare (t Double) "test2_input_test"
+              , declare (t Double) "test_result"
+
+              , (v "test_result") `assign` call fnName [v "test2_input_test"]
               , expect_ isSat (error "Should be sat")
               ]
   genBodySMT verif
@@ -502,9 +582,12 @@ defineAll op = do
   class_ v8type
   class_ limits
   class_ boundary
+  define test
+  define verifyTest
   define op
   -- predicates
   define fInBitset
+  define fInType
   -- rangers
   define verifyAddRanger
   define verifySubtractRanger
@@ -515,14 +598,38 @@ defineAll op = do
   define newRange
   define nanType
   define getBoundary
+  define anyType
+  define noneType
+  define signedAddWouldOverflow
   -- limits
   define verifyLimitUnion
   define verifyLimitIntersect
-  -- bitsets
-  define verifyBitsetMin
-  define bitsetIs
   define isEmpty
+  -- bitsets
+  define bitsetIs
+  define bitsetIsNone
+  define bitsetLub
+  define bitsetGlb
+  --define bitsetTypeLub
+  define bitsetTypeGlb
+  define numberBits
   define copy
+  -- types
+  define verifyTypeIntersect
+  define typeIntersectAux
+  define isBitset
+  define asBitset
+  define newBitset
+  define typeIs
+  define typeSlowIs
+  define typeIsNone
+  define typeIsAny
+  define typeIsUnion
+  define typeIsRange
+  define typeIsTuple
+  define rangeContains
+  define simplyEquals
+  define getLimits
   -- checkers
   define fInLimits
 

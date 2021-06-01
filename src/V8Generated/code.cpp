@@ -177,6 +177,17 @@ struct boundary {
 // NOTES:
 // 1. MUST ANNOTATE MAGIC NUMBERS WITH TYPES OR WILL REE AT U
 
+double test(double test_input) {
+    double yeet = test_input;
+    return 0.0;
+}
+
+double test2(double test2_input) {
+    double yeet = 0.0;
+    test(1.0);
+    return yeet;
+}
+
 // Helpers
 double min4(double one, double two, double three, double four) {
     double min = one;
@@ -230,10 +241,6 @@ v8type newRange(double min, double max) {
     type.maybeMinusZero = (bool)0;
     type.isUnion = (bool)0;
     return type;
-}
-
-v8type newRange(limits lims){
-  return newRange(lims.min, lims.max);
 }
 
 v8type nanType() {
@@ -315,18 +322,18 @@ v8type plainNumberType() {
     type.isUnion = FALSE;
 }
 
-limits copy(limits other) {
-    limits result;
-    result.min = other.min;
-    result.max = other.max;
-    return result;
+limits copy(limits const& other) {
+    limits lresult;
+    lresult.min = other.min;
+    lresult.max = other.max;
+    return lresult;
 }
 
 limits getLimits(v8type const& t) {
-    limits result;
-    result.min = t.min; // TODO: wrong!
-    result.max = t.max;
-    return result;
+    limits lresult;
+    lresult.min = t.min; // TODO: wrong!
+    lresult.max = t.max;
+    return lresult;
 }
 
 // boundary helpers
@@ -381,52 +388,53 @@ uint32_t BoundariesSize() {
 }
 
 //bit helper functions
-bool SignedAddWouldOverflow32(int_32t lhs, int_32t rhs){
-  uint32_t res = (uint32_t)lhs + (uint32_t)rhs;
-  return ((res ^ lhs) & (res ^ rhs) & ((uint32_t) 1 << (uint32_t)31)) != (uint32_t)0;
+bool SignedAddWouldOverflow32(int32_t ulhs, int32_t urhs){
+  uint32_t res = (uint32_t)ulhs + (uint32_t)urhs;
+  return ((res ^ ulhs) & (res ^ urhs) & ((uint32_t) 1 << (uint32_t)31)) != (uint32_t)0;
 }
 
 // Range-related helper functions
 //
 
+// must use lthis_ because this_ would interfere with v8type funcs, as param declarations are shared...
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=22
-bool IsEmpty(limits this_) { 
-    return this_.min > this_.max;
+bool IsEmpty(limits lthis_) { 
+    return lthis_.min > lthis_.max;
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=24
-limits LimitIntersect(limits lhs, limits rhs) {
+limits LimitIntersect(limits const& llhs, limits const& lrhs) {
   //DisallowGarbageCollection no_gc;
-  limits result;
-  result = copy(lhs);
+  limits lresult;
+  lresult = copy(llhs);
 
-  if (lhs.min < rhs.min) {
-      result.min = rhs.min;
+  if (llhs.min < lrhs.min) {
+      lresult.min = lrhs.min;
   }
-  if (lhs.max > rhs.max) { 
-      result.max = rhs.max;
+  if (llhs.max > lrhs.max) { 
+      lresult.max = lrhs.max;
   }
-  return result;
+  return lresult;
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=32
-limits Union(limits lhs, limits rhs) {
+limits Union(limits const& llhs, limits const& lrhs) {
   //DisallowGarbageCollection no_gc;
-  limits result;
-  if (IsEmpty(lhs)) {
-      return rhs;
+  limits lresult;
+  if (IsEmpty(llhs)) {
+      return lrhs;
   }
-  if (IsEmpty(rhs)) {
-      return lhs;
+  if (IsEmpty(lrhs)) {
+      return llhs;
   }
-  result = copy(lhs);
-  if (lhs.min > rhs.min) {
-    result.min = rhs.min;
+  lresult = copy(llhs);
+  if (llhs.min > lrhs.min) {
+    lresult.min = lrhs.min;
   }
-  if (lhs.max < rhs.max) {
-      result.max = rhs.max;
+  if (llhs.max < lrhs.max) {
+      lresult.max = lrhs.max;
   }
-  return result;
+  return lresult;
 }
 
 
@@ -448,7 +456,7 @@ bool Overlap(v8type const& lhs, v8type const& rhs) {
 // type hierarchy
 bool IsBitset(v8type const& this_) {
     // TODO:
-    return ~(this_.hasRange || this_.isUnion); 
+    return !(this_.hasRange || this_.isUnion); 
 }
 
 bool IsRange(v8type const& this_) {
@@ -460,7 +468,7 @@ bool IsUnion(v8type const& this_) {
 }
 
 bool IsTuple(v8type const& this_) {
-    return false;
+    return FALSE;
 }
 
 bool TypeIsNone(v8type t){
@@ -594,6 +602,7 @@ bitset_t NumberBits(bitset_t bits) {
     return bits & kPlainNumber;
 }
 
+// TODO: rename this...
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=418
 bitset_t BitsetTypeGlb(double min, double max) {
   bitset_t glb = kNone; //NOTE: Type of glb changed from int(int is weird, why is it signed?)
@@ -705,7 +714,7 @@ bitset_t BitsetGlb(v8type this_) {
   } else if(IsRange(this_)){
     return BitsetTypeGlb(this_.min, this_.max);
   } else {
-    return noneType;
+    return kNone;
   }
 }
 
@@ -873,7 +882,7 @@ bool SlowIs(v8type this_, v8type that_){
     return IsRange(this_) && RangeContains(this_, that_);
   }
   if(IsRange(this_)){
-    return false;
+    return FALSE;
   }
   return SimplyEquals(this_, that_);
 }
@@ -1016,18 +1025,30 @@ v8type MultiplyRanger(double lhs_min, double lhs_max, double rhs_min, double rhs
   return type;
 }
 
-limits IntersectAux(v8type lhs, v8type rhs, limits incomingLimit){
+limits IntersectAux(v8type tlhs, v8type trhs, limits incomingLimit){
   //first two if statements can be ignored since we don't support unions
   if(BitsetIsNone(BitsetLub(lhs) & BitsetLub(rhs))){
     return incomingLimit; 
   }
 
+  // delcare vars in if statement...
+  limits lhs_lim;
+  limits rhs_lim;
+  limits newLimit;
+  lhs_lim.min = 0.0;
+  lhs_lim.max = 0.0;
+  rhs_lim.min = 0.0;
+  rhs_lim.max = 0.0;
+  newLimit.min = 0.0;
+  newLimit.max = 0.0;
   if(IsRange(lhs)){
     if(IsBitset(rhs)){
 
     } 
     if(IsRange(rhs)){
-      limits newLimit = LimitIntersect(getLimits(lhs), getLimits(rhs));
+      lhs_lim = getLimits(lhs);
+      rhs_lim = getLimits(rhs);
+      newLimit = LimitIntersect(lhs_lim, rhs_lim);
       if(!IsEmpty(newLimit)){
         return Union(newLimit, incomingLimit); 
       } else {
@@ -1035,9 +1056,10 @@ limits IntersectAux(v8type lhs, v8type rhs, limits incomingLimit){
       }
     }
   }
-  if(IsRange(rhs)){
+  // TODO: is this supposed to be here?
+  /*if(IsRange(rhs)){
     return IntersectAux(rhs, lhs, incomingLimit);
-  }
+  }*/
 
   //last two cases we don't handle because they involve unions again
   //TODO is this correct?
@@ -1054,7 +1076,8 @@ v8type NormalizeUnion(v8type union){ //this is a no-op currently since we don't 
 
 // ignore zone
 //Type Type::Intersect(Type type1, Type type2, Zone* zone) {
-v8type Intersect(v8type type1, v8type type2) {
+v8type Intersect(v8type const& type1, v8type const& type2) {
+  return noneType();
   // Fast case: bit sets.
   if (IsBitset(type1) && IsBitset(type2)) {
     return NewBitset(AsBitset(type1) & AsBitset(type2));
@@ -1073,9 +1096,9 @@ v8type Intersect(v8type type1, v8type type2) {
   // Semantic subtyping check - this is needed for consistency with the
   // semi-fast case above.
   if (Is(type1, type2)) {
-    type2 = Any();
+    type2 = AnyType();
   } else if (Is(type2, type1)) {
-    type1 = Any();
+    type1 = AnyType();
   }
 
  
@@ -1100,14 +1123,16 @@ v8type Intersect(v8type type1, v8type type2) {
 
   size = size + (int32_t)1;
 
-  limits empty = getLimits(noneType());
+  v8type none = noneType();
+  limits empty = getLimits(none);
   limits lims = IntersectAux(type1, type2, empty);
   //update result, normally done in IntersectAux but lack of pointers means we do it this way
-  result = newRange(lims);
+  result = newRange(lims.min, lims.max);
 
+  bitset_t number_bits = UINT32_ZERO;
   if(!IsEmpty(lims)){
     //don't need UpdateRange because we don't support unions
-    bitset_t number_bits = NumberBits(bits);
+    number_bits = NumberBits(bits);
     bits = bits & ~number_bits;
     result.bitset = bits;
   }

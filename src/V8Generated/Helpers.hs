@@ -43,6 +43,15 @@ nanType = fn "nanType"
 getBoundary:: FunctionDef
 getBoundary = fn "getBoundary"
 
+anyType :: FunctionDef
+anyType = fn "AnyType"
+
+noneType :: FunctionDef
+noneType = fn "noneType"
+
+signedAddWouldOverflow :: FunctionDef
+signedAddWouldOverflow = fn "SignedAddWouldOverflow32"
+
 -- int min and max 
 jsIntMax :: Codegen SExpr
 jsIntMax = n Signed (0x7fffffff)
@@ -66,7 +75,7 @@ jsIntMin64 :: Codegen SExpr
 jsIntMin64 = n Signed64 (-2147483648)
 
 jsUIntMax :: Codegen SExpr
-jsUIntMax = n Unsigned (0x80000000)
+jsUIntMax = n Unsigned (0xFFFFFFFF)
 
 jsUIntMin :: Codegen SExpr
 jsUIntMin = n Unsigned (0)
