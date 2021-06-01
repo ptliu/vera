@@ -1066,78 +1066,76 @@ limits IntersectAux(v8type intersectaux_lhs, v8type intersectaux_rhs, limits int
   return intersectaux_incomingLimit;
 }
 
-v8type UpdateRange(v8type range, int32_t size){
 
-}
-
-v8type NormalizeUnion(v8type union){ //this is a no-op currently since we don't support unions
-  return union;
+v8type NormalizeUnion(v8type normalizeunion_union){ //this is a no-op currently since we don't support unions
+  return normalizeunion_union;
 }
 
 // ignore zone
 //Type Type::Intersect(Type type1, Type type2, Zone* zone) {
-v8type Intersect(v8type const& type1, v8type const& type2) {
+v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
   return noneType();
   // Fast case: bit sets.
-  if (IsBitset(type1) && IsBitset(type2)) {
-    return NewBitset(AsBitset(type1) & AsBitset(type2));
+  if (IsBitset(intersect_type1) && IsBitset(intersect_type2)) {
+    return NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
   }
 
   // Fast case: top or bottom types.
-  if (TypeIsNone(type1) || TypeIsAny(type2)) return type1;  // Shortcut.
-  if (TypeIsNone(type2) || TypeIsAny(type1)) return type2;  // Shortcut.
+  if (TypeIsNone(intersect_type1) || TypeIsAny(intersect_type2)) return intersect_type1;  // Shortcut.
+  if (TypeIsNone(intersect_type2) || TypeIsAny(intersect_type1)) return intersect_type2;  // Shortcut.
 
   // Semi-fast case.
-  if (Is(type1, type2)) return type1;
-  if (Is(type2, type1)) return type2;
+  if (Is(intersect_type1, intersect_type2)) return intersect_type1;
+  if (Is(intersect_type2, intersect_type1)) return intersect_type2;
 
   // Slow case: create union.
 
   // Semantic subtyping check - this is needed for consistency with the
   // semi-fast case above.
-  if (Is(type1, type2)) {
-    type2 = AnyType();
-  } else if (Is(type2, type1)) {
-    type1 = AnyType();
+  if (Is(intersect_type1, intersect_type2)) {
+    intersect_type2 = AnyType();
+  } else if (Is(intersect_type2, intersect_type1)) {
+    intersect_type1 = AnyType();
   }
 
  
 
-  bitset_t bits = BitsetGlb(type1) & BitsetGlb(type2);
-  int32_t size1 = (int32_t)1; //we don't support unions so this is just 1
+  bitset_t intersect_bits = BitsetGlb(intersect_type1) & BitsetGlb(intersect_type2);
+  int32_t intersect_size1 = (int32_t)1; //we don't support unions so this is just 1
 
-  int32_t size2 = (int32_t)1; //also changed from int to int32_t
+  int32_t intersect_size2 = (int32_t)1; //also changed from int to int32_t
 
-  if(SignedAddWouldOverflow32(size1, size2)){
+  if(SignedAddWouldOverflow32(intersect_size1, intersect_size2)){
     return AnyType();
   }
 
-  int32_t size = size1 + size2;
+  int32_t intersect_size = intersect_size1 + intersect_size2;
  
-  if(SignedAddWouldOverflow32(size, (int32_t)2)){
+  if(SignedAddWouldOverflow32(intersect_size, (int32_t)2)){
     return AnyType();
   }
 
   v8type result; //was a union but we don't support them :)
-  result.bitset = bits;
+  result.bitset = intersect_bits;
 
-  size = size + (int32_t)1;
+  intersect_size = intersect_size + (int32_t)1;
 
-  v8type none = noneType();
-  limits empty = getLimits(none);
-  limits lims = IntersectAux(type1, type2, empty);
+  v8type intersect_none = noneType();
+  limits intersect_empty = getLimits(intersect_none);
+  limits intersect_lims = IntersectAux(intersect_type1, intersect_type2, intersect_empty);
   //update result, normally done in IntersectAux but lack of pointers means we do it this way
-  result = newRange(lims.min, lims.max);
+  v8type intersect_result = newRange(intersect_lims.min, intersect_lims.max);
 
-  bitset_t number_bits = UINT32_ZERO;
-  if(!IsEmpty(lims)){
+  bitset_t intersect_number_bits = UINT32_ZERO;
+  if(!IsEmpty(intersect_lims)){
     //don't need UpdateRange because we don't support unions
-    number_bits = NumberBits(bits);
-    bits = bits & ~number_bits;
-    result.bitset = bits;
+    intersect_number_bits = NumberBits(intersect_bits);
+    intersect_bits = intersect_bits & ~intersect_number_bits;
+    intersect_result.bitset = intersect_bits;
   }
   
-  return AnyType();
+  return intersect_result;
+  //return AnyType();
   /*
   if (base::bits::SignedAddOverflow32(size1, size2, &size)) return Any();
   if (base::bits::SignedAddOverflow32(size, 2, &size)) return Any();
@@ -1163,20 +1161,20 @@ v8type Intersect(v8type const& type1, v8type const& type2) {
   return NormalizeUnion(result, size, zone);*/
 }
 
-v8Type TypeUnion(v8Type type1, v8Type type2) {
+v8Type TypeUnion(v8Type typeunion_type1, v8Type typeunion_type2) {
   //TODO, need to handle ranges at least a little bit probably
   // Fast case: bit sets.
-  if (IsBitset(type1) && IsBitset(type2)) {
-    return newBitset(type1.bitset | type2.bitset);
+  if (IsBitset(typeunion_type1) && IsBitset(typeunion_type2)) {
+    return newBitset(typeunion_type1.bitset | typeunion_type2.bitset);
   }
 
   // Fast case: top or bottom types.
-  if (TypeIsAny(type1) || TypeIsNone(type2)) return type1;
-  if (TypeIsAny(type2)  || TypeIsNone(type1)) return type2;
+  if (TypeIsAny(typeunion_type1) || TypeIsNone(typeunion_type2)) return typeunion_type1;
+  if (TypeIsAny(typeunion_type2)  || TypeIsNone(typeunion_type1)) return typeunion_type2;
 
   // Semi-fast case.
-  if (Is(type1, type2)) return type1;
-  if (Is(type2, type1)) return type2;
+  if (Is(typeunion_type1, typeunion_type2)) return typeunion_type1;
+  if (Is(typeunion_type2, typeunion_type1)) return type2;
 
   return AnyType();
 
@@ -1218,41 +1216,41 @@ v8Type TypeUnion(v8Type type1, v8Type type2) {
 
 
 // Precondition: input is numbers
-v8type NumberAdd(v8type lhs, v8type rhs) {
+v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   //DCHECK(lhs.Is(Type::Number()));
-  //DCHECK(rhs.Is(Type::Number()));
+  //DCHECK(numberadd_rhs.Is(Type::Number()));
 
-  if (TypeIsNone(lhs) || TypeIsNone(rhs)) {
+  if (TypeIsNone(numberadd_lhs) || TypeIsNone(numberadd_rhs)) {
     return noneType();
   }
 
   // Addition can return NaN if either input can be NaN or we try to compute
   // the sum of two infinities of opposite sign.
-  bool maybe_nan = Maybe(lhs, nanType()) || Maybe(rhs, nanType());
+  bool maybe_nan = Maybe(numberadd_lhs, nanType()) || Maybe(numberadd_rhs, nanType());
 
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
-  if (Maybe(lhs, minusZeroType())) {
-    lhs = TypeUnion(lhs, kSingletonZero); //we don't do unions yet so just merge ranges
+  if (Maybe(numberadd_lhs, minusZeroType())) {
+    numberadd_lhs = TypeUnion(numberadd_lhs, kSingletonZero); //we don't do unions yet so just merge ranges
   } else {
     maybe_minuszero = false;
   }
-  if (Maybe(rhs, minusZeroType())) {
-    rhs = TypeUnion(rhs, kSingletonZero);
+  if (Maybe(numberadd_rhs, minusZeroType())) {
+    numberadd_rhs = TypeUnion(numberadd_rhs, kSingletonZero);
   } else {
     maybe_minuszero = false;
   }
 
   // We can give more precise types for integers.
   v8type type = noneType();
-  lhs = Intersect(lhs, plainNumberType());
-  rhs = Intersect(rhs, plainNumberType());
-  if (!TypeIsNone(lhs) && !TypeIsNone(rhs)) {
-    if (Is(lhs, kInteger) && Is(rhs, kInteger)) {
-      type = AddRanger(lhs.min, lhs.max, rhs.min, rhs.max);
+  numberadd_lhs = Intersect(numberadd_lhs, plainNumberType());
+  numberadd_rhs = Intersect(numberadd_rhs, plainNumberType());
+  if (!TypeIsNone(numberadd_lhs) && !TypeIsNone(numberadd_rhs)) {
+    if (Is(numberadd_lhs, kInteger) && Is(numberadd_rhs, kInteger)) {
+      type = AddRanger(numberadd_lhs.min, numberadd_lhs.max, numberadd_rhs.min, numberadd_rhs.max);
     } else {
-      if ((Maybe(lhs, minusInfinityType()) && Maybe(rhs, infinityType())) || // minus_infinity_, infinity_ are Types
-          (Maybe(rhs,minusInfinityType()) && Maybe(lhs, infinityType()))) {
+      if ((Maybe(numberadd_lhs, minusInfinityType()) && Maybe(numberadd_rhs, infinityType())) || // minus_infinity_, infinity_ are Types
+          (Maybe(numberadd_rhs,minusInfinityType()) && Maybe(numberadd_lhs, infinityType()))) {
         maybe_nan = true;
       }
       type = plainNumberType();
