@@ -178,7 +178,7 @@ struct boundary {
 // 1. MUST ANNOTATE MAGIC NUMBERS WITH TYPES OR WILL REE AT U
 
 double test(double test_input) {
-    double yeet = test_input;
+    double test_yeet = test_input;
     return 0.0;
 }
 
