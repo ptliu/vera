@@ -674,6 +674,7 @@ setupNumberAdd :: FunctionDef
           -> Codegen ()
 setupNumberAdd op fnName fn = do
   defineAll op
+  define limitsIntersect
   let verif = [ declare (c "v8type") "numberadd_lhs"
               , declare (t Double) "numberadd_js_left"
               , declare (c "v8type") "numberadd_rhs"
@@ -714,11 +715,13 @@ defineAll op = do
   define plainNumberType
   define kIntegerType
   define getBoundary
+  define boundariesSize
   define anyType
   define noneType
   define signedAddWouldOverflow
   -- type helpers
   define maybeFunc
+  define overlapFunc
   -- limits
   define verifyLimitUnion
   define verifyLimitIntersect
@@ -732,6 +735,8 @@ defineAll op = do
   define bitsetTypeGlb
   define numberBits
   define copy
+  define bitsetMin
+  define bitsetMax
   -- types
   define verifyTypeIntersect
   define typeIntersectAux

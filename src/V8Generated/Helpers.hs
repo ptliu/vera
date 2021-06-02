@@ -58,6 +58,9 @@ kIntegerType = fn "kIntegerType"
 getBoundary:: FunctionDef
 getBoundary = fn "getBoundary"
 
+boundariesSize :: FunctionDef
+boundariesSize = fn "BoundariesSize"
+
 anyType :: FunctionDef
 anyType = fn "AnyType"
 
@@ -71,6 +74,9 @@ signedAddWouldOverflow = fn "SignedAddWouldOverflow32"
 
 maybeFunc :: FunctionDef
 maybeFunc = fn "Maybe"
+
+overlapFunc :: FunctionDef
+overlapFunc = fn "Overlap"
 
 -- int min and max 
 jsIntMax :: Codegen SExpr
