@@ -23,78 +23,86 @@ lejit> test (suite: lejit-test, args: -p V8Sanity)
 
 All tests
   V8Sanity
-    LimitsUnion:     OK (11.04s)
-    LimitsIntersect: OK (1.42s)
+    LimitsUnion:     OK (10.52s)
+    LimitsIntersect: OK (1.44s)
     TypeIntersect:   FAIL
       Exception: Failed to verify type Intersect
       AnyType_return_val_bitset_1 : 41efffffffc00000
       AnyType_return_val_bitset_2 : 41efffffffc00000
       AnyType_return_val_bitset_3 : 41efffffffc00000
       AnyType_return_val_bitset_4 : 41efffffffc00000
+      AnyType_return_val_bitset_5 : 41efffffffc00000
       InBitsetCheck_1 : 1.0
       InBitsetCheck_2 : 1.0
       InBitsetCheck_3 : 0.0
       InRangeCheck_1 : 1.0
       InRangeCheck_2 : 1.0
       InRangeCheck_3 : 1.0
-      Intersect_return_val_bitset_1 : 4036000000000000
+      Intersect_return_val_bitset_1 : 4090580000000000
       MinusZeroCheck_1 : 1.0
       MinusZeroCheck_2 : 1.0
       MinusZeroCheck_3 : 1.0
       NaNCheck_1 : 1.0
       NaNCheck_2 : 1.0
       NaNCheck_3 : 1.0
-      NewBitset_return_val_bitset_1 : 41effffefee00000
+      NewBitset_return_val_bitset_1 : 41e006a898c00000
       anytype_type_bitset_1 : 41efffffffc00000
       anytype_type_bitset_2 : 41efffffffc00000
       anytype_type_bitset_3 : 41efffffffc00000
       anytype_type_bitset_4 : 41efffffffc00000
+      anytype_type_bitset_5 : 41efffffffc00000
       anytype_type_hasRange_1 : 0.0
       anytype_type_hasRange_2 : 0.0
       anytype_type_hasRange_3 : 0.0
       anytype_type_hasRange_4 : 0.0
+      anytype_type_hasRange_5 : 0.0
       anytype_type_isUnion_1 : 0.0
       anytype_type_isUnion_2 : 0.0
       anytype_type_isUnion_3 : 0.0
       anytype_type_isUnion_4 : 0.0
+      anytype_type_isUnion_5 : 0.0
       anytype_type_max_1 : 0.0
       anytype_type_max_2 : 0.0
       anytype_type_max_3 : 0.0
       anytype_type_max_4 : 0.0
+      anytype_type_max_5 : 0.0
       anytype_type_maybeMinusZero_1 : 1.0
       anytype_type_maybeMinusZero_2 : 1.0
       anytype_type_maybeMinusZero_3 : 1.0
       anytype_type_maybeMinusZero_4 : 1.0
+      anytype_type_maybeMinusZero_5 : 1.0
       anytype_type_maybeNaN_1 : 1.0
       anytype_type_maybeNaN_2 : 1.0
       anytype_type_maybeNaN_3 : 1.0
       anytype_type_maybeNaN_4 : 1.0
+      anytype_type_maybeNaN_5 : 1.0
       anytype_type_min_1 : 0.0
       anytype_type_min_2 : 0.0
       anytype_type_min_3 : 0.0
       anytype_type_min_4 : 0.0
-      asbitset_this__bitset_1 : 41effffefee00000
-      asbitset_this__bitset_10 : 41effffefee00000
-      asbitset_this__bitset_11 : 41effffffee00000
-      asbitset_this__bitset_12 : 41effffefee00000
-      asbitset_this__bitset_13 : 41effffffee00000
-      asbitset_this__bitset_14 : 41effffffee00000
-      asbitset_this__bitset_15 : 41effffefee00000
-      asbitset_this__bitset_16 : 41effffffee00000
-      asbitset_this__bitset_17 : 41effffefee00000
-      asbitset_this__bitset_18 : 41effffefee00000
-      asbitset_this__bitset_19 : 41effffefee00000
-      asbitset_this__bitset_2 : 41effffffee00000
-      asbitset_this__bitset_20 : 41effffefee00000
-      asbitset_this__bitset_21 : 41effffffee00000
-      asbitset_this__bitset_22 : 41effffffee00000
-      asbitset_this__bitset_3 : 41effffffee00000
-      asbitset_this__bitset_4 : 41effffefee00000
-      asbitset_this__bitset_5 : 41effffffee00000
-      asbitset_this__bitset_6 : 41effffffee00000
-      asbitset_this__bitset_7 : 41effffefee00000
-      asbitset_this__bitset_8 : 41effffffee00000
-      asbitset_this__bitset_9 : 41effffefee00000
+      anytype_type_min_5 : 0.0
+      asbitset_this__bitset_1 : 41e006a89cc00000
+      asbitset_this__bitset_10 : 41e006a89cc00000
+      asbitset_this__bitset_11 : 41ebfffffbc00000
+      asbitset_this__bitset_12 : 41e006a89cc00000
+      asbitset_this__bitset_13 : 41ebfffffbc00000
+      asbitset_this__bitset_14 : 41ebfffffbc00000
+      asbitset_this__bitset_15 : 41e006a89cc00000
+      asbitset_this__bitset_16 : 41ebfffffbc00000
+      asbitset_this__bitset_17 : 41e006a89cc00000
+      asbitset_this__bitset_18 : 41e006a89cc00000
+      asbitset_this__bitset_19 : 41e006a89cc00000
+      asbitset_this__bitset_2 : 41ebfffffbc00000
+      asbitset_this__bitset_20 : 41e006a89cc00000
+      asbitset_this__bitset_21 : 41ebfffffbc00000
+      asbitset_this__bitset_22 : 41ebfffffbc00000
+      asbitset_this__bitset_3 : 41ebfffffbc00000
+      asbitset_this__bitset_4 : 41e006a89cc00000
+      asbitset_this__bitset_5 : 41ebfffffbc00000
+      asbitset_this__bitset_6 : 41ebfffffbc00000
+      asbitset_this__bitset_7 : 41e006a89cc00000
+      asbitset_this__bitset_8 : 41ebfffffbc00000
+      asbitset_this__bitset_9 : 41e006a89cc00000
       asbitset_this__hasRange_1 : 3ff0000000000000
       asbitset_this__hasRange_10 : 3ff0000000000000
       asbitset_this__hasRange_11 : 3ff0000000000000
@@ -139,28 +147,28 @@ All tests
       asbitset_this__isUnion_7 : 0
       asbitset_this__isUnion_8 : 0
       asbitset_this__isUnion_9 : 0
-      asbitset_this__max_1 : 43f2800000002004
-      asbitset_this__max_10 : 43f2800000002004
-      asbitset_this__max_11 : 61f0000040000000
-      asbitset_this__max_12 : 43f2800000002004
-      asbitset_this__max_13 : 61f0000040000000
-      asbitset_this__max_14 : 61f0000040000000
-      asbitset_this__max_15 : 43f2800000002004
-      asbitset_this__max_16 : 61f0000040000000
-      asbitset_this__max_17 : 43f2800000002004
-      asbitset_this__max_18 : 43f2800000002004
-      asbitset_this__max_19 : 43f2800000002004
-      asbitset_this__max_2 : 61f0000040000000
-      asbitset_this__max_20 : 43f2800000002004
-      asbitset_this__max_21 : 61f0000040000000
-      asbitset_this__max_22 : 61f0000040000000
-      asbitset_this__max_3 : 61f0000040000000
-      asbitset_this__max_4 : 43f2800000002004
-      asbitset_this__max_5 : 61f0000040000000
-      asbitset_this__max_6 : 61f0000040000000
-      asbitset_this__max_7 : 43f2800000002004
-      asbitset_this__max_8 : 61f0000040000000
-      asbitset_this__max_9 : 43f2800000002004
+      asbitset_this__max_1 : 6020025100c06211
+      asbitset_this__max_10 : 6020025100c06211
+      asbitset_this__max_11 : 6801000000900002
+      asbitset_this__max_12 : 6020025100c06211
+      asbitset_this__max_13 : 6801000000900002
+      asbitset_this__max_14 : 6801000000900002
+      asbitset_this__max_15 : 6020025100c06211
+      asbitset_this__max_16 : 6801000000900002
+      asbitset_this__max_17 : 6020025100c06211
+      asbitset_this__max_18 : 6020025100c06211
+      asbitset_this__max_19 : 6020025100c06211
+      asbitset_this__max_2 : 6801000000900002
+      asbitset_this__max_20 : 6020025100c06211
+      asbitset_this__max_21 : 6801000000900002
+      asbitset_this__max_22 : 6801000000900002
+      asbitset_this__max_3 : 6801000000900002
+      asbitset_this__max_4 : 6020025100c06211
+      asbitset_this__max_5 : 6801000000900002
+      asbitset_this__max_6 : 6801000000900002
+      asbitset_this__max_7 : 6020025100c06211
+      asbitset_this__max_8 : 6801000000900002
+      asbitset_this__max_9 : 6020025100c06211
       asbitset_this__maybeMinusZero_1 : 0
       asbitset_this__maybeMinusZero_10 : 0
       asbitset_this__maybeMinusZero_11 : 0
@@ -205,34 +213,34 @@ All tests
       asbitset_this__maybeNaN_7 : 0
       asbitset_this__maybeNaN_8 : 0
       asbitset_this__maybeNaN_9 : 0
-      asbitset_this__min_1 : 40000000000002
-      asbitset_this__min_10 : 40000000000002
-      asbitset_this__min_11 : 110000000000001
-      asbitset_this__min_12 : 40000000000002
-      asbitset_this__min_13 : 110000000000001
-      asbitset_this__min_14 : 110000000000001
-      asbitset_this__min_15 : 40000000000002
-      asbitset_this__min_16 : 110000000000001
-      asbitset_this__min_17 : 40000000000002
-      asbitset_this__min_18 : 40000000000002
-      asbitset_this__min_19 : 40000000000002
-      asbitset_this__min_2 : 110000000000001
-      asbitset_this__min_20 : 40000000000002
-      asbitset_this__min_21 : 110000000000001
-      asbitset_this__min_22 : 110000000000001
-      asbitset_this__min_3 : 110000000000001
-      asbitset_this__min_4 : 40000000000002
-      asbitset_this__min_5 : 110000000000001
-      asbitset_this__min_6 : 110000000000001
-      asbitset_this__min_7 : 40000000000002
-      asbitset_this__min_8 : 110000000000001
-      asbitset_this__min_9 : 40000000000002
-      bitsetglb_this__bitset_1 : 41effffffee00000
-      bitsetglb_this__bitset_2 : 41effffefee00000
-      bitsetglb_this__bitset_3 : 41effffffee00000
-      bitsetglb_this__bitset_4 : 41effffefee00000
-      bitsetglb_this__bitset_5 : 41effffefee00000
-      bitsetglb_this__bitset_6 : 41effffffee00000
+      asbitset_this__min_1 : c020000800006021
+      asbitset_this__min_10 : c020000800006021
+      asbitset_this__min_11 : a804000000000001
+      asbitset_this__min_12 : c020000800006021
+      asbitset_this__min_13 : a804000000000001
+      asbitset_this__min_14 : a804000000000001
+      asbitset_this__min_15 : c020000800006021
+      asbitset_this__min_16 : a804000000000001
+      asbitset_this__min_17 : c020000800006021
+      asbitset_this__min_18 : c020000800006021
+      asbitset_this__min_19 : c020000800006021
+      asbitset_this__min_2 : a804000000000001
+      asbitset_this__min_20 : c020000800006021
+      asbitset_this__min_21 : a804000000000001
+      asbitset_this__min_22 : a804000000000001
+      asbitset_this__min_3 : a804000000000001
+      asbitset_this__min_4 : c020000800006021
+      asbitset_this__min_5 : a804000000000001
+      asbitset_this__min_6 : a804000000000001
+      asbitset_this__min_7 : c020000800006021
+      asbitset_this__min_8 : a804000000000001
+      asbitset_this__min_9 : c020000800006021
+      bitsetglb_this__bitset_1 : 41ebfffffbc00000
+      bitsetglb_this__bitset_2 : 41e006a89cc00000
+      bitsetglb_this__bitset_3 : 41ebfffffbc00000
+      bitsetglb_this__bitset_4 : 41e006a89cc00000
+      bitsetglb_this__bitset_5 : 41e006a89cc00000
+      bitsetglb_this__bitset_6 : 41ebfffffbc00000
       bitsetglb_this__hasRange_1 : 3ff0000000000000
       bitsetglb_this__hasRange_2 : 3ff0000000000000
       bitsetglb_this__hasRange_3 : 3ff0000000000000
@@ -245,12 +253,12 @@ All tests
       bitsetglb_this__isUnion_4 : 0
       bitsetglb_this__isUnion_5 : 0
       bitsetglb_this__isUnion_6 : 0
-      bitsetglb_this__max_1 : 61f0000040000000
-      bitsetglb_this__max_2 : 43f2800000002004
-      bitsetglb_this__max_3 : 61f0000040000000
-      bitsetglb_this__max_4 : 43f2800000002004
-      bitsetglb_this__max_5 : 43f2800000002004
-      bitsetglb_this__max_6 : 61f0000040000000
+      bitsetglb_this__max_1 : 6801000000900002
+      bitsetglb_this__max_2 : 6020025100c06211
+      bitsetglb_this__max_3 : 6801000000900002
+      bitsetglb_this__max_4 : 6020025100c06211
+      bitsetglb_this__max_5 : 6020025100c06211
+      bitsetglb_this__max_6 : 6801000000900002
       bitsetglb_this__maybeMinusZero_1 : 0
       bitsetglb_this__maybeMinusZero_2 : 0
       bitsetglb_this__maybeMinusZero_3 : 0
@@ -263,77 +271,59 @@ All tests
       bitsetglb_this__maybeNaN_4 : 0
       bitsetglb_this__maybeNaN_5 : 0
       bitsetglb_this__maybeNaN_6 : 0
-      bitsetglb_this__min_1 : 110000000000001
-      bitsetglb_this__min_2 : 40000000000002
-      bitsetglb_this__min_3 : 110000000000001
-      bitsetglb_this__min_4 : 40000000000002
-      bitsetglb_this__min_5 : 40000000000002
-      bitsetglb_this__min_6 : 110000000000001
-      bitsetis_bits1_1 : 41effffefee00000
-      bitsetis_bits1_2 : 41effffefee00000
-      bitsetis_bits1_3 : 41effffffee00000
-      bitsetis_bits1_4 : 41effffffee00000
-      bitsetis_bits1_5 : 41effffefee00000
-      bitsetis_bits1_6 : 41effffefee00000
-      bitsetis_bits1_7 : 41effffffee00000
-      bitsetis_bits1_8 : 41effffffee00000
-      bitsetis_bits2_1 : 41effffffee00000
-      bitsetis_bits2_2 : 0
-      bitsetis_bits2_3 : 41effffefee00000
-      bitsetis_bits2_4 : 0
-      bitsetis_bits2_5 : 41effffffee00000
-      bitsetis_bits2_6 : 0
-      bitsetis_bits2_7 : 41effffefee00000
-      bitsetis_bits2_8 : 0
-      bitsetisnone_bits_1 : 41effffefee00000
-      bitsetisnone_bits_2 : 41effffffee00000
-      bitsetisnone_bits_3 : 41effffefee00000
-      bitsetlub_this__bitset_1 : 41effffefee00000
-      bitsetlub_this__bitset_2 : 41effffffee00000
-      bitsetlub_this__bitset_3 : 41effffefee00000
-      bitsetlub_this__bitset_4 : 41effffffee00000
-      bitsetlub_this__bitset_5 : 41effffefee00000
-      bitsetlub_this__bitset_6 : 41effffffee00000
+      bitsetglb_this__min_1 : a804000000000001
+      bitsetglb_this__min_2 : c020000800006021
+      bitsetglb_this__min_3 : a804000000000001
+      bitsetglb_this__min_4 : c020000800006021
+      bitsetglb_this__min_5 : c020000800006021
+      bitsetglb_this__min_6 : a804000000000001
+      bitsetis_bits1_1 : 41e006a89cc00000
+      bitsetis_bits1_2 : 41e006a89cc00000
+      bitsetis_bits1_3 : 41ebfffffbc00000
+      bitsetis_bits1_4 : 41ebfffffbc00000
+      bitsetis_bits1_5 : 41e006a89cc00000
+      bitsetis_bits1_6 : 41e006a89cc00000
+      bitsetis_bits1_7 : 41ebfffffbc00000
+      bitsetis_bits1_8 : 41ebfffffbc00000
+      bitsetis_bits2_1 : 41ebfffffbc00000
+      bitsetis_bits2_2 : 4090180000000000
+      bitsetis_bits2_3 : 41e006a89cc00000
+      bitsetis_bits2_4 : 4090180000000000
+      bitsetis_bits2_5 : 41ebfffffbc00000
+      bitsetis_bits2_6 : 4090180000000000
+      bitsetis_bits2_7 : 41e006a89cc00000
+      bitsetis_bits2_8 : 4090180000000000
+      bitsetisnone_bits_1 : 41e006a89cc00000
+      bitsetisnone_bits_2 : 41ebfffffbc00000
+      bitsetlub_this__bitset_1 : 41e006a89cc00000
+      bitsetlub_this__bitset_2 : 41ebfffffbc00000
+      bitsetlub_this__bitset_3 : 41e006a89cc00000
+      bitsetlub_this__bitset_4 : 41ebfffffbc00000
       bitsetlub_this__hasRange_1 : 3ff0000000000000
       bitsetlub_this__hasRange_2 : 3ff0000000000000
       bitsetlub_this__hasRange_3 : 3ff0000000000000
       bitsetlub_this__hasRange_4 : 3ff0000000000000
-      bitsetlub_this__hasRange_5 : 3ff0000000000000
-      bitsetlub_this__hasRange_6 : 3ff0000000000000
       bitsetlub_this__isUnion_1 : 0
       bitsetlub_this__isUnion_2 : 0
       bitsetlub_this__isUnion_3 : 0
       bitsetlub_this__isUnion_4 : 0
-      bitsetlub_this__isUnion_5 : 0
-      bitsetlub_this__isUnion_6 : 0
-      bitsetlub_this__max_1 : 43f2800000002004
-      bitsetlub_this__max_2 : 61f0000040000000
-      bitsetlub_this__max_3 : 43f2800000002004
-      bitsetlub_this__max_4 : 61f0000040000000
-      bitsetlub_this__max_5 : 43f2800000002004
-      bitsetlub_this__max_6 : 61f0000040000000
+      bitsetlub_this__max_1 : 6020025100c06211
+      bitsetlub_this__max_2 : 6801000000900002
+      bitsetlub_this__max_3 : 6020025100c06211
+      bitsetlub_this__max_4 : 6801000000900002
       bitsetlub_this__maybeMinusZero_1 : 0
       bitsetlub_this__maybeMinusZero_2 : 0
       bitsetlub_this__maybeMinusZero_3 : 0
       bitsetlub_this__maybeMinusZero_4 : 0
-      bitsetlub_this__maybeMinusZero_5 : 0
-      bitsetlub_this__maybeMinusZero_6 : 0
       bitsetlub_this__maybeNaN_1 : 0
       bitsetlub_this__maybeNaN_2 : 0
       bitsetlub_this__maybeNaN_3 : 0
       bitsetlub_this__maybeNaN_4 : 0
-      bitsetlub_this__maybeNaN_5 : 0
-      bitsetlub_this__maybeNaN_6 : 0
-      bitsetlub_this__min_1 : 40000000000002
-      bitsetlub_this__min_2 : 110000000000001
-      bitsetlub_this__min_3 : 40000000000002
-      bitsetlub_this__min_4 : 110000000000001
-      bitsetlub_this__min_5 : 40000000000002
-      bitsetlub_this__min_6 : 110000000000001
+      bitsetlub_this__min_1 : c020000800006021
+      bitsetlub_this__min_2 : a804000000000001
+      bitsetlub_this__min_3 : c020000800006021
+      bitsetlub_this__min_4 : a804000000000001
       bitsetlub_unreachable__1 : 0
-      bitsetlub_unreachable__10 : 3ff0000000000000
-      bitsetlub_unreachable__11 : 0
-      bitsetlub_unreachable__12 : 3ff0000000000000
       bitsetlub_unreachable__2 : 3ff0000000000000
       bitsetlub_unreachable__3 : 0
       bitsetlub_unreachable__4 : 3ff0000000000000
@@ -341,7 +331,6 @@ All tests
       bitsetlub_unreachable__6 : 3ff0000000000000
       bitsetlub_unreachable__7 : 0
       bitsetlub_unreachable__8 : 3ff0000000000000
-      bitsetlub_unreachable__9 : 0
       bitsettypeglb_continueLoop_1 : 3ff0000000000000
       bitsettypeglb_continueLoop_10 : 3ff0000000000000
       bitsettypeglb_continueLoop_11 : 3ff0000000000000
@@ -379,53 +368,53 @@ All tests
       bitsettypeglb_continueLoop_8 : 3ff0000000000000
       bitsettypeglb_continueLoop_9 : 3ff0000000000000
       bitsettypeglb_glb_1 : 0
-      bitsettypeglb_glb_10 : 0
+      bitsettypeglb_glb_10 : 4090000000000000
       bitsettypeglb_glb_11 : 4090180000000000
       bitsettypeglb_glb_12 : 4090180000000000
       bitsettypeglb_glb_13 : 0
       bitsettypeglb_glb_14 : 0
       bitsettypeglb_glb_15 : 0
-      bitsettypeglb_glb_16 : 0
+      bitsettypeglb_glb_16 : 4090000000000000
       bitsettypeglb_glb_17 : 4090180000000000
       bitsettypeglb_glb_18 : 4090180000000000
       bitsettypeglb_glb_19 : 0
       bitsettypeglb_glb_2 : 0
       bitsettypeglb_glb_20 : 0
       bitsettypeglb_glb_21 : 0
-      bitsettypeglb_glb_22 : 0
+      bitsettypeglb_glb_22 : 4090000000000000
       bitsettypeglb_glb_23 : 4090180000000000
       bitsettypeglb_glb_24 : 4090180000000000
       bitsettypeglb_glb_25 : 0
       bitsettypeglb_glb_26 : 0
       bitsettypeglb_glb_27 : 0
-      bitsettypeglb_glb_28 : 0
+      bitsettypeglb_glb_28 : 4090000000000000
       bitsettypeglb_glb_29 : 4090180000000000
       bitsettypeglb_glb_3 : 0
       bitsettypeglb_glb_30 : 4090180000000000
       bitsettypeglb_glb_31 : 0
       bitsettypeglb_glb_32 : 0
       bitsettypeglb_glb_33 : 0
-      bitsettypeglb_glb_34 : 0
+      bitsettypeglb_glb_34 : 4090000000000000
       bitsettypeglb_glb_35 : 4090180000000000
       bitsettypeglb_glb_36 : 4090180000000000
-      bitsettypeglb_glb_4 : 0
+      bitsettypeglb_glb_4 : 4090000000000000
       bitsettypeglb_glb_5 : 4090180000000000
       bitsettypeglb_glb_6 : 4090180000000000
       bitsettypeglb_glb_7 : 0
       bitsettypeglb_glb_8 : 0
       bitsettypeglb_glb_9 : 0
-      bitsettypeglb_max_1 : 61f0000040000000
-      bitsettypeglb_max_2 : 43f2800000002004
-      bitsettypeglb_max_3 : 61f0000040000000
-      bitsettypeglb_max_4 : 43f2800000002004
-      bitsettypeglb_max_5 : 43f2800000002004
-      bitsettypeglb_max_6 : 61f0000040000000
-      bitsettypeglb_min_1 : 110000000000001
-      bitsettypeglb_min_2 : 40000000000002
-      bitsettypeglb_min_3 : 110000000000001
-      bitsettypeglb_min_4 : 40000000000002
-      bitsettypeglb_min_5 : 40000000000002
-      bitsettypeglb_min_6 : 110000000000001
+      bitsettypeglb_max_1 : 6801000000900002
+      bitsettypeglb_max_2 : 6020025100c06211
+      bitsettypeglb_max_3 : 6801000000900002
+      bitsettypeglb_max_4 : 6020025100c06211
+      bitsettypeglb_max_5 : 6020025100c06211
+      bitsettypeglb_max_6 : 6801000000900002
+      bitsettypeglb_min_1 : a804000000000001
+      bitsettypeglb_min_2 : c020000800006021
+      bitsettypeglb_min_3 : a804000000000001
+      bitsettypeglb_min_4 : c020000800006021
+      bitsettypeglb_min_5 : c020000800006021
+      bitsettypeglb_min_6 : a804000000000001
       bitsettypeglb_mins_1_external_1 : 4052000000000000
       bitsettypeglb_mins_1_external_2 : 4052000000000000
       bitsettypeglb_mins_1_external_3 : 4052000000000000
@@ -534,8 +523,8 @@ All tests
       bitsettypeglb_mins_6_min_4 : 41f0000000000000
       bitsettypeglb_mins_6_min_5 : 41f0000000000000
       bitsettypeglb_mins_6_min_6 : 41f0000000000000
-      bitsettypelub_max_1 : 43f2800000002004
-      bitsettypelub_min_1 : 0
+      bitsettypelub_max_1 : 6020025100c06211
+      bitsettypelub_min_1 : a804000000000001
       bitsettypelub_mins_1_external_1 : 4052000000000000
       bitsettypelub_mins_1_internal_1 : 4020000000000000
       bitsettypelub_mins_1_min_1 : c1e0000000000000
@@ -557,160 +546,183 @@ All tests
       bitsettypelub_mins_7_external_1 : 4091780000000000
       bitsettypelub_mins_7_internal_1 : 4030000000000000
       bitsettypelub_mins_7_min_1 : 0
-      copy_lresult_max_1 : 2.132904783526024e19
-      copy_lresult_max_2 : 2.132904783526024e19
-      copy_lresult_min_1 : 1.780059086805762e-307
-      copy_lresult_min_2 : 1.4582244039112798e-303
-      elem_type_0 : 1.529059112558455e-297
-      fbitset_1 : 41effffefee00000
-      fbitset_2 : 41effffffee00000
-      fbitset_3 : 4036000000000000
-      ftype_bitset_1 : 41effffefee00000
-      ftype_bitset_2 : 41effffffee00000
-      ftype_bitset_3 : 4036000000000000
+      copy_lresult_max_1 : 1.0732312375952914e155
+      copy_lresult_min_1 : -8.000061035199964
+      elem_type_0 : -2.983336292480093e-154
+      fbitset_1 : 41e006a89cc00000
+      fbitset_2 : 41ebfffffbc00000
+      fbitset_3 : 4090580000000000
+      ftype_bitset_1 : 41e006a89cc00000
+      ftype_bitset_2 : 41ebfffffbc00000
+      ftype_bitset_3 : 4090580000000000
       ftype_hasRange_1 : 1.0
       ftype_hasRange_2 : 1.0
       ftype_hasRange_3 : 1.0
       ftype_isUnion_1 : 0.0
       ftype_isUnion_2 : 0.0
       ftype_isUnion_3 : 0.0
-      ftype_max_1 : 2.132904783526024e19
-      ftype_max_2 : 5.758611029974823e163
-      ftype_max_3 : 2.132904783526024e19
+      ftype_max_1 : 1.0732312375952914e155
+      ftype_max_2 : 9.695186331568137e192
+      ftype_max_3 : 1.0732312375952914e155
       ftype_maybeMinusZero_1 : 0.0
       ftype_maybeMinusZero_2 : 0.0
       ftype_maybeMinusZero_3 : 0.0
       ftype_maybeNaN_1 : 0.0
       ftype_maybeNaN_2 : 0.0
       ftype_maybeNaN_3 : 0.0
-      ftype_min_1 : 1.780059086805762e-307
-      ftype_min_2 : 1.4582244039112798e-303
-      ftype_min_3 : 0.0
-      fval_1 : 1.529059112558455e-297
-      fval_2 : 1.529059112558455e-297
-      fval_3 : 1.529059112558455e-297
-      fval_4 : 1.529059112558455e-297
-      fval_5 : 1.529059112558455e-297
-      fval_6 : 1.529059112558455e-297
-      getlimits_lresult_max_1 : 0.0
-      getlimits_lresult_max_2 : 2.132904783526024e19
-      getlimits_lresult_max_3 : 5.758611029974823e163
-      getlimits_lresult_min_1 : 0.0
-      getlimits_lresult_min_2 : 1.780059086805762e-307
-      getlimits_lresult_min_3 : 1.4582244039112798e-303
-      getlimits_ty_bitset_1 : 0
-      getlimits_ty_bitset_2 : 41effffefee00000
-      getlimits_ty_bitset_3 : 41effffffee00000
-      intersect_bits_1 : 0.0
-      intersect_empty_max_1 : 0.0
-      intersect_empty_min_1 : 0.0
-      intersect_lims_max_1 : 2.132904783526024e19
-      intersect_lims_min_1 : 0.0
-      intersect_none_bitset_1 : 0
-      intersect_none_hasRange_1 : 0.0
-      intersect_none_isUnion_1 : 0.0
-      intersect_none_max_1 : 0.0
-      intersect_none_maybeMinusZero_1 : 0.0
-      intersect_none_maybeNaN_1 : 0.0
-      intersect_none_min_1 : 0.0
-      intersect_result_bitset_1 : 22.0
-      intersect_result_hasRange_1 : 1.0
+      ftype_min_1 : -8.000061035199964
+      ftype_min_2 : -6.344854593289124e-116
+      ftype_min_3 : -6.344854593289124e-116
+      fval_1 : -2.983336292480093e-154
+      fval_2 : -2.983336292480093e-154
+      fval_3 : -2.983336292480093e-154
+      fval_4 : -2.983336292480093e-154
+      fval_5 : -2.983336292480093e-154
+      fval_6 : -2.983336292480093e-154
+      getlimits_lresult_max_1 : 1.0732312375952914e155
+      getlimits_lresult_max_2 : 9.695186331568137e192
+      getlimits_lresult_min_1 : -8.000061035199964
+      getlimits_lresult_min_2 : -6.344854593289124e-116
+      getlimits_ty_bitset_1 : 41e006a89cc00000
+      getlimits_ty_bitset_2 : 41ebfffffbc00000
+      intersect_bits_1 : 1030.0
+      intersect_continue_1 : 1.0
+      intersect_continue_2 : 1.0
+      intersect_continue_3 : 1.0
+      intersect_continue_4 : 1.0
+      intersect_continue_5 : 1.0
+      intersect_continue_6 : 1.0
+      intersect_continue_7 : 1.0
+      intersect_continue_8 : 1.0
+      intersect_lhs_lim_max_1 : 9.695186331568137e192
+      intersect_lhs_lim_min_1 : -6.344854593289124e-116
+      intersect_lims_max_1 : 1.0732312375952914e155
+      intersect_lims_min_1 : -6.344854593289124e-116
+      intersect_result_bitset_1 : 4.294967294e9
+      intersect_result_bitset_2 : 4.294967294e9
+      intersect_result_bitset_3 : 4.294967294e9
+      intersect_result_bitset_4 : 4.294967294e9
+      intersect_result_bitset_5 : 4.294967294e9
+      intersect_result_bitset_6 : 4.294967294e9
+      intersect_result_bitset_7 : 4.294967294e9
+      intersect_result_bitset_8 : 4.294967294e9
+      intersect_result_bitset_9 : 1046.0
+      intersect_result_hasRange_1 : 0.0
+      intersect_result_hasRange_2 : 0.0
+      intersect_result_hasRange_3 : 0.0
+      intersect_result_hasRange_4 : 0.0
+      intersect_result_hasRange_5 : 0.0
+      intersect_result_hasRange_6 : 0.0
+      intersect_result_hasRange_7 : 0.0
+      intersect_result_hasRange_8 : 0.0
+      intersect_result_hasRange_9 : 1.0
       intersect_result_isUnion_1 : 0.0
-      intersect_result_max_1 : 2.132904783526024e19
-      intersect_result_maybeMinusZero_1 : 0.0
-      intersect_result_maybeNaN_1 : 0.0
+      intersect_result_isUnion_2 : 0.0
+      intersect_result_isUnion_3 : 0.0
+      intersect_result_isUnion_4 : 0.0
+      intersect_result_isUnion_5 : 0.0
+      intersect_result_isUnion_6 : 0.0
+      intersect_result_isUnion_7 : 0.0
+      intersect_result_isUnion_8 : 0.0
+      intersect_result_isUnion_9 : 0.0
+      intersect_result_max_1 : 0.0
+      intersect_result_max_2 : 0.0
+      intersect_result_max_3 : 0.0
+      intersect_result_max_4 : 0.0
+      intersect_result_max_5 : 0.0
+      intersect_result_max_6 : 0.0
+      intersect_result_max_7 : 0.0
+      intersect_result_max_8 : 0.0
+      intersect_result_max_9 : 1.0732312375952914e155
+      intersect_result_maybeMinusZero_1 : 1.0
+      intersect_result_maybeMinusZero_2 : 1.0
+      intersect_result_maybeMinusZero_3 : 1.0
+      intersect_result_maybeMinusZero_4 : 1.0
+      intersect_result_maybeMinusZero_5 : 1.0
+      intersect_result_maybeMinusZero_6 : 1.0
+      intersect_result_maybeMinusZero_7 : 1.0
+      intersect_result_maybeMinusZero_8 : 1.0
+      intersect_result_maybeMinusZero_9 : 0.0
+      intersect_result_maybeNaN_1 : 1.0
+      intersect_result_maybeNaN_2 : 1.0
+      intersect_result_maybeNaN_3 : 1.0
+      intersect_result_maybeNaN_4 : 1.0
+      intersect_result_maybeNaN_5 : 1.0
+      intersect_result_maybeNaN_6 : 1.0
+      intersect_result_maybeNaN_7 : 1.0
+      intersect_result_maybeNaN_8 : 1.0
+      intersect_result_maybeNaN_9 : 0.0
       intersect_result_min_1 : 0.0
+      intersect_result_min_2 : 0.0
+      intersect_result_min_3 : 0.0
+      intersect_result_min_4 : 0.0
+      intersect_result_min_5 : 0.0
+      intersect_result_min_6 : 0.0
+      intersect_result_min_7 : 0.0
+      intersect_result_min_8 : 0.0
+      intersect_result_min_9 : -6.344854593289124e-116
+      intersect_rhs_lim_max_1 : 1.0732312375952914e155
+      intersect_rhs_lim_min_1 : -8.000061035199964
       intersect_size1_1 : 1.0
       intersect_size2_1 : 1.0
       intersect_size_1 : 2.0
       intersect_size_2 : 3.0
-      intersect_type1_bitset_1 : 41effffefee00000
-      intersect_type1_bitset_2 : 41effffefee00000
+      intersect_type1_bitset_1 : 41e006a89cc00000
+      intersect_type1_bitset_2 : 41e006a89cc00000
       intersect_type1_hasRange_1 : 1.0
       intersect_type1_hasRange_2 : 1.0
       intersect_type1_isUnion_1 : 0.0
       intersect_type1_isUnion_2 : 0.0
-      intersect_type1_max_1 : 2.132904783526024e19
-      intersect_type1_max_2 : 2.132904783526024e19
+      intersect_type1_max_1 : 1.0732312375952914e155
+      intersect_type1_max_2 : 1.0732312375952914e155
       intersect_type1_maybeMinusZero_1 : 0.0
       intersect_type1_maybeMinusZero_2 : 0.0
       intersect_type1_maybeNaN_1 : 0.0
       intersect_type1_maybeNaN_2 : 0.0
-      intersect_type1_min_1 : 1.780059086805762e-307
-      intersect_type1_min_2 : 1.780059086805762e-307
-      intersect_type2_bitset_1 : 41effffffee00000
-      intersect_type2_bitset_2 : 41effffffee00000
+      intersect_type1_min_1 : -8.000061035199964
+      intersect_type1_min_2 : -8.000061035199964
+      intersect_type2_bitset_1 : 41ebfffffbc00000
+      intersect_type2_bitset_2 : 41ebfffffbc00000
       intersect_type2_hasRange_1 : 1.0
       intersect_type2_hasRange_2 : 1.0
       intersect_type2_isUnion_1 : 0.0
       intersect_type2_isUnion_2 : 0.0
-      intersect_type2_max_1 : 5.758611029974823e163
-      intersect_type2_max_2 : 5.758611029974823e163
+      intersect_type2_max_1 : 9.695186331568137e192
+      intersect_type2_max_2 : 9.695186331568137e192
       intersect_type2_maybeMinusZero_1 : 0.0
       intersect_type2_maybeMinusZero_2 : 0.0
       intersect_type2_maybeNaN_1 : 0.0
       intersect_type2_maybeNaN_2 : 0.0
-      intersect_type2_min_1 : 1.4582244039112798e-303
-      intersect_type2_min_2 : 1.4582244039112798e-303
-      intersectaux_incomingLimit_max_1 : 0.0
-      intersectaux_incomingLimit_min_1 : 0.0
-      intersectaux_lhs_bitset_1 : 41effffefee00000
-      intersectaux_lhs_hasRange_1 : 1.0
-      intersectaux_lhs_isUnion_1 : 0.0
-      intersectaux_lhs_lim_max_1 : 0.0
-      intersectaux_lhs_lim_max_2 : 2.132904783526024e19
-      intersectaux_lhs_lim_min_1 : 0.0
-      intersectaux_lhs_lim_min_2 : 1.780059086805762e-307
-      intersectaux_lhs_max_1 : 2.132904783526024e19
-      intersectaux_lhs_maybeMinusZero_1 : 0.0
-      intersectaux_lhs_maybeNaN_1 : 0.0
-      intersectaux_lhs_min_1 : 1.780059086805762e-307
-      intersectaux_newLimit_max_1 : 0.0
-      intersectaux_newLimit_max_2 : 2.132904783526024e19
-      intersectaux_newLimit_min_1 : 0.0
-      intersectaux_newLimit_min_2 : 1.4582244039112798e-303
-      intersectaux_rhs_bitset_1 : 41effffffee00000
-      intersectaux_rhs_hasRange_1 : 1.0
-      intersectaux_rhs_isUnion_1 : 0.0
-      intersectaux_rhs_lim_max_1 : 0.0
-      intersectaux_rhs_lim_max_2 : 5.758611029974823e163
-      intersectaux_rhs_lim_min_1 : 0.0
-      intersectaux_rhs_lim_min_2 : 1.4582244039112798e-303
-      intersectaux_rhs_max_1 : 5.758611029974823e163
-      intersectaux_rhs_maybeMinusZero_1 : 0.0
-      intersectaux_rhs_maybeNaN_1 : 0.0
-      intersectaux_rhs_min_1 : 1.4582244039112798e-303
-      is_that__bitset_1 : 41effffffee00000
-      is_that__bitset_2 : 41effffefee00000
-      is_that__bitset_3 : 41effffffee00000
-      is_that__bitset_4 : 41effffefee00000
-      is_this__bitset_1 : 41effffefee00000
-      is_this__bitset_2 : 41effffffee00000
-      is_this__bitset_3 : 41effffefee00000
-      is_this__bitset_4 : 41effffffee00000
-      isbitset_this__bitset_1 : 41effffefee00000
-      isbitset_this__bitset_10 : 41effffefee00000
-      isbitset_this__bitset_11 : 41effffffee00000
-      isbitset_this__bitset_12 : 41effffefee00000
-      isbitset_this__bitset_13 : 41effffefee00000
-      isbitset_this__bitset_14 : 41effffffee00000
-      isbitset_this__bitset_15 : 41effffefee00000
-      isbitset_this__bitset_16 : 41effffffee00000
-      isbitset_this__bitset_17 : 41effffffee00000
-      isbitset_this__bitset_18 : 41effffefee00000
-      isbitset_this__bitset_19 : 41effffefee00000
-      isbitset_this__bitset_2 : 41effffffee00000
-      isbitset_this__bitset_20 : 41effffffee00000
-      isbitset_this__bitset_21 : 41effffefee00000
-      isbitset_this__bitset_22 : 41effffffee00000
-      isbitset_this__bitset_23 : 41effffffee00000
-      isbitset_this__bitset_3 : 41effffffee00000
-      isbitset_this__bitset_4 : 41effffefee00000
-      isbitset_this__bitset_5 : 41effffefee00000
-      isbitset_this__bitset_6 : 41effffffee00000
-      isbitset_this__bitset_7 : 41effffefee00000
-      isbitset_this__bitset_8 : 41effffffee00000
-      isbitset_this__bitset_9 : 41effffffee00000
+      intersect_type2_min_1 : -6.344854593289124e-116
+      intersect_type2_min_2 : -6.344854593289124e-116
+      is_that__bitset_1 : 41ebfffffbc00000
+      is_that__bitset_2 : 41e006a89cc00000
+      is_that__bitset_3 : 41ebfffffbc00000
+      is_that__bitset_4 : 41e006a89cc00000
+      is_this__bitset_1 : 41e006a89cc00000
+      is_this__bitset_2 : 41ebfffffbc00000
+      is_this__bitset_3 : 41e006a89cc00000
+      is_this__bitset_4 : 41ebfffffbc00000
+      isbitset_this__bitset_1 : 41e006a89cc00000
+      isbitset_this__bitset_10 : 41e006a89cc00000
+      isbitset_this__bitset_11 : 41ebfffffbc00000
+      isbitset_this__bitset_12 : 41e006a89cc00000
+      isbitset_this__bitset_13 : 41e006a89cc00000
+      isbitset_this__bitset_14 : 41ebfffffbc00000
+      isbitset_this__bitset_15 : 41e006a89cc00000
+      isbitset_this__bitset_16 : 41ebfffffbc00000
+      isbitset_this__bitset_17 : 41ebfffffbc00000
+      isbitset_this__bitset_18 : 41e006a89cc00000
+      isbitset_this__bitset_19 : 41e006a89cc00000
+      isbitset_this__bitset_2 : 41ebfffffbc00000
+      isbitset_this__bitset_20 : 41ebfffffbc00000
+      isbitset_this__bitset_3 : 41ebfffffbc00000
+      isbitset_this__bitset_4 : 41e006a89cc00000
+      isbitset_this__bitset_5 : 41e006a89cc00000
+      isbitset_this__bitset_6 : 41ebfffffbc00000
+      isbitset_this__bitset_7 : 41e006a89cc00000
+      isbitset_this__bitset_8 : 41ebfffffbc00000
+      isbitset_this__bitset_9 : 41ebfffffbc00000
       isbitset_this__hasRange_1 : 3ff0000000000000
       isbitset_this__hasRange_10 : 3ff0000000000000
       isbitset_this__hasRange_11 : 3ff0000000000000
@@ -724,9 +736,6 @@ All tests
       isbitset_this__hasRange_19 : 3ff0000000000000
       isbitset_this__hasRange_2 : 3ff0000000000000
       isbitset_this__hasRange_20 : 3ff0000000000000
-      isbitset_this__hasRange_21 : 3ff0000000000000
-      isbitset_this__hasRange_22 : 3ff0000000000000
-      isbitset_this__hasRange_23 : 3ff0000000000000
       isbitset_this__hasRange_3 : 3ff0000000000000
       isbitset_this__hasRange_4 : 3ff0000000000000
       isbitset_this__hasRange_5 : 3ff0000000000000
@@ -747,9 +756,6 @@ All tests
       isbitset_this__isUnion_19 : 0
       isbitset_this__isUnion_2 : 0
       isbitset_this__isUnion_20 : 0
-      isbitset_this__isUnion_21 : 0
-      isbitset_this__isUnion_22 : 0
-      isbitset_this__isUnion_23 : 0
       isbitset_this__isUnion_3 : 0
       isbitset_this__isUnion_4 : 0
       isbitset_this__isUnion_5 : 0
@@ -757,29 +763,26 @@ All tests
       isbitset_this__isUnion_7 : 0
       isbitset_this__isUnion_8 : 0
       isbitset_this__isUnion_9 : 0
-      isbitset_this__max_1 : 43f2800000002004
-      isbitset_this__max_10 : 43f2800000002004
-      isbitset_this__max_11 : 61f0000040000000
-      isbitset_this__max_12 : 43f2800000002004
-      isbitset_this__max_13 : 43f2800000002004
-      isbitset_this__max_14 : 61f0000040000000
-      isbitset_this__max_15 : 43f2800000002004
-      isbitset_this__max_16 : 61f0000040000000
-      isbitset_this__max_17 : 61f0000040000000
-      isbitset_this__max_18 : 43f2800000002004
-      isbitset_this__max_19 : 43f2800000002004
-      isbitset_this__max_2 : 61f0000040000000
-      isbitset_this__max_20 : 61f0000040000000
-      isbitset_this__max_21 : 43f2800000002004
-      isbitset_this__max_22 : 61f0000040000000
-      isbitset_this__max_23 : 61f0000040000000
-      isbitset_this__max_3 : 61f0000040000000
-      isbitset_this__max_4 : 43f2800000002004
-      isbitset_this__max_5 : 43f2800000002004
-      isbitset_this__max_6 : 61f0000040000000
-      isbitset_this__max_7 : 43f2800000002004
-      isbitset_this__max_8 : 61f0000040000000
-      isbitset_this__max_9 : 61f0000040000000
+      isbitset_this__max_1 : 6020025100c06211
+      isbitset_this__max_10 : 6020025100c06211
+      isbitset_this__max_11 : 6801000000900002
+      isbitset_this__max_12 : 6020025100c06211
+      isbitset_this__max_13 : 6020025100c06211
+      isbitset_this__max_14 : 6801000000900002
+      isbitset_this__max_15 : 6020025100c06211
+      isbitset_this__max_16 : 6801000000900002
+      isbitset_this__max_17 : 6801000000900002
+      isbitset_this__max_18 : 6020025100c06211
+      isbitset_this__max_19 : 6020025100c06211
+      isbitset_this__max_2 : 6801000000900002
+      isbitset_this__max_20 : 6801000000900002
+      isbitset_this__max_3 : 6801000000900002
+      isbitset_this__max_4 : 6020025100c06211
+      isbitset_this__max_5 : 6020025100c06211
+      isbitset_this__max_6 : 6801000000900002
+      isbitset_this__max_7 : 6020025100c06211
+      isbitset_this__max_8 : 6801000000900002
+      isbitset_this__max_9 : 6801000000900002
       isbitset_this__maybeMinusZero_1 : 0
       isbitset_this__maybeMinusZero_10 : 0
       isbitset_this__maybeMinusZero_11 : 0
@@ -793,9 +796,6 @@ All tests
       isbitset_this__maybeMinusZero_19 : 0
       isbitset_this__maybeMinusZero_2 : 0
       isbitset_this__maybeMinusZero_20 : 0
-      isbitset_this__maybeMinusZero_21 : 0
-      isbitset_this__maybeMinusZero_22 : 0
-      isbitset_this__maybeMinusZero_23 : 0
       isbitset_this__maybeMinusZero_3 : 0
       isbitset_this__maybeMinusZero_4 : 0
       isbitset_this__maybeMinusZero_5 : 0
@@ -816,9 +816,6 @@ All tests
       isbitset_this__maybeNaN_19 : 0
       isbitset_this__maybeNaN_2 : 0
       isbitset_this__maybeNaN_20 : 0
-      isbitset_this__maybeNaN_21 : 0
-      isbitset_this__maybeNaN_22 : 0
-      isbitset_this__maybeNaN_23 : 0
       isbitset_this__maybeNaN_3 : 0
       isbitset_this__maybeNaN_4 : 0
       isbitset_this__maybeNaN_5 : 0
@@ -826,92 +823,83 @@ All tests
       isbitset_this__maybeNaN_7 : 0
       isbitset_this__maybeNaN_8 : 0
       isbitset_this__maybeNaN_9 : 0
-      isbitset_this__min_1 : 40000000000002
-      isbitset_this__min_10 : 40000000000002
-      isbitset_this__min_11 : 110000000000001
-      isbitset_this__min_12 : 40000000000002
-      isbitset_this__min_13 : 40000000000002
-      isbitset_this__min_14 : 110000000000001
-      isbitset_this__min_15 : 40000000000002
-      isbitset_this__min_16 : 110000000000001
-      isbitset_this__min_17 : 110000000000001
-      isbitset_this__min_18 : 40000000000002
-      isbitset_this__min_19 : 40000000000002
-      isbitset_this__min_2 : 110000000000001
-      isbitset_this__min_20 : 110000000000001
-      isbitset_this__min_21 : 40000000000002
-      isbitset_this__min_22 : 110000000000001
-      isbitset_this__min_23 : 110000000000001
-      isbitset_this__min_3 : 110000000000001
-      isbitset_this__min_4 : 40000000000002
-      isbitset_this__min_5 : 40000000000002
-      isbitset_this__min_6 : 110000000000001
-      isbitset_this__min_7 : 40000000000002
-      isbitset_this__min_8 : 110000000000001
-      isbitset_this__min_9 : 110000000000001
-      isrange_this__bitset_1 : 41effffefee00000
-      isrange_this__bitset_10 : 41effffffee00000
-      isrange_this__bitset_11 : 41effffefee00000
-      isrange_this__bitset_12 : 41effffffee00000
-      isrange_this__bitset_13 : 41effffffee00000
-      isrange_this__bitset_14 : 41effffefee00000
-      isrange_this__bitset_15 : 41effffefee00000
-      isrange_this__bitset_16 : 41effffffee00000
-      isrange_this__bitset_17 : 41effffefee00000
-      isrange_this__bitset_18 : 41effffefee00000
-      isrange_this__bitset_19 : 41effffffee00000
-      isrange_this__bitset_2 : 41effffffee00000
-      isrange_this__bitset_20 : 41effffffee00000
-      isrange_this__bitset_21 : 41effffefee00000
-      isrange_this__bitset_22 : 41effffffee00000
-      isrange_this__bitset_23 : 41effffefee00000
-      isrange_this__bitset_24 : 41effffffee00000
-      isrange_this__bitset_25 : 41effffefee00000
-      isrange_this__bitset_26 : 41effffffee00000
-      isrange_this__bitset_3 : 41effffffee00000
-      isrange_this__bitset_4 : 41effffefee00000
-      isrange_this__bitset_5 : 41effffefee00000
-      isrange_this__bitset_6 : 41effffffee00000
-      isrange_this__bitset_7 : 41effffefee00000
-      isrange_this__bitset_8 : 41effffefee00000
-      isrange_this__bitset_9 : 41effffffee00000
-      istuple_this__bitset_1 : 41effffefee00000
-      istuple_this__bitset_2 : 41effffffee00000
-      istuple_this__bitset_3 : 41effffefee00000
-      istuple_this__bitset_4 : 41effffffee00000
-      istuple_this__bitset_5 : 41effffefee00000
-      istuple_this__bitset_6 : 41effffffee00000
-      isunion_this__bitset_1 : 41effffefee00000
-      isunion_this__bitset_10 : 41effffefee00000
-      isunion_this__bitset_11 : 41effffefee00000
-      isunion_this__bitset_12 : 41effffffee00000
-      isunion_this__bitset_13 : 41effffefee00000
-      isunion_this__bitset_14 : 41effffffee00000
-      isunion_this__bitset_15 : 41effffefee00000
-      isunion_this__bitset_16 : 41effffffee00000
-      isunion_this__bitset_17 : 41effffffee00000
-      isunion_this__bitset_18 : 41effffefee00000
-      isunion_this__bitset_19 : 41effffffee00000
-      isunion_this__bitset_2 : 41effffffee00000
-      isunion_this__bitset_20 : 41effffefee00000
-      isunion_this__bitset_21 : 41effffffee00000
-      isunion_this__bitset_22 : 41effffefee00000
-      isunion_this__bitset_23 : 41effffefee00000
-      isunion_this__bitset_24 : 41effffffee00000
-      isunion_this__bitset_25 : 41effffefee00000
-      isunion_this__bitset_26 : 41effffffee00000
-      isunion_this__bitset_27 : 41effffefee00000
-      isunion_this__bitset_28 : 41effffffee00000
-      isunion_this__bitset_3 : 41effffefee00000
-      isunion_this__bitset_4 : 41effffffee00000
-      isunion_this__bitset_5 : 41effffffee00000
-      isunion_this__bitset_6 : 41effffefee00000
-      isunion_this__bitset_7 : 41effffffee00000
-      isunion_this__bitset_8 : 41effffefee00000
-      isunion_this__bitset_9 : 41effffffee00000
+      isbitset_this__min_1 : c020000800006021
+      isbitset_this__min_10 : c020000800006021
+      isbitset_this__min_11 : a804000000000001
+      isbitset_this__min_12 : c020000800006021
+      isbitset_this__min_13 : c020000800006021
+      isbitset_this__min_14 : a804000000000001
+      isbitset_this__min_15 : c020000800006021
+      isbitset_this__min_16 : a804000000000001
+      isbitset_this__min_17 : a804000000000001
+      isbitset_this__min_18 : c020000800006021
+      isbitset_this__min_19 : c020000800006021
+      isbitset_this__min_2 : a804000000000001
+      isbitset_this__min_20 : a804000000000001
+      isbitset_this__min_3 : a804000000000001
+      isbitset_this__min_4 : c020000800006021
+      isbitset_this__min_5 : c020000800006021
+      isbitset_this__min_6 : a804000000000001
+      isbitset_this__min_7 : c020000800006021
+      isbitset_this__min_8 : a804000000000001
+      isbitset_this__min_9 : a804000000000001
+      isrange_this__bitset_1 : 41e006a89cc00000
+      isrange_this__bitset_10 : 41ebfffffbc00000
+      isrange_this__bitset_11 : 41e006a89cc00000
+      isrange_this__bitset_12 : 41ebfffffbc00000
+      isrange_this__bitset_13 : 41ebfffffbc00000
+      isrange_this__bitset_14 : 41e006a89cc00000
+      isrange_this__bitset_15 : 41e006a89cc00000
+      isrange_this__bitset_16 : 41ebfffffbc00000
+      isrange_this__bitset_17 : 41e006a89cc00000
+      isrange_this__bitset_18 : 41e006a89cc00000
+      isrange_this__bitset_19 : 41ebfffffbc00000
+      isrange_this__bitset_2 : 41ebfffffbc00000
+      isrange_this__bitset_20 : 41ebfffffbc00000
+      isrange_this__bitset_21 : 41e006a89cc00000
+      isrange_this__bitset_22 : 41ebfffffbc00000
+      isrange_this__bitset_23 : 41e006a89cc00000
+      isrange_this__bitset_24 : 41ebfffffbc00000
+      isrange_this__bitset_3 : 41ebfffffbc00000
+      isrange_this__bitset_4 : 41e006a89cc00000
+      isrange_this__bitset_5 : 41e006a89cc00000
+      isrange_this__bitset_6 : 41ebfffffbc00000
+      isrange_this__bitset_7 : 41e006a89cc00000
+      isrange_this__bitset_8 : 41e006a89cc00000
+      isrange_this__bitset_9 : 41ebfffffbc00000
+      istuple_this__bitset_1 : 41e006a89cc00000
+      istuple_this__bitset_2 : 41ebfffffbc00000
+      istuple_this__bitset_3 : 41e006a89cc00000
+      istuple_this__bitset_4 : 41ebfffffbc00000
+      isunion_this__bitset_1 : 41e006a89cc00000
+      isunion_this__bitset_10 : 41e006a89cc00000
+      isunion_this__bitset_11 : 41e006a89cc00000
+      isunion_this__bitset_12 : 41ebfffffbc00000
+      isunion_this__bitset_13 : 41e006a89cc00000
+      isunion_this__bitset_14 : 41ebfffffbc00000
+      isunion_this__bitset_15 : 41e006a89cc00000
+      isunion_this__bitset_16 : 41ebfffffbc00000
+      isunion_this__bitset_17 : 41ebfffffbc00000
+      isunion_this__bitset_18 : 41e006a89cc00000
+      isunion_this__bitset_19 : 41ebfffffbc00000
+      isunion_this__bitset_2 : 41ebfffffbc00000
+      isunion_this__bitset_20 : 41e006a89cc00000
+      isunion_this__bitset_21 : 41ebfffffbc00000
+      isunion_this__bitset_22 : 41e006a89cc00000
+      isunion_this__bitset_23 : 41e006a89cc00000
+      isunion_this__bitset_24 : 41ebfffffbc00000
+      isunion_this__bitset_25 : 41e006a89cc00000
+      isunion_this__bitset_26 : 41ebfffffbc00000
+      isunion_this__bitset_3 : 41e006a89cc00000
+      isunion_this__bitset_4 : 41ebfffffbc00000
+      isunion_this__bitset_5 : 41ebfffffbc00000
+      isunion_this__bitset_6 : 41e006a89cc00000
+      isunion_this__bitset_7 : 41ebfffffbc00000
+      isunion_this__bitset_8 : 41e006a89cc00000
+      isunion_this__bitset_9 : 41ebfffffbc00000
       kNegative31Bounds_1 : 1.0
       kNegative31Bounds_2 : 1.0
-      kNegative31Bounds_3 : 1.0
+      kNegative31Bounds_3 : 0.0
       kOtherNumberBounds_1 : 1.0
       kOtherNumberBounds_2 : 1.0
       kOtherNumberBounds_3 : 1.0
@@ -926,125 +914,116 @@ All tests
       kOtherUnsigned32Bounds_3 : 1.0
       kUnsigned30Bounds_1 : 1.0
       kUnsigned30Bounds_2 : 1.0
-      kUnsigned30Bounds_3 : 0.0
-      limitintersect_llhs_max_1 : 2.132904783526024e19
-      limitintersect_llhs_min_1 : 1.780059086805762e-307
-      limitintersect_lresult_max_1 : 2.132904783526024e19
-      limitintersect_lresult_max_2 : 2.132904783526024e19
-      limitintersect_lresult_min_1 : 1.780059086805762e-307
-      limitintersect_lresult_min_2 : 1.4582244039112798e-303
-      limitintersect_lrhs_max_1 : 5.758611029974823e163
-      limitintersect_lrhs_min_1 : 1.4582244039112798e-303
-      newRange_return_val_bitset_1 : 4036000000000000
-      newbitset_bitset_1 : 41effffefee00000
-      newbitset_type_bitset_1 : 41effffefee00000
+      kUnsigned30Bounds_3 : 1.0
+      limitintersect_llhs_max_1 : 1.0732312375952914e155
+      limitintersect_llhs_min_1 : -8.000061035199964
+      limitintersect_lresult_max_1 : 1.0732312375952914e155
+      limitintersect_lresult_max_2 : 1.0732312375952914e155
+      limitintersect_lresult_min_1 : -8.000061035199964
+      limitintersect_lresult_min_2 : -6.344854593289124e-116
+      limitintersect_lrhs_max_1 : 9.695186331568137e192
+      limitintersect_lrhs_min_1 : -6.344854593289124e-116
+      newRange_return_val_bitset_1 : 4090580000000000
+      newbitset_bitset_1 : 41e006a898c00000
+      newbitset_type_bitset_1 : 41e006a898c00000
       newbitset_type_hasRange_1 : 0
       newbitset_type_isUnion_1 : 0
       newbitset_type_max_1 : 0
       newbitset_type_maybeMinusZero_1 : 0
       newbitset_type_maybeNaN_1 : 0
       newbitset_type_min_1 : 0
-      newrange_type_bitset_1 : 4036000000000000
+      newrange_type_bitset_1 : 4090580000000000
       newrange_type_hasRange_1 : 1.0
       newrange_type_isUnion_1 : 0.0
-      newrange_type_max_1 : 2.132904783526024e19
+      newrange_type_max_1 : 1.0732312375952914e155
       newrange_type_maybeMinusZero_1 : 0.0
       newrange_type_maybeNaN_1 : 0.0
-      newrange_type_min_1 : 0.0
-      noneType_return_val_bitset_1 : 0
-      nonetype_type_bitset_1 : 0
-      nonetype_type_hasRange_1 : 0.0
-      nonetype_type_isUnion_1 : 0.0
-      nonetype_type_max_1 : 0.0
-      nonetype_type_maybeMinusZero_1 : 0.0
-      nonetype_type_maybeNaN_1 : 0.0
-      nonetype_type_min_1 : 0.0
-      rangecontains_lhs_bitset_1 : 41effffefee00000
-      rangecontains_lhs_bitset_2 : 41effffffee00000
-      rangecontains_lhs_bitset_3 : 41effffefee00000
-      rangecontains_lhs_bitset_4 : 41effffffee00000
-      rangecontains_rhs_bitset_1 : 41effffffee00000
-      rangecontains_rhs_bitset_2 : 41effffefee00000
-      rangecontains_rhs_bitset_3 : 41effffffee00000
-      rangecontains_rhs_bitset_4 : 41effffefee00000
-      result_bitset_1 : 0.0
-      result_type_bitset_1 : 22.0
+      newrange_type_min_1 : -6.344854593289124e-116
+      rangecontains_lhs_bitset_1 : 41e006a89cc00000
+      rangecontains_lhs_bitset_2 : 41ebfffffbc00000
+      rangecontains_lhs_bitset_3 : 41e006a89cc00000
+      rangecontains_lhs_bitset_4 : 41ebfffffbc00000
+      rangecontains_rhs_bitset_1 : 41ebfffffbc00000
+      rangecontains_rhs_bitset_2 : 41e006a89cc00000
+      rangecontains_rhs_bitset_3 : 41ebfffffbc00000
+      rangecontains_rhs_bitset_4 : 41e006a89cc00000
+      result_type_bitset_1 : 1046.0
       result_type_hasRange_1 : 1.0
       result_type_isUnion_1 : 0.0
-      result_type_max_1 : 2.132904783526024e19
+      result_type_max_1 : 1.0732312375952914e155
       result_type_maybeMinusZero_1 : 0.0
       result_type_maybeNaN_1 : 0.0
-      result_type_min_1 : 0.0
-      simplyequals_that_bitset_1 : 41effffffee00000
-      simplyequals_that_bitset_2 : 41effffefee00000
-      simplyequals_that_bitset_3 : 41effffffee00000
-      simplyequals_that_bitset_4 : 41effffefee00000
-      simplyequals_this__bitset_1 : 41effffefee00000
-      simplyequals_this__bitset_2 : 41effffffee00000
-      simplyequals_this__bitset_3 : 41effffefee00000
-      simplyequals_this__bitset_4 : 41effffffee00000
-      slowis_that__bitset_1 : 41effffffee00000
-      slowis_that__bitset_2 : 41effffefee00000
-      slowis_that__bitset_3 : 41effffffee00000
-      slowis_that__bitset_4 : 41effffefee00000
-      slowis_this__bitset_1 : 41effffefee00000
-      slowis_this__bitset_2 : 41effffffee00000
-      slowis_this__bitset_3 : 41effffefee00000
-      slowis_this__bitset_4 : 41effffffee00000
-      type1_bitset_0 : 41effffefee00000
+      result_type_min_1 : -6.344854593289124e-116
+      simplyequals_that_bitset_1 : 41ebfffffbc00000
+      simplyequals_that_bitset_2 : 41e006a89cc00000
+      simplyequals_that_bitset_3 : 41ebfffffbc00000
+      simplyequals_that_bitset_4 : 41e006a89cc00000
+      simplyequals_this__bitset_1 : 41e006a89cc00000
+      simplyequals_this__bitset_2 : 41ebfffffbc00000
+      simplyequals_this__bitset_3 : 41e006a89cc00000
+      simplyequals_this__bitset_4 : 41ebfffffbc00000
+      slowis_that__bitset_1 : 41ebfffffbc00000
+      slowis_that__bitset_2 : 41e006a89cc00000
+      slowis_that__bitset_3 : 41ebfffffbc00000
+      slowis_that__bitset_4 : 41e006a89cc00000
+      slowis_this__bitset_1 : 41e006a89cc00000
+      slowis_this__bitset_2 : 41ebfffffbc00000
+      slowis_this__bitset_3 : 41e006a89cc00000
+      slowis_this__bitset_4 : 41ebfffffbc00000
+      type1_bitset_0 : 41e006a89cc00000
       type1_hasRange_0 : 1.0
       type1_isUnion_0 : 0.0
-      type1_max_0 : 2.132904783526024e19
+      type1_max_0 : 1.0732312375952914e155
       type1_maybeMinusZero_0 : 0.0
       type1_maybeNaN_0 : 0.0
-      type1_min_0 : 1.780059086805762e-307
-      type2_bitset_0 : 41effffffee00000
+      type1_min_0 : -8.000061035199964
+      type2_bitset_0 : 41ebfffffbc00000
       type2_hasRange_0 : 1.0
       type2_isUnion_0 : 0.0
-      type2_max_0 : 5.758611029974823e163
+      type2_max_0 : 9.695186331568137e192
       type2_maybeMinusZero_0 : 0.0
       type2_maybeNaN_0 : 0.0
-      type2_min_0 : 1.4582244039112798e-303
-      typeisany_ty_bitset_1 : 41effffffee00000
-      typeisany_ty_bitset_2 : 41effffefee00000
+      type2_min_0 : -6.344854593289124e-116
+      typeisany_ty_bitset_1 : 41ebfffffbc00000
+      typeisany_ty_bitset_2 : 41e006a89cc00000
       typeisany_ty_hasRange_1 : 1.0
       typeisany_ty_hasRange_2 : 1.0
       typeisany_ty_isUnion_1 : 0.0
       typeisany_ty_isUnion_2 : 0.0
-      typeisany_ty_max_1 : 5.758611029974823e163
-      typeisany_ty_max_2 : 2.132904783526024e19
+      typeisany_ty_max_1 : 9.695186331568137e192
+      typeisany_ty_max_2 : 1.0732312375952914e155
       typeisany_ty_maybeMinusZero_1 : 0.0
       typeisany_ty_maybeMinusZero_2 : 0.0
       typeisany_ty_maybeNaN_1 : 0.0
       typeisany_ty_maybeNaN_2 : 0.0
-      typeisany_ty_min_1 : 1.4582244039112798e-303
-      typeisany_ty_min_2 : 1.780059086805762e-307
-      typeisnone_ty_bitset_1 : 41effffefee00000
-      typeisnone_ty_bitset_2 : 41effffffee00000
+      typeisany_ty_min_1 : -6.344854593289124e-116
+      typeisany_ty_min_2 : -8.000061035199964
+      typeisnone_ty_bitset_1 : 41e006a89cc00000
+      typeisnone_ty_bitset_2 : 41ebfffffbc00000
       typeisnone_ty_hasRange_1 : 1.0
       typeisnone_ty_hasRange_2 : 1.0
       typeisnone_ty_isUnion_1 : 0.0
       typeisnone_ty_isUnion_2 : 0.0
-      typeisnone_ty_max_1 : 2.132904783526024e19
-      typeisnone_ty_max_2 : 5.758611029974823e163
+      typeisnone_ty_max_1 : 1.0732312375952914e155
+      typeisnone_ty_max_2 : 9.695186331568137e192
       typeisnone_ty_maybeMinusZero_1 : 0.0
       typeisnone_ty_maybeMinusZero_2 : 0.0
       typeisnone_ty_maybeNaN_1 : 0.0
       typeisnone_ty_maybeNaN_2 : 0.0
-      typeisnone_ty_min_1 : 1.780059086805762e-307
-      typeisnone_ty_min_2 : 1.4582244039112798e-303
-      union_lresult_max_1 : 2.132904783526024e19
-      union_lresult_max_2 : 2.132904783526024e19
-      union_lresult_min_1 : 1.4582244039112798e-303
-      union_lresult_min_2 : 0.0
+      typeisnone_ty_min_1 : -8.000061035199964
+      typeisnone_ty_min_2 : -6.344854593289124e-116
       
       CallStack (from HasCallStack):
-        error, called at src/V8Generated/Verify.hs:844:10 in lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp:V8Generated.Verify
-    AddRanger:       OK (1.43s)
-    SubtractRanger:  OK (2.05s)
-    MultiplyRanger:  OK (10.41s)
+        error, called at src/V8Generated/Verify.hs:886:10 in lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp:V8Generated.Verify
+    AddRanger:       OK (1.54s)
+    SubtractRanger:  OK (2.84s)
+    MultiplyRanger:  OK (33.40s)
+    NumberAdd:       FAIL
+      Exception: Function minusInfinityType undefined so has no formal args
+      CallStack (from HasCallStack):
+        error, called at src/Generate/State.hs:145:17 in lejit-0.1.0.0-CEQOVHBIT9A6XwGBKlqNNp:Generate.State
 
-1 out of 6 tests failed (54.47s)
+2 out of 7 tests failed (89.53s)
 
 lejit> Test suite lejit-test failed
 Completed 2 action(s).

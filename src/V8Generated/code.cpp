@@ -1202,6 +1202,7 @@ limits IntersectAux(v8type intersectaux_lhs, v8type intersectaux_rhs, limits int
     return intersectaux_incomingLimit; 
   }
 
+  bool intersectaux_continue = FALSE;
   // delcare vars in if statement...
   limits intersectaux_lhs_lim;
   limits intersectaux_rhs_lim;
@@ -1212,6 +1213,9 @@ limits IntersectAux(v8type intersectaux_lhs, v8type intersectaux_rhs, limits int
   intersectaux_rhs_lim.max = 0.0;
   intersectaux_newLimit.min = 0.0;
   intersectaux_newLimit.max = 0.0;
+  limits intersectaux_union; 
+  intersectaux_union.min = 0.0;
+  intersectaux_union.max = 0.0;
   if(IsRange(intersectaux_lhs)){
     if(IsBitset(intersectaux_rhs)){
 
@@ -1221,16 +1225,44 @@ limits IntersectAux(v8type intersectaux_lhs, v8type intersectaux_rhs, limits int
       intersectaux_rhs_lim = getLimits(intersectaux_rhs);
       intersectaux_newLimit = LimitIntersect(intersectaux_lhs_lim, intersectaux_rhs_lim);
       if(!IsEmpty(intersectaux_newLimit)){
-        return Union(intersectaux_newLimit, intersectaux_incomingLimit); 
+        intersectaux_union = Union(intersectaux_newLimit, intersectaux_incomingLimit);
+        intersectaux_continue = FALSE;
+        return intersectaux_union; 
       } else {
+        intersectaux_continue = FALSE;
         return intersectaux_incomingLimit;
       }
     }
   }
-  // TODO: is this supposed to be here?
-  /*if(IsRange(rhs)){
-    return IntersectAux(rhs, lhs, incomingLimit);
-  }*/
+
+  limits intersectaux_lhs_lim1;
+  limits intersectaux_rhs_lim1;
+  limits intersectaux_newLimit1;
+  intersectaux_lhs_lim1.min = 0.0;
+  intersectaux_lhs_lim1.max = 0.0;
+  intersectaux_rhs_lim1.min = 0.0;
+  intersectaux_rhs_lim1.max = 0.0;
+  intersectaux_newLimit1.min = 0.0;
+  intersectaux_newLimit1.max = 0.0;
+  limits intersectaux_union1; 
+  intersectaux_union1.min = 0.0;
+  intersectaux_union1.max = 0.0;
+  if(IsRange(intersectaux_rhs)){
+    if(IsBitset(intersectaux_lhs)){
+
+    } 
+    if(IsRange(intersectaux_lhs)){
+      intersectaux_rhs_lim1 = getLimits(intersectaux_rhs);
+      intersectaux_lhs_lim1 = getLimits(intersectaux_lhs);
+      intersectaux_newLimit1 = LimitIntersect(intersectaux_rhs_lim1, intersectaux_lhs_lim1);
+      if(!IsEmpty(intersectaux_newLimit1) && intersectaux_continue){
+        intersectaux_union1 = Union(intersectaux_newLimit1, intersectaux_incomingLimit);
+        return intersectaux_union1; 
+      } else if (intersectaux_continue) {
+        return intersectaux_incomingLimit;
+      }
+    }
+  }
 
   //last two cases we don't handle because they involve unions again
   //TODO is this correct?
@@ -1246,18 +1278,33 @@ v8type NormalizeUnion(v8type normalizeunion_union){ //this is a no-op currently 
 //Type Type::Intersect(Type type1, Type type2, Zone* zone) {
 v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
   //return noneType();
+  bool intersect_continue = TRUE;
+  v8type intersect_result = AnyType(); //NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
   // Fast case: bit sets.
   if (IsBitset(intersect_type1) && IsBitset(intersect_type2)) {
-    return NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
+      intersect_continue = FALSE;
+      intersect_result = NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
   }
 
   // Fast case: top or bottom types.
-  if (TypeIsNone(intersect_type1) || TypeIsAny(intersect_type2)) return intersect_type1;  // Shortcut.
-  if (TypeIsNone(intersect_type2) || TypeIsAny(intersect_type1)) return intersect_type2;  // Shortcut.
+  if (intersect_continue && (TypeIsNone(intersect_type1) || TypeIsAny(intersect_type2))) {
+      intersect_continue = FALSE;
+      intersect_result = intersect_type1;  // Shortcut.
+  }
+  if (intersect_continue && (TypeIsNone(intersect_type2) || TypeIsAny(intersect_type1))) {
+      intersect_continue = FALSE;
+      intersect_result = intersect_type2;  // Shortcut.
+  }
 
   // Semi-fast case.
-  if (Is(intersect_type1, intersect_type2)) return intersect_type1;
-  if (Is(intersect_type2, intersect_type1)) return intersect_type2;
+  if (intersect_continue && (Is(intersect_type1, intersect_type2))) {
+      intersect_continue = FALSE;
+      intersect_result = intersect_type1;
+  }
+  if (intersect_continue && (Is(intersect_type2, intersect_type1))) {
+      intersect_continue = FALSE;
+      intersect_result = intersect_type2;
+  }
 
   // Slow case: create union.
 
@@ -1270,31 +1317,32 @@ v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
   }
 
  
-
   bitset_t intersect_bits = BitsetGlb(intersect_type1) & BitsetGlb(intersect_type2);
   int32_t intersect_size1 = (int32_t)1; //we don't support unions so this is just 1
   int32_t intersect_size2 = (int32_t)1; //also changed from int to int32_t
 
-  if(SignedAddWouldOverflow32(intersect_size1, intersect_size2)){
-    return AnyType();
+  if(intersect_continue && (SignedAddWouldOverflow32(intersect_size1, intersect_size2))){
+    intersect_continue = FALSE;
+    intersect_result = AnyType();
   }
 
   int32_t intersect_size = intersect_size1 + intersect_size2;
  
-  if(SignedAddWouldOverflow32(intersect_size, (int32_t)2)){
-    return AnyType();
+  if(intersect_continue && (SignedAddWouldOverflow32(intersect_size, (int32_t)2))){
+    intersect_continue = FALSE;
+    intersect_result = AnyType();
   }
 
-  v8type result; //was a union but we don't support them :)
-  result.bitset = intersect_bits;
-
   intersect_size = intersect_size + (int32_t)1;
+  limits intersect_rhs_lim = getLimits(intersect_type1);
+  limits intersect_lhs_lim = getLimits(intersect_type2);
 
-  v8type intersect_none = noneType();
-  limits intersect_empty = getLimits(intersect_none);
-  limits intersect_lims = IntersectAux(intersect_type1, intersect_type2, intersect_empty);
-  //update result, normally done in IntersectAux but lack of pointers means we do it this way
-  v8type intersect_result = newRange(intersect_lims.min, intersect_lims.max);
+  limits intersect_lims = LimitIntersect(intersect_rhs_lim, intersect_lhs_lim);
+  if (intersect_continue && (IsRange(intersect_type1) && IsRange(intersect_type2))) {
+    /*limits intersect_lims = IntersectAux(intersect_type1, intersect_type2, intersect_empty);*/
+    //update result, normally done in IntersectAux but lack of pointers means we do it this way
+    v8type intersect_result = newRange(intersect_lims.min, intersect_lims.max);
+  }
 
   /*bitset_t intersect_number_bits = UINT32_ZERO;
   if(!IsEmpty(intersect_lims)){
