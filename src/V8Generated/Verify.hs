@@ -615,7 +615,7 @@ setupNumberAdd op fnName fn = do
               , assert_ $ call "fInType" [v "numberadd_js_left", v "numberadd_lhs"]              
               , assert_ $ call "fInType" [v "numberadd_js_right", v "numberadd_rhs"]
               , (v "numberadd_js_result") `assign` (v "numberadd_js_left" `fn` v "numberadd_js_right")
-              , expect_ isSat $ \r -> showInt32Result "Should be sat" r
+              , expect_ isSat (error "Should be sat")
               ]
   genBodySMT verif
 
@@ -642,10 +642,13 @@ defineAll op = do
   define minusInfinityType
   define infinityType
   define plainNumberType
+  define kIntegerType
   define getBoundary
   define anyType
   define noneType
   define signedAddWouldOverflow
+  -- type helpers
+  define maybeFunc
   -- limits
   define verifyLimitUnion
   define verifyLimitIntersect

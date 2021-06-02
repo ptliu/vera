@@ -52,6 +52,9 @@ infinityType = fn "infinityType"
 plainNumberType :: FunctionDef
 plainNumberType = fn "plainNumberType"
 
+kIntegerType :: FunctionDef
+kIntegerType = fn "kIntegerType"
+
 getBoundary:: FunctionDef
 getBoundary = fn "getBoundary"
 
@@ -63,6 +66,11 @@ noneType = fn "noneType"
 
 signedAddWouldOverflow :: FunctionDef
 signedAddWouldOverflow = fn "SignedAddWouldOverflow32"
+
+-- types helpers
+
+maybeFunc :: FunctionDef
+maybeFunc = fn "Maybe"
 
 -- int min and max 
 jsIntMax :: Codegen SExpr

@@ -233,7 +233,7 @@ v8type newBitset(bitset_t newbitset_bits) {
 
 v8type newRange(double newrange_min, double newrange_max) {
     v8type newrange_type;
-    newrange_type.bitset = BitsetTypeLub(newrange_min, newrange_max);
+    newrange_type.bitset = BitsetTypeLub(newrange_min, newrange_max); //BitsetTypeLub causes invariant failure
     newrange_type.hasRange = (bool)1;
     newrange_type.max = newrange_max;
     newrange_type.min = newrange_min;
@@ -320,6 +320,17 @@ v8type plainNumberType() {
     plainnumbertype_type.maybeNaN = FALSE;
     plainnumbertype_type.maybeMinusZero = FALSE;
     plainnumbertype_type.isUnion = FALSE;
+}
+
+v8type kIntegerType() {
+  v8type minusinfinitytype_type;
+    minusinfinitytype_type.bitset = kOtherNumber;
+    minusinfinitytype_type.max = V8_INFINITY;
+    minusinfinitytype_type.min = -V8_INFINITY;
+    minusinfinitytype_type.hasRange = TRUE; 
+    minusinfinitytype_type.maybeNaN = FALSE;
+    minusinfinitytype_type.maybeMinusZero = FALSE;
+    minusinfinitytype_type.isUnion = FALSE;
 }
 
 limits copy(limits const& copy_other) {
@@ -615,58 +626,65 @@ bitset_t BitsetTypeLub(double bitsettypelub_min, double bitsettypelub_max) {
       if (max < mins[i].min) return lub;
     }
   }*/
+  //need i=0 case
+  bool bitsettypelub_continueLoop = TRUE;
+  boundary bitsettypelub_mins_0 = getBoundary((uint32_t)0);
   boundary bitsettypelub_mins_1 = getBoundary((uint32_t)1);
-  if (bitsettypelub_min < bitsettypelub_mins_1.min) {
-      lub |= bitsettypelub_mins_1.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_1.min  && bitsettypelub_continueLoop) {
+      lub |= bitsettypelub_mins_0.internal;
       if (bitsettypelub_max < bitsettypelub_mins_1.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
   boundary bitsettypelub_mins_2 = getBoundary((uint32_t)2);
-  if (bitsettypelub_min < bitsettypelub_mins_2.min) {
-      lub |= bitsettypelub_mins_2.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_2.min  && bitsettypelub_continueLoop) {
+      lub |= bitsettypelub_mins_1.internal;
       if (bitsettypelub_max < bitsettypelub_mins_2.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
   boundary bitsettypelub_mins_3 = getBoundary((uint32_t)3);
-  if (bitsettypelub_min < bitsettypelub_mins_3.min) {
-      lub |= bitsettypelub_mins_3.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_3.min  && bitsettypelub_continueLoop) {
+      lub |= bitsettypelub_mins_2.internal;
       if (bitsettypelub_max < bitsettypelub_mins_3.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
   boundary bitsettypelub_mins_4 = getBoundary((uint32_t)4);
-  if (bitsettypelub_min < bitsettypelub_mins_4.min) {
-      lub |= bitsettypelub_mins_4.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_4.min  && bitsettypelub_continueLoop) {
+      lub |= bitsettypelub_mins_3.internal;
       if (bitsettypelub_max < bitsettypelub_mins_4.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
   boundary bitsettypelub_mins_5 = getBoundary((uint32_t)5);
-  if (bitsettypelub_min < bitsettypelub_mins_5.min) {
-      lub |= bitsettypelub_mins_5.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_5.min  && bitsettypelub_continueLoop) {
+      lub |= bitsettypelub_mins_4.internal;
       if (bitsettypelub_max < bitsettypelub_mins_5.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
   boundary bitsettypelub_mins_6 = getBoundary((uint32_t)6);
-  if (bitsettypelub_min < bitsettypelub_mins_6.min) {
-      lub |= bitsettypelub_mins_6.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_6.min  && bitsettypelub_continueLoop)  {
+      lub |= bitsettypelub_mins_5.internal;
       if (bitsettypelub_max < bitsettypelub_mins_6.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
   boundary bitsettypelub_mins_7 = getBoundary((uint32_t)7);
-  if (bitsettypelub_min < bitsettypelub_mins_7.min) {
-      lub |= bitsettypelub_mins_7.internal;
+  if (bitsettypelub_min < bitsettypelub_mins_7.min  && bitsettypelub_continueLoop) {
+      lub |= bitsettypelub_mins_6.internal;
       if (bitsettypelub_max < bitsettypelub_mins_7.min) {
-          return lub;
+          bitsettypelub_continueLoop = FALSE;
       }
   }
 
   // return lub | mins[BoundariesSize() - 1].internal;
-  lub |= bitsettypelub_mins_7.internal;
+  if(bitsettypelub_continueLoop ){
+
+    lub |= bitsettypelub_mins_7.internal;
+  }
+  
   return lub;
 }
 
@@ -681,7 +699,7 @@ bitset_t BitsetTypeGlb(double bitsettypeglb_min, double bitsettypeglb_max) {
   if(bitsettypeglb_max <  (double)-1 || bitsettypeglb_min > DOUBLE_ZERO){
     return bitsettypeglb_glb;
   }
-
+  //need i=0 case
   boundary bitsettypeglb_mins_1 = getBoundary((uint32_t)1);
   
   boundary bitsettypeglb_mins_2 = getBoundary((uint32_t)2);
@@ -871,10 +889,18 @@ bool SimplyEquals(v8type simplyequals_this_, v8type simplyequals_that) {
   //UNREACHABLE();
 }
 
-bool Maybe(v8Type maybe_this_, v8Type maybe_that) {
+bool Maybe(v8type maybe_this_, v8type maybe_that) {
   //DisallowGarbageCollection no_gc;
-
-  if (BitsetIsNone(BitsetLub(maybe_this_) & BitsetLub(maybe_that))) return false;
+  bool maybe_returnVal;
+  bool maybe_pathCond = TRUE;
+  bitset_t maybe_thisLub = BitsetLub(maybe_this_);
+  bitset_t maybe_thatLub = BitsetLub(maybe_that);
+  bitset_t maybe_bitsetIsNone = BitsetIsNone(maybe_thisLub & maybe_thatLub);
+  //if (BitsetIsNone(BitsetLub(maybe_this_) & BitsetLub(maybe_that)))
+  if (maybe_bitsetIsNone){
+    maybe_returnVal = FALSE; //return false
+    maybe_pathCond = FALSE;
+  } 
 
   // TODO: no unions what do?
   // (T1 \/ ... \/ Tn) overlaps T  if  (T1 overlaps T) \/ ... \/ (Tn overlaps T)
@@ -886,45 +912,121 @@ bool Maybe(v8Type maybe_this_, v8Type maybe_that) {
   }*/
 
   // T overlaps (T1 \/ ... \/ Tn)  if  (T overlaps T1) \/ ... \/ (T overlaps Tn)
-  /*if (that.IsUnion()) {
+  if (that.IsUnion()) {
     for (int i = 0, n = that.AsUnion()->Length(); i < n; ++i) {
       if (this->Maybe(that.AsUnion()->Get(i))) return true;
     }
     return false;
-  }*/
+  }
 
   // for now, just treat unions as "unbounded union of all types"
-  if (IsUnion(maybe_this_)) {
-      return true;
+  bool maybe_this_union = IsUnion(maybe_this_);
+  if (maybe_this_union) {
+      if(maybe_pathCond){
+        maybe_returnVal = TRUE; //return true
+        maybe_pathCond = FALSE;
+      }
+
   }
 
-  if (IsUnion(maybe_that_)) {
-    return true;
-  }
-
-  if (IsBitset(maybe_this_) && IsBitset(maybe_that)) return true;
-
-  if (IsRange(maybe_this_)) {
-    if (IsRange(maybe_that)) {
-      return Overlap(maybe_this_, maybe_that);
+  bool maybe_that_union = IsUnion(maybe_that);
+  if (maybe_that_union) {
+    if(maybe_pathCond){
+        maybe_returnVal = TRUE; //return true
+        maybe_pathCond = FALSE;
     }
-    if (IsBitset(maybe_that)) {
+  }
+
+  bool maybe_this_bitset = IsBitset(maybe_this_);
+  bool maybe_that_bitset = IsBitset(maybe_that);
+  
+  if (maybe_this_bitset && maybe_that_bitset){
+    if(maybe_pathCond){
+        maybe_returnVal = TRUE; //return true
+        maybe_pathCond = FALSE;
+    }
+
+  } 
+
+  bool maybe_this_range = IsRange(maybe_this_);
+  bool maybe_that_range = IsRange(maybe_that);
+  if (maybe_this_range) {
+    if (maybe_that_range) {
+
+      if(maybe_pathCond){
+        maybe_returnVal = Overlap(maybe_this_, maybe_that); //return Overlap
+        maybe_pathCond = FALSE;
+      }
+    }
+    if (maybe_that_bitset) {
       bitset_t maybe_number_bits = NumberBits(maybe_that.bitset);
       if (maybe_number_bits == kNone) {
-        return false;
+        if(maybe_pathCond){
+          maybe_returnVal = FALSE; //return false
+          maybe_pathCond = FALSE;
+        }
       }
-      double maybe_min = math::max(BitsetMin(maybe_number_bits), Min(maybe_this_));
-      double maybe_max = math::min(BitsetMax(maybe_number_bits), Max(maybe_this_));
-      return maybe_min <= maybe_max;
+      double maybe_bitsetmin_maybe_number_bits = BitsetMin(maybe_number_bits);
+      double maybe_bitsetmax_maybe_number_bits = BitsetMax(maybe_number_bits);
+      double maybe_this_min = BitsetMin(maybe_this_);
+      double maybe_this_max = BitsetMax(maybe_this_);
+      double maybe_min = math::max(maybe_bitsetmin_maybe_number_bits, maybe_this_min);
+      double maybe_max = math::min(maybe_bitsetmax_maybe_number_bits, maybe_this_max);
+      if(maybe_pathCond){
+          maybe_returnVal = maybe_min <= maybe_max; //return maybe_min <= maybe_max;
+          maybe_pathCond = FALSE;
+      }
     }
   }
-  if (IsRange(maybe_that)) {
-    return Maybe(maybe_that, maybe_this_);  // This case is handled above.
+
+  //if (IsRange(maybe_that)) {
+    //return Maybe(maybe_that, maybe_this_);  // This case is handled above.
+  //}
+  //since we don't handle recursion we do this explicitly
+  if (maybe_that_range) {
+    if (maybe_this_range) {
+
+      if(maybe_pathCond){
+        maybe_returnVal = Overlap(maybe_that, maybe_this_); //return Overlap
+        maybe_pathCond = FALSE;
+      }
+    }
+    if (maybe_this_bitset) {
+      bitset_t maybe_number_bits = NumberBits(maybe_this.bitset);
+      if (maybe_number_bits == kNone) {
+        if(maybe_pathCond){
+          maybe_returnVal = FALSE; //return false
+          maybe_pathCond = FALSE;
+        }
+      }
+      double maybe_bitsetmin_maybe_number_bits = BitsetMin(maybe_number_bits);
+      double maybe_bitsetmax_maybe_number_bits = BitsetMax(maybe_number_bits);
+      double maybe_that_min = BitsetMin(maybe_that);
+      double maybe_that_max = BitsetMax(maybe_that);
+      double maybe_min = math::max(maybe_bitsetmin_maybe_number_bits, maybe_that_min);
+      double maybe_max = math::min(maybe_bitsetmax_maybe_number_bits, maybe_that_max);
+      if(maybe_pathCond){
+          maybe_returnVal = maybe_min <= maybe_max; //return maybe_min <= maybe_max;
+          maybe_pathCond = FALSE;
+      }
+    }
   }
 
-  if (IsBitset(maybe_this_) || IsBitset(maybe_that)) return true;
+//  if (IsBitset(maybe_this_) || IsBitset(maybe_that)) return true;
+/*
+  if(maybe_this_bitset || maybe_that_bitset){
+    if(maybe_pathCond){
+        maybe_returnVal = TRUE; //return true
+        maybe_pathCond = FALSE;
+    }
+  }
+*/
 
-  return SimplyEquals(maybe_this_, maybe_that);
+  if(maybe_pathCond){
+    maybe_returnVal = SimplyEquals(maybe_this_, maybe_that);
+    maybe_pathCond = FALSE;
+  }
+  return maybe_returnVal;
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=520
@@ -1297,17 +1399,24 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   v8type numberadd_nantype = nanType();
   
   v8type numberadd_minuszerotype = minusZeroType();
-  
+  //bitset_t xdlmao = BitsetTypeLub(DOUBLE_ZERO, DOUBLE_ZERO);
   v8type numberadd_singletonZero = kSingletonZero;
-  return AnyType();
-  /*
-  v8type numberadd_integer = kInteger;
+  
+  
+  v8type numberadd_integer = kIntegerType();
+  
+  
   v8type numberadd_minusinfinitytype = minusInfinityType();
+ 
+  
   v8type numberadd_infinitytype = infinityType();
   v8type numberadd_plainnumbertype = plainNumberType();
   
+  
+  
   bool maybe_nan = Maybe(numberadd_lhs, numberadd_nantype) || Maybe(numberadd_rhs, numberadd_nantype);
-
+  return AnyType();
+  /*
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool maybe_minuszero = true;
   if (Maybe(numberadd_lhs, numberadd_minuszerotype)) {
