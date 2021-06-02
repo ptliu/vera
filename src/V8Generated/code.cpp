@@ -465,7 +465,7 @@ bool Overlap(v8type const& overlap_lhs, v8type const& overlap_rhs) {
 
 // Oversimplified IsBitset. Can't do original cause we don't have
 // type hierarchy
-bool IsBitset(v8type const& isbitset_this_) {
+bool IsBitset(v8type isbitset_this_) {
     // TODO:
     return !(isbitset_this_.hasRange || isbitset_this_.isUnion); 
 }
@@ -482,11 +482,11 @@ bool IsTuple(v8type const& istuple_this_) {
     return FALSE;
 }
 
-bool TypeIsNone(v8type typeisnone_ty){
+bool TypeIsNone(v8type const& typeisnone_ty){
   return BitsetIsNone(typeisnone_ty.bitset);
 }
 
-bool TypeIsAny(v8type typeisany_ty) {
+bool TypeIsAny(v8type const& typeisany_ty) {
     return typeisany_ty.bitset == kAny;
 }
 
@@ -747,7 +747,7 @@ bitset_t BitsetTypeGlb(double bitsettypeglb_min, double bitsettypeglb_max) {
 
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=114
-bitset_t BitsetLub(v8type bitsetlub_this_) {
+bitset_t BitsetLub(v8type const& bitsetlub_this_) {
   // The smallest bitset subsuming this type, possibly not a proper one.
 
   // DisallowGarbageCollection no_gc;
@@ -791,7 +791,7 @@ bitset_t BitsetLub(v8type bitsetlub_this_) {
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=96
-bitset_t BitsetGlb(v8type bitsetglb_this_) {
+bitset_t BitsetGlb(v8type const& bitsetglb_this_) {
   if(IsBitset(bitsetglb_this_)){
     return AsBitset(bitsetglb_this_);
   } else if (IsUnion(bitsetglb_this_)){
@@ -824,7 +824,7 @@ v8type NewBitset(bitset_t newbitset_bitset) {
 // ----
 // Casts
 
-bitset_t AsBitset(v8type asbitset_this_) {
+bitset_t AsBitset(v8type const& asbitset_this_) {
     return asbitset_this_.bitset;
 }
 
@@ -857,7 +857,7 @@ ion()) {
 // Predicates.
 
 // TODO:
-bool SimplyEquals(v8type simplyequals_this_, v8type simplyequals_that) {
+bool SimplyEquals(v8type const& simplyequals_this_, v8type const& simplyequals_that) {
   /*DisallowGarbageCollection no_gc;
   if (this->IsHeapConstant()) {
     return that.IsHeapConstant() &&
@@ -889,10 +889,13 @@ bool SimplyEquals(v8type simplyequals_this_, v8type simplyequals_that) {
   //UNREACHABLE();
 }
 
-bool Maybe(v8type maybe_this_, v8type maybe_that) {
+bool Maybe(v8type const& maybe_this_, v8type const& maybe_that) {
   //DisallowGarbageCollection no_gc;
+  
   bool maybe_returnVal = FALSE;
+  
   bool maybe_pathCond = TRUE;
+  
   bitset_t maybe_thisLub = BitsetLub(maybe_this_);
   bitset_t maybe_thatLub = BitsetLub(maybe_that);
   bool maybe_bitsetIsNone = BitsetIsNone(maybe_thisLub & maybe_thatLub);
@@ -938,11 +941,15 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
     }
   }
 
-  bool maybe_this_bitset = IsBitset(maybe_this_);
-  /*
-  bool maybe_that_bitset = IsBitset(maybe_that);
   
-  if (maybe_this_bitset && maybe_that_bitset){
+  bool maybe_this_bitset = IsBitset(maybe_this_);
+  //bool maybe_that_bitset_1 = maybe_that.hasRange;
+
+  bool maybe_that_bitset_1 = IsBitset(maybe_that);
+  //bool maybe_that_bitset_1 = IsUnion(maybe_this_);
+  
+  
+  if (maybe_this_bitset && maybe_that_bitset_1){
     if(maybe_pathCond){
         maybe_returnVal = TRUE; //return true
         maybe_pathCond = FALSE;
@@ -959,7 +966,7 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
         maybe_pathCond = FALSE;
       }
     }
-    if (maybe_that_bitset) {
+    if (maybe_that_bitset_1) {
       bitset_t maybe_number_bits = NumberBits(maybe_that.bitset);
       if (maybe_number_bits == kNone) {
         if(maybe_pathCond){
@@ -1015,7 +1022,7 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
 
 //  if (IsBitset(maybe_this_) || IsBitset(maybe_that)) return true;
 
-  if(maybe_this_bitset || maybe_that_bitset){
+  if(maybe_this_bitset || maybe_that_bitset_1){
     if(maybe_pathCond){
         maybe_returnVal = TRUE; //return true
         maybe_pathCond = FALSE;
@@ -1026,7 +1033,7 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   if(maybe_pathCond){
     maybe_returnVal = SimplyEquals(maybe_this_, maybe_that);
     maybe_pathCond = FALSE;
-  }*/
+  }
   return maybe_returnVal;
 }
 
@@ -1463,22 +1470,25 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   
   
   
-  bool maybe_nan = Maybe(numberadd_lhs, numberadd_nantype) || Maybe(numberadd_rhs, numberadd_nantype);
-  return AnyType();
-  /*
+  bool numberadd_maybe_nan = Maybe(numberadd_lhs, numberadd_nantype) || Maybe(numberadd_rhs, numberadd_nantype);
+  
+  
   // Addition can yield minus zero only if both inputs can be minus zero.
-  bool maybe_minuszero = true;
-  if (Maybe(numberadd_lhs, numberadd_minuszerotype)) {
+  bool numberadd_maybe_minuszero = true;
+  bool numberadd_maybe_numberadd_lhs_minuszerotype = Maybe(numberadd_lhs, numberadd_minuszerotype);
+  if (numberadd_maybe_numberadd_lhs_minuszerotype) {
     numberadd_lhs = TypeUnion(numberadd_lhs, numberadd_singletonZero); //we don't do unions yet so just merge ranges
   } else {
-    maybe_minuszero = false;
+    numberadd_maybe_minuszero = false;
   }
-  if (Maybe(numberadd_rhs, numberadd_minuszerotype)) {
+  bool numberadd_maybe_numberadd_rhs_minuszerotype = Maybe(numberadd_rhs, numberadd_minuszerotype);
+  if (numberadd_maybe_numberadd_rhs_minuszerotype) {
     numberadd_rhs = TypeUnion(numberadd_rhs, numberadd_singletonZero);
   } else {
-    maybe_minuszero = false;
+    numberadd_maybe_minuszero = false;
   }
-
+  /*
+  return AnyType();
   // We can give more precise types for integers.
   v8type numberadd_type = noneType();
   numberadd_lhs = Intersect(numberadd_lhs, numberadd_plainnumbertype);
@@ -1489,17 +1499,17 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
     } else {
       if ((Maybe(numberadd_lhs, numberadd_minusinfinitytype) && Maybe(numberadd_rhs, numberadd_infinitytype)) || // minus_infinity_, infinity_ are Types
           (Maybe(numberadd_rhs,numberadd_minusinfinitytype) && Maybe(numberadd_lhs, numberadd_infinitytype))) {
-        maybe_nan = true;
+        numberadd_maybe_nan = true;
       }
       numberadd_type = numberadd_plainnumbertype;
     }
   }
 
   // Take into account the -0 and NaN information computed earlier.
-  if (maybe_minuszero) {
+  if (numberadd_maybe_minuszero) {
     numberadd_type = TypeUnion(numberadd_type, numberadd_minuszerotype);
   }
-  if (maybe_nan) {
+  if (numberadd_maybe_nan) {
     numberadd_type = TypeUnion(numberadd_type,numberadd_nantype);
   }
   return numberadd_type;

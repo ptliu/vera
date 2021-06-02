@@ -649,6 +649,7 @@ defineAll op = do
   define signedAddWouldOverflow
   -- type helpers
   define maybeFunc
+  define overlapFunc
   -- limits
   define verifyLimitUnion
   define verifyLimitIntersect

@@ -72,6 +72,9 @@ signedAddWouldOverflow = fn "SignedAddWouldOverflow32"
 maybeFunc :: FunctionDef
 maybeFunc = fn "Maybe"
 
+overlapFunc :: FunctionDef
+overlapFunc = fn "Overlap"
+
 -- int min and max 
 jsIntMax :: Codegen SExpr
 jsIntMax = n Signed (0x7fffffff)
