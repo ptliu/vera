@@ -22,11 +22,11 @@ import           Utils
 
 v8SanityCheck = benchTestGroup "V8Sanity" [ 
      --dumbTestTest
-         limitUnionTest
-                                          , limitIntersectTest
-                                          ,typeIntersectTest
-                                              , dumbAddTest
-                                          , dumbSubtractTest
-                                          , dumbMultiplyTest
-                                          , numberAddTest
+     --    limitUnionTest
+     --                                     , limitIntersectTest
+     --                                     ,typeIntersectTest
+                                               dumbAddTest
+     --                                     , dumbSubtractTest
+                                         --  dumbMultiplyTest
+                                          --, numberAddTest
                                           ]

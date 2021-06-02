@@ -37,13 +37,13 @@ limitIntersectTest = benchTestCase "LimitsIntersect" $ evalCodegen Nothing $ tes
 -- ranger tests
 
 dumbAddTest :: BenchTest
-dumbAddTest = benchTestCase "AddRanger" $ evalCodegen Nothing $ testAddRanger $ Set "AddRanger" addRanger
+dumbAddTest = benchTestCase "AddRanger" $ evalCodegen Nothing $ testAddRanger $ Binary "AddRanger" addRanger jsAdd
 
 dumbSubtractTest :: BenchTest
 dumbSubtractTest = benchTestCase "SubtractRanger" $ evalCodegen Nothing $ testSubtractRanger $ Set "SubtractRanger" subtractRanger
 
 dumbMultiplyTest :: BenchTest
-dumbMultiplyTest = benchTestCase "MultiplyRanger" $ evalCodegen Nothing $ testMultiplyRanger $ Set "MultiplyRanger" multiplyRanger
+dumbMultiplyTest = benchTestCase "MultiplyRanger" $ evalCodegen Nothing $ testMultiplyRanger $ Binary "MultiplyRanger" multiplyRanger jsMul
 
 -- type tests
 typeIntersectTest :: BenchTest

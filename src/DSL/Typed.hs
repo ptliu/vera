@@ -82,6 +82,7 @@ module DSL.Typed ( vassert
                  , cppAdd
                  , cppSub
                  , cppMul
+                 , cppDiv
                  , cppOr
                  , cppMin
                  , cppMax
@@ -894,6 +895,14 @@ instance CppMul VNode VNode where
         noopWrapper left right D.fpMul Nothing "mul"
     | otherwise =
         noopWrapper left right D.mul (Just D.mulUndef) "mul"
+
+DEFINEBINOPCLASS(CppDiv, cppDiv)
+instance CppDiv VNode VNode where
+  cppDiv left right
+    | isDouble (vtype left) || isDouble (vtype right) =
+        noopWrapper left right D.fpDiv Nothing "div"
+    | otherwise =
+        error "no div for non-doubles"
                   
 DEFINEBINOPCLASS(CppAdd, cppAdd)
 instance CppAdd VNode VNode where

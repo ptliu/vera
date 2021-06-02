@@ -333,7 +333,7 @@ member = do
 -- This list does its best to match: https://en.cppreference.com/w/cpp/language/operator_precedence
 operators = [[postfix $ member]
             ,[prefix $ choice [prefixOp "-" L.negative_, prefixOp "!" L.not_, prefixOp "~" L.bitwise_neg_, try cast]]
-            ,[binary "*" Mul AssocLeft]
+            ,[binary "*" Mul AssocLeft, binary "/" Div AssocLeft]
             ,[binary "+" Add AssocLeft, binary "-" Sub AssocLeft]
             ,[binary "<<" Shl AssocLeft, binary ">>" Shr AssocLeft]
             ,[binary "<" Lt AssocLeft, binary "<=" Lte AssocLeft]

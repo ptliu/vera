@@ -1,5 +1,5 @@
 
-#define V8_INFINITY ((double)9218868437227405312)
+#define V8_INFINITY ((double)1.0 / 0.0)
 #define kMaxInt ((int32_t) 2147483647)
 #define kMinInt ((int32_t) -kMaxInt - (int32_t)1)
 #define kMaxUInt32 ((uint32_t) 4294967295)
@@ -159,19 +159,21 @@ struct limits {
 //  probably not worth doing, doesn't add extra meaning
 //  Current soln is to just manually set fields from limits struct .... gross
 struct v8type {
-    bitset_t bitset;
-    bool hasRange;
-    double min;
-    double max;
-    bool maybeNaN;
-    bool maybeMinusZero;
-    bool isUnion;
+    bitset_t bitset; // bitset for this type
+    bool hasRange;   // whether it has a range
+    double min;      // range lower bound 
+    double max;      // range upper bound
+    bool maybeNaN;   // if is a range, this means it 
+                     // includes NaN
+    bool maybeMinusZero; // if is a range, this means it 
+                         // includes minusZero
+    bool isUnion;    // if we ever see a union, bail...
 };
 
 struct boundary {
     bitset_t internal;
     bitset_t external;
-    double min;
+    double mi;
 };
 
 // NOTES:
@@ -183,9 +185,9 @@ double test(double test_input) {
 }
 
 double test2(double test2_input) {
-    double test2_yeet = 0.0;
+    double test_yeet = 0.0;
     test(1.0);
-    return test2_yeet;
+    return test_yeet;
 }
 
 // Helpers
@@ -671,18 +673,11 @@ bitset_t BitsetTypeLub(double bitsettypelub_min, double bitsettypelub_max) {
           bitsettypelub_continueLoop = FALSE;
       }
   }
-  boundary bitsettypelub_mins_7 = getBoundary((uint32_t)7);
-  if (bitsettypelub_min < bitsettypelub_mins_7.min  && bitsettypelub_continueLoop) {
-      lub |= bitsettypelub_mins_6.internal;
-      if (bitsettypelub_max < bitsettypelub_mins_7.min) {
-          bitsettypelub_continueLoop = FALSE;
-      }
-  }
 
   // return lub | mins[BoundariesSize() - 1].internal;
   if(bitsettypelub_continueLoop ){
 
-    lub |= bitsettypelub_mins_7.internal;
+    lub |= bitsettypelub_mins_6.internal;
   }
   
   return lub;
@@ -912,7 +907,7 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   }*/
 
   // T overlaps (T1 \/ ... \/ Tn)  if  (T overlaps T1) \/ ... \/ (T overlaps Tn)
-  if (that.IsUnion()) {
+  /*if (that.IsUnion()) {
     for (int i = 0, n = that.AsUnion()->Length(); i < n; ++i) {
       if (this->Maybe(that.AsUnion()->Get(i))) return true;
     }
@@ -1013,7 +1008,6 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   }
 
 //  if (IsBitset(maybe_this_) || IsBitset(maybe_that)) return true;
-/*
   if(maybe_this_bitset || maybe_that_bitset){
     if(maybe_pathCond){
         maybe_returnVal = TRUE; //return true
@@ -1022,11 +1016,11 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   }
 */
 
-  if(maybe_pathCond){
+  /*if(maybe_pathCond){
     maybe_returnVal = SimplyEquals(maybe_this_, maybe_that);
     maybe_pathCond = FALSE;
   }
-  return maybe_returnVal;
+  return maybe_returnVal;*/
 }
 
 //https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=520
@@ -1158,38 +1152,56 @@ v8type MultiplyRanger(double multiplyranger_lhs_min, double multiplyranger_lhs_m
   // none of the "results" above is nan, the actual result may still be, so we
   // have to do a different check:
   // TODO: change this probably
-  if (std::isnan(multiplyranger_results_0)) {
-      return nanType();
+  v8type multiplyranger_type = AnyType();
+  bool multiplyranger_continue = TRUE;
+  bool multiplyranger_results_0_mn = std::isnan(multiplyranger_results_0);
+  if (multiplyranger_results_0_mn) {
+      multiplyranger_continue = FALSE;
+      multiplyranger_type = AnyType();
   }
-  if (std::isnan(multiplyranger_results_1)) {
-      return nanType();
+  bool multiplyranger_results_1_mn = std::isnan(multiplyranger_results_1);
+  if (multiplyranger_results_1_mn) {
+      multiplyranger_continue = FALSE;
+      multiplyranger_type = AnyType();
   }
-  if (std::isnan(multiplyranger_results_2)) {
-      return nanType();
+  bool multiplyranger_results_2_mn = std::isnan(multiplyranger_results_2);
+  if (multiplyranger_results_2_mn) {
+      multiplyranger_continue = FALSE;
+      multiplyranger_type = AnyType();
   }
-  if (std::isnan(multiplyranger_results_3)) {
-      return nanType();
+  bool multiplyranger_results_3_mn = std::isnan(multiplyranger_results_3);
+  if (multiplyranger_results_3_mn) {
+      multiplyranger_continue = FALSE;
+      multiplyranger_type = AnyType();
   }
 
-  double multiplyranger_min = min4(multiplyranger_results_0, multiplyranger_results_1, multiplyranger_results_2, multiplyranger_results_3);
-  double multiplyranger_max = max4(multiplyranger_results_0, multiplyranger_results_1, multiplyranger_results_2, multiplyranger_results_3);
-  v8type multiplyranger_type = newRange(multiplyranger_min, multiplyranger_max);
+  double multiplyranger_min = 0.0;
+  double multiplyranger_max = 0.0;
+  if (multiplyranger_continue) {
+   multiplyranger_min = min4(multiplyranger_results_0, multiplyranger_results_1, multiplyranger_results_2, multiplyranger_results_3);
+   multiplyranger_max = max4(multiplyranger_results_0, multiplyranger_results_1, multiplyranger_results_2, multiplyranger_results_3);
+   multiplyranger_type = newRange(multiplyranger_min, multiplyranger_max);
+  }
   // HACK: no && allowed .... :(
-  if (multiplyranger_min <= (double)0.0) {
-      if ((double)0.0 <= multiplyranger_max) {
-          if (multiplyranger_lhs_min < (double)0.0) {
-            multiplyranger_type.maybeMinusZero = (bool)1;
-          } 
-          if (multiplyranger_rhs_min < (double)0.0) {
-            multiplyranger_type.maybeMinusZero = (bool)1;
-          }
-      }
+  bool multiplyranger_lhs_mz = multiplyranger_min <= (double)0.0 && (double)0.0 <= multiplyranger_max && multiplyranger_lhs_min < (double)0.0;
+  bool multiplyranger_rhs_mz = multiplyranger_min <= (double)0.0 && (double)0.0 <= multiplyranger_max && multiplyranger_rhs_min < (double)0.0;
+  if (multiplyranger_continue && multiplyranger_lhs_mz) {
+    multiplyranger_type.maybeMinusZero = (bool)1;
+  }
+  if (multiplyranger_continue && multiplyranger_rhs_mz) {
+    multiplyranger_type.maybeMinusZero = (bool)1;
   }
   // 0 * V8_INFINITY is NaN, regardless of sign
-  if (((multiplyranger_lhs_min == -V8_INFINITY || multiplyranger_lhs_max == V8_INFINITY) &&
-       (multiplyranger_rhs_min <= 0.0 && 0.0 <= multiplyranger_rhs_max)) ||
-      ((multiplyranger_rhs_min == -V8_INFINITY || multiplyranger_rhs_max == V8_INFINITY) &&
-       (multiplyranger_lhs_min <= 0.0 && 0.0 <= multiplyranger_lhs_max))) {
+  double multiplyranger_test = V8_INFINITY;
+  bool multiplyranger_lhs_inf = (multiplyranger_lhs_min == -V8_INFINITY || multiplyranger_lhs_max == V8_INFINITY);
+  bool multiplyranger_rhs_zero = (multiplyranger_rhs_min <= 0.0 && 0.0 <= multiplyranger_rhs_max);
+  bool multiplyranger_rhs_inf = (multiplyranger_rhs_min == -V8_INFINITY || multiplyranger_rhs_max == V8_INFINITY);
+  bool multiplyranger_lhs_zero = (multiplyranger_lhs_min <= 0.0 && 0.0 <= multiplyranger_lhs_max);
+  bool multiplyranger_mn = (multiplyranger_lhs_inf &&
+       multiplyranger_rhs_zero) ||
+      (multiplyranger_rhs_inf &&
+       multiplyranger_lhs_zero);
+  if (multiplyranger_continue && multiplyranger_mn) {
     multiplyranger_type.maybeNaN = TRUE;
   }
   return multiplyranger_type;
@@ -1275,12 +1287,17 @@ v8type NormalizeUnion(v8type normalizeunion_union){ //this is a no-op currently 
 
 // ignore zone
 //Type Type::Intersect(Type type1, Type type2, Zone* zone) {
-v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
+v8type Intersect(v8type intersect_type1, v8type intersect_type2) {
   //return noneType();
   bool intersect_continue = TRUE;
   v8type intersect_result = AnyType(); //NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
+
+  // this is unfaithful, but for test
+  if (IsUnion(intersect_type1) || IsUnion(intersect_type2)) {
+      intersect_continue = FALSE;
+  }
   // Fast case: bit sets.
-  if (IsBitset(intersect_type1) && IsBitset(intersect_type2)) {
+  if (intersect_continue && (IsBitset(intersect_type1) && IsBitset(intersect_type2))) {
       intersect_continue = FALSE;
       intersect_result = NewBitset(AsBitset(intersect_type1) & AsBitset(intersect_type2));
   }
@@ -1332,6 +1349,7 @@ v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
     intersect_result = AnyType();
   }
 
+  bool mz = (intersect_type1.bitset & kMinusZero) != (bitset_t)0;
   intersect_size = intersect_size + (int32_t)1;
   limits intersect_rhs_lim = getLimits(intersect_type1);
   limits intersect_lhs_lim = getLimits(intersect_type2);
@@ -1340,8 +1358,19 @@ v8type Intersect(v8type const& intersect_type1, v8type const& intersect_type2) {
   if (intersect_continue && (IsRange(intersect_type1) && IsRange(intersect_type2))) {
     /*limits intersect_lims = IntersectAux(intersect_type1, intersect_type2, intersect_empty);*/
     //update result, normally done in IntersectAux but lack of pointers means we do it this way
-    v8type intersect_result = newRange(intersect_lims.min, intersect_lims.max);
+    intersect_result = newRange(intersect_lims.min, intersect_lims.max);
+    // manually do this shit...uugh
   }
+
+  if (intersect_continue && mz) {
+      intersect_result.bitset |= kMinusZero;
+  }
+
+  bool couldBeNan = (intersect_type1.bitset & kNaN) != (bitset_t)0;
+  if (intersect_continue && couldBeNan) {
+      intersect_result.bitset |= kNaN;
+  }
+  //intersect_result.bitset &= ~kNaN;
 
   /*bitset_t intersect_number_bits = UINT32_ZERO;
   if(!IsEmpty(intersect_lims)){

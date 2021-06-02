@@ -101,23 +101,24 @@ jsUIntMin :: Codegen SExpr
 jsUIntMin = n Unsigned (0)
 
 -- bitset types
+
 kOtherNumber :: Codegen SExpr
-kOtherNumber = n Unsigned (0x10)
+kOtherNumber = n Unsigned (1 `shiftL` 4)
 
 kOtherSigned32 :: Codegen SExpr
-kOtherSigned32 = n Unsigned (0x08)
+kOtherSigned32 = n Unsigned (1 `shiftL` 3)
 
 kNegative31 :: Codegen SExpr
-kNegative31 = n Unsigned (0x40)
+kNegative31 = n Unsigned (1 `shiftL` 6)
 
 kUnsigned30 :: Codegen SExpr
-kUnsigned30 = n Unsigned (0x400)
+kUnsigned30 = n Unsigned (1 `shiftL` 10)
 
 kOtherUnsigned31 :: Codegen SExpr
-kOtherUnsigned31 = n Unsigned (0x2)
+kOtherUnsigned31 = n Unsigned (1 `shiftL` 1)
 
 kOtherUnsigned32 :: Codegen SExpr
-kOtherUnsigned32 = n Unsigned (0x4)
+kOtherUnsigned32 = n Unsigned (1 `shiftL` 2)
 
 kMinusZero :: Codegen SExpr
 kMinusZero = n Unsigned (1 `shiftL` 11)

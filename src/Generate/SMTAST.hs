@@ -75,6 +75,7 @@ data SExpr = VarExpr { exprVar :: SVar }
            | Sub SExpr SExpr
            | JSSub SExpr SExpr
            | Mul SExpr SExpr
+           | Div SExpr SExpr
            | JSMul SExpr SExpr
            | Or SExpr SExpr
            | JSOr SExpr SExpr

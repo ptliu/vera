@@ -121,7 +121,7 @@ runVerif :: Maybe Integer -- ^ Optional timeout
          -> IO (a, VerifState)
 runVerif _mTimeout (Verif act) =
   -- Z.evalZ3 $ runStateT act emptyVerifState
-  Z.evalZ3With Nothing (Z.opt "timeout" (1200000 :: Int)) $ runStateT act emptyVerifState
+  Z.evalZ3With Nothing (Z.opt "timeout" (12000000 :: Int)) $ runStateT act emptyVerifState
 
 shouldDumpSMT :: IO Bool
 shouldDumpSMT = isJust `liftM` lookupEnv "DUMP_SMT"

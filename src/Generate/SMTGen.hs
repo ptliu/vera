@@ -116,6 +116,7 @@ genExprSMT expr =
     Add left right -> genBinOpSMT left right T.cppAdd
     Sub left right -> genBinOpSMT left right T.cppSub
     Mul left right -> genBinOpSMT left right T.cppMul
+    Div left right -> genBinOpSMT left right T.cppDiv
     Or left right  -> genBinOpSMT left right T.cppOr
     XOr left right -> genBinOpSMT left right T.cppXor
     Min left right -> genBinOpSMT left right T.cppMin

@@ -22,11 +22,32 @@ import           Prelude
 fInLimits :: FunctionDef
 fInLimits =
   let args = [ ("fval", t Double)
+              -- must be  
+              
              , ("frange", c "limits")
              ]
       body = [ return_ $ ((v "fval" .=>. (v "frange" .->. "min")) .&&. (v "fval" .<=. (v "frange" .->. "max")))
              ]
   in Function "fInLimits" (t Bool) args body
+
+wellFormedType :: FunctionDef
+wellFormedType = 
+  let args = [ ("ftypew", c "v8type")
+             ]
+      body = [ 
+             -- if has range, value must be in range
+             -- otherwise, must be in bitset range
+             -- can't have range and kNan set...use maybeNaN
+               declare (t Bool) "notNanAndRange"
+             , v "notNanAndRange" `assign` (testImplies (v "ftypew" .->. "hasRange") ((v "ftypew" .->. "bitset" .&&. kNaN) .==. (n Unsigned 0)))
+
+             -- can't have range and kMinusZero set...use maybeNaN
+             , declare (t Bool) "notMinusZeroAndRange"
+             , v "notMinusZeroAndRange" `assign` (testImplies (v "ftypew" .->. "hasRange") ((v "ftypew" .->. "bitset" .&&. kMinusZero) .==. (n Unsigned 0)))
+
+             , return_ $ v "notNanAndRange" .&&. v "notMinusZeroAndRange" 
+             ]
+  in Function "wellFormedType" (t Bool) args body
 
 -- todo(evan): This needs to take nan into account
 fInType :: FunctionDef
@@ -37,13 +58,21 @@ fInType =
       body = [ 
              -- if has range, value must be in range
              -- otherwise, must be in bitset range
-               declare (t Bool) "InRangeCheck"
-             , v "InRangeCheck" `assign` (testImplies (v "ftype" .->. "hasRange") ((v "fval" .=>. (v "ftype" .->. "min")) .&&. (v "fval" .<=. (v "ftype" .->. "max"))))
+             -- basically, if its a range, then we use maybeNan and maybeMinusZero flags...
+               declare (t Bool) "MinusZeroCheck2"
+             , v "MinusZeroCheck2" `assign` (testImplies ((v "ftype" .->. "hasRange") .&&. (not_ $ v "ftype" .->. "maybeMinusZero")) (not_ $ isNegZero $ v "fval"))
+
+             , declare (t Bool) "NaNCheck2"
+             , v "NaNCheck2" `assign` (testImplies ((v "ftype" .->. "hasRange") .&&. (not_ $ v "ftype" .->. "maybeNaN")) (not_ $ isNan $ v "fval"))
+
+             -- if it isn't nan, enforce range bounds (nan enforced above)
+             , declare (t Bool) "InRangeCheck"
+             , v "InRangeCheck" `assign` (testImplies ((v "ftype" .->. "hasRange") .&&. (not_ $ isNan $ v "fval")) ((v "fval" .=>. (v "ftype" .->. "min")) .&&. (v "fval" .<=. (v "ftype" .->. "max"))))
              -- must also be in the bitset always
              , declare (t Bool) "InBitsetCheck"
              , v "InBitsetCheck" `assign` (call "fInBitset" [v "fval", v "ftype" .->. "bitset"])
 
-             , return_ $ v "InRangeCheck" .&&. v "InBitsetCheck" 
+             , return_ $ v "MinusZeroCheck2" .&&. v "NaNCheck2" .&&. v "InRangeCheck" .&&. v "InBitsetCheck" 
              ]
   in Function "fInType" (t Bool) args body
 
@@ -56,15 +85,16 @@ fInBitset =
       body = [ 
              -- TODO: nan makes this always false, handle with full type thing
              -- if the bitset doesn't have kNaN, value can't be minus zero...
+             -- this is only true for NON RANGE bitsets...
                declare (t Bool) "NaNCheck"
-             , v "NaNCheck" `assign` (testImplies ((v "fbitset" .&&. kNaN) .==. n Unsigned 0) (not_ $ isNan $ v "fval"))
+             , v "NaNCheck" `assign` (testImplies ((not_ (v "ftype" .->. "hasRange")) .&&. ((v "fbitset" .&&. kNaN) .==. n Unsigned 0)) (not_ $ isNan $ v "fval"))
              -- if the bitset doesn't have kMinusZero, value can't be minus zero...
              , declare (t Bool) "MinusZeroCheck"
-             , v "MinusZeroCheck" `assign` (testImplies ((v "fbitset" .&&. kMinusZero) .==. n Unsigned 0) (not_ $ isNegZero $ v "fval"))
-             -- if the bitset doesnt have kOtherNumber, it must be greater than eq to jsMinInt and less than jsUIntMax (unsigned check later...)
-             -- i.e. jsMinInt <= val <= jsUIntMax
+             , v "MinusZeroCheck" `assign` (testImplies ((not_ (v "ftype" .->. "hasRange")) .&&. ((v "fbitset" .&&. kMinusZero) .==. n Unsigned 0)) (not_ $ isNegZero $ v "fval"))
+             -- if the bitset doesnt have kOtherNumber, it must be greater than eq to jsMinInt and less than jsUIntMax+1 (unsigned check later...)
+             -- i.e. jsMinInt <= val < jsUIntMax + 1
              , declare (t Bool) "kOtherNumberBounds"
-             , v "kOtherNumberBounds" `assign` (testImplies ((v "fbitset" .&&. kOtherNumber) .==. n Unsigned 0) ((v "fval" .=>. (cast (jsIntMin) Double)) .&&. (v "fval" .<=. (cast (jsUIntMax) Double))))
+             , v "kOtherNumberBounds" `assign` (testImplies ((v "fbitset" .&&. kOtherNumber) .==. n Unsigned 0) ((v "fval" .=>. (cast (jsIntMin) Double)) .&&. (v "fval" .<. (d Double (0x100000000))))) -- must
              -- if doesn't have kOtherUnsigned32 set, must be outside of the range [2^31, 2^32-1]
              -- i.e. x < 2^31 || x >= 2^32
              , declare (t Bool) "kOtherUnsigned32Bounds"
@@ -85,7 +115,11 @@ fInBitset =
              -- i.e. x < -2^31 || x >= -2^30
              , declare (t Bool) "kOtherSigned32Bounds"
              , v "kOtherSigned32Bounds" `assign` (testImplies ((v "fbitset" .&&. kOtherSigned32) .==. n Unsigned 0) ((v "fval" .<. (cast (jsIntMin) Double)) .||. (v "fval" .=>. (cast (n Signed (0xC0000000)) Double))))
-             , return_ $ v "MinusZeroCheck" .&&. v "kOtherNumberBounds" .&&. v "kOtherUnsigned32Bounds" .&&. v "kOtherUnsigned31Bounds" .&&. v "kUnsigned30Bounds" .&&. v "kNegative31Bounds" .&&. v "kOtherSigned32Bounds"
+             -- must have this check of nan always out of range
+             -- i.e. if its NaN, we need to just say its always in range
+             , declare (t Bool) "kInBoundsAll"
+             , v "kInBoundsAll" `assign` (testImplies (not_ $ isNan $ v "fval") (v "kOtherNumberBounds" .&&. v "kOtherUnsigned32Bounds" .&&. v "kOtherUnsigned31Bounds" .&&. v "kUnsigned30Bounds" .&&. v "kNegative31Bounds" .&&. v "kOtherSigned32Bounds"))
+             , return_ $ v "NaNCheck" .&&. v "MinusZeroCheck" .&&. v "kInBoundsAll"
              ]
   in Function "fInBitset" (t Bool) args body
 
@@ -202,7 +236,7 @@ verifyTypeIntersect =
              -- assert not postcond
              -- yay :D
              , assert_ $ (v "isInLeftType") .&&. (v "isInRightType")
-             , assert_ $ not_ $ v "isInResultType"
+             , assert_ $ v "isInResultType"
              , expect_ isUnsat $ \r -> showInt32Result "Failed to verify type Intersect" r
              , pop_
              ]
@@ -238,22 +272,20 @@ testAddRanger :: TestFunction -> Codegen ()
 testAddRanger fn = do
     {-setupAllFloat fn-}
   setupAllTest fn
-  genBodySMT [vcall "verifyAddRanger" [v "lhs_min", v "lhs_max", v "rhs_min", v "rhs_max", v "result_type"]]
+  genBodySMT [vcall "verifyAddRanger" [v "result_type", v "result"]]
 
 verifyAddRanger :: FunctionDef
 verifyAddRanger =
-  let args = [ ("lhs_min", t Double)
-             , ("lhs_max", t Double)
-             , ("rhs_min", t Double)
-             , ("rhs_max", t Double)
-             , ("result_type", c "v8type")
+  let args = [ 
+             ("result_type", c "v8type")
+             , ("result", t Double)
              ]
       body = [ push_
              -- assert precond
              -- assert not postcond
              -- yay :D
-             , assert_ $ not_ $ ((isInf $ v "lhs_min") .&&. (isInf $ v "rhs_min") .&&. (isInf $ v "lhs_max") .&&. (isInf $ v "rhs_max") .&&. (isNeg $ v "lhs_min") .&&. (isNeg $ v "lhs_max") .&&. (not_ $ isNeg $ v "rhs_min") .&&. (not_ $ isNeg $ v "rhs_max")) `testImplies` (v "result_type" .->. "maybeNaN")
-             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify AddRanger" r
+             , assert_ $ not_ $ call "fInType" [v "result", v "result_type"] 
+             , expect_ isUnsat $ \r -> showInt32Result "Failed to verify MultiplyRanger" r
              , pop_
              ]
   in Function "verifyAddRanger" Void args body
@@ -286,21 +318,19 @@ testMultiplyRanger :: TestFunction -> Codegen ()
 testMultiplyRanger fn = do
     {-setupAllFloat fn-}
   setupAllTest fn
-  genBodySMT [vcall "verifyMultiplyRanger" [v "lhs_min", v "lhs_max", v "rhs_min", v "rhs_max", v "result_type"]]
+  genBodySMT [vcall "verifyMultiplyRanger" [v "result_type", v "result"]]
 
 verifyMultiplyRanger :: FunctionDef
 verifyMultiplyRanger =
-  let args = [ ("lhs_min", t Double)
-             , ("lhs_max", t Double)
-             , ("rhs_min", t Double)
-             , ("rhs_max", t Double)
-             , ("result_type", c "v8type")
+  let args = [ 
+             ("result_type", c "v8type")
+             , ("result", t Double)
              ]
       body = [ push_
              -- assert precond
              -- assert not postcond
              -- yay :D
-             , assert_ $ not_ $ ((isInf $ v "lhs_min") .&&. (isInf $ v "rhs_min") .&&. (isInf $ v "lhs_max") .&&. (isInf $ v "rhs_max") .&&. (isZero $ v "rhs_max")) `testImplies` (v "result_type" .->. "maybeNaN")
+             , assert_ $ not_ $ call "fInType" [v "result", v "result_type"] 
              , expect_ isUnsat $ \r -> showInt32Result "Failed to verify MultiplyRanger" r
              , pop_
              ]
@@ -355,7 +385,7 @@ setupAllFloat fn = do
 
 setupAllTest :: TestFunction -> Codegen ()
 setupAllTest fn = do
-  setupRanger (setOp fn) (testName fn)
+  setupRanger (binaryCppOp fn) (testName fn) (binaryJSOp fn)
 
 -- Individual setup functions
 
@@ -544,14 +574,22 @@ setupTypesSet op fnName = do
               , (v "result_type") `assign` call fnName [v "type1", v "type2"]
 
               , declare (t Double) "elem_type"
+              --, assert_ $ isNan $ v "elem_type"
               , declare (t Bool) "isInRightType"
               , declare (t Bool) "isInLeftType"
               , declare (t Bool) "isInResultType"
+              --, assert_ $ (v "type1" .->. "hasRange")
+              --, assert_ $ (v "type2" .->. "hasRange")
+              --, assert_ $ (((v "type1" .->. "bitset") .&&. kNaN) .!=. n Unsigned 0)
+              --, assert_ $ (((v "type2" .->. "bitset") .&&. kNaN) .!=. n Unsigned 0)
 
               , v "isInRightType" `assign` (call "fInType" [v "elem_type", v "type1"])
               , v "isInLeftType" `assign` (call "fInType" [v "elem_type", v "type2"])
               , v "isInResultType" `assign` (call "fInType" [v "elem_type", v "result_type"])
+              --, assert_ $ not_ $ v "isInRightType"
+              --, assert_ $ not_ $ v "isInLeftType"
               , expect_ isSat (error "Should be sat")
+              --, expect_ isUnsat $ \r -> showInt32Result "Failed to verify MultiplyRanger" r
               ]
   genBodySMT verif
 
@@ -584,16 +622,48 @@ setupDumbBitset op fnName = do
 
 setupRanger :: FunctionDef
           -> String
+          -> (Codegen SExpr -> Codegen SExpr -> Codegen SExpr)
           -> Codegen ()
-setupRanger op fnName = do
+setupRanger op fnName fn = do
   defineAll op
-  let verif = [ declare (t Double) "lhs_min"
+  let verif = [ 
+                declare (t Double) "left"
+              , declare (t Double) "right"
+
+              , declare (t Double) "lhs_min"
               , declare (t Double) "lhs_max"
               , declare (t Double) "rhs_min"
               , declare (t Double) "rhs_max"
-              
+
+              , declare (t Bool) "isInRightDouble"
+              , declare (t Bool) "isInLeftDouble"
+              , declare (t Bool) "isInResultDouble"
+    
+              -- no minus zero or nan (preconds of rangers)
+              , assert_ $ not_ $ isNan $ (v "lhs_min")
+              , assert_ $ not_ $ isNan $ (v "lhs_max")
+              , assert_ $ not_ $ isNan $ (v "rhs_min")
+              , assert_ $ not_ $ isNan $ (v "rhs_max")
+              , assert_ $ not_ $ isNegZero $ (v "lhs_min")
+              , assert_ $ not_ $ isNegZero $ (v "lhs_max")
+              , assert_ $ not_ $ isNegZero $ (v "rhs_min")
+              , assert_ $ not_ $ isNegZero $ (v "rhs_max")
+              -- don't allow inputs to include nan or minus zero either?
+              , assert_ $ not_ $ isNan $ (v "left")
+              , assert_ $ not_ $ isNan $ (v "right")
+              , assert_ $ not_ $ isNegZero $ (v "left")
+              , assert_ $ not_ $ isNegZero $ (v "right")
+
               , declare (c "v8type") "result_type"
               , (v "result_type") `assign` call fnName [v "lhs_min", v "lhs_max", v "rhs_min", v "rhs_max"]
+              , assert_ $ (v "left" .=>. v "lhs_min") .&&. (v "left" .<=. v "lhs_max")
+              , assert_ $ (v "right" .=>. v "rhs_min") .&&. (v "right" .<=. v "rhs_max")
+              -- handle neg zero, i.e. can't have 0 min with pos max
+              , assert_ $ (testImplies (isNegZero $ v "left") (v "lhs_min" .<. (d Double 0)))
+              , assert_ $ (testImplies (isNegZero $ v "right") (v "rhs_min" .<. (d Double 0)))
+              , v "left" `assign` v "left"
+              , v "right" `assign` v "right"
+              , v "result" `assign` (v "left" `fn` v "right")
               , expect_ isSat (error "Should be sat")
               ]
   genBodySMT verif
@@ -901,7 +971,7 @@ getIntList fls = catMaybes $ map (\(str, fl) ->
                          _ | "undef" `isInfixOf` str -> Nothing
                          _ | "value"  `isInfixOf` str -> sstr str fl
                          _ | "result"  `isInfixOf` str -> sstr str fl
-                         _ | "bitset" `isInfixOf` str -> Just $ unwords [str, ":", showHex (coerceToWord fl) ""]
+                         _ | "bitset" `isInfixOf` str -> sstr str fl --Just $ unwords [str, ":", showHex (coerceToWord fl) ""]
                          _ | "result_min" `isInfixOf` str -> sstr str fl
                          _ | "Bounds" `isInfixOf` str -> sstr str fl
                          _ | "Check" `isInfixOf` str -> sstr str fl
@@ -909,6 +979,10 @@ getIntList fls = catMaybes $ map (\(str, fl) ->
                          _ | "type" `isInfixOf` str -> sstr str fl
                          _ | "intersect" `isInfixOf` str -> sstr str fl
                          _ | "js" `isInfixOf` str -> sstr str fl
+                         _ | "isIn" `isInfixOf` str -> sstr str fl
+                         _ | "ranger" `isInfixOf` str -> sstr str fl
+                         _ | "right" `isInfixOf` str -> sstr str fl
+                         _ | "left" `isInfixOf` str -> sstr str fl
                          _ -> Nothing
                      ) $ M.toList fls
   where
