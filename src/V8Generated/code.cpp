@@ -1399,7 +1399,7 @@ v8Type TypeUnion(v8Type typeunion_type1, v8Type typeunion_type2) {
 
   // Semi-fast case.
   if (Is(typeunion_type1, typeunion_type2)) return typeunion_type1;
-  if (Is(typeunion_type2, typeunion_type1)) return type2;
+  if (Is(typeunion_type2, typeunion_type1)) return typeunion_type2;
 
   return AnyType();
 
