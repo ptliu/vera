@@ -452,8 +452,10 @@ limits Union(limits const& union_llhs, limits const& union_lrhs) {
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=42
 bool Overlap(v8type const& overlap_lhs, v8type const& overlap_rhs) {
   //DisallowGarbageCollection no_gc;
-  return !IsEmpty(LimitIntersect(getLimits(overlap_lhs),
-                    getLimits(overlap_rhs)));
+  limits overlap_lhs_limits = getLimits(overlap_lhs);
+  limits overlap_rhs_limits = getLimits(overlap_rhs);
+  limits overlap_intersect_limits = LimitIntersect(overlap_lhs_limits, overlap_rhs_limits);
+  return !IsEmpty(overlap_intersect_limits);
 }
 
 // https://source.chromium.org/chromium/chromium/src/+/main:v8/src/compiler/types.cc;l=49
@@ -551,8 +553,9 @@ double BitsetMax(bitset_t bitsetmax_bits) {
   //DCHECK(Is(bits, kNumber));
   //DCHECK(!Is(bits, kNaN));
   
-  bool bitsetmax_mz = bitsetmax_bits & kMinusZero;
-  if (BitsetIs(getBoundary((uint32_t)BoundariesSize() - UINT32_ONE).internal, bitsetmax_bits)) {
+  bool bitsetmax_mz = (bitsetmax_bits & kMinusZero) != (bitset_t)0;
+  boundary bitsetmax_initialboundary = getBoundary((uint32_t)BoundariesSize() - UINT32_ONE);
+  if (BitsetIs(bitsetmax_initialboundary.internal, bitsetmax_bits)) { //TODO expand
     return V8_INFINITY;
   }
 
@@ -564,45 +567,46 @@ double BitsetMax(bitset_t bitsetmax_bits) {
   }*/
   uint32_t i = (uint32_t)BoundariesSize() - UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
+  boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
   i -= UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
   i -= UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
   i -= UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
   i -= UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
   i -= UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
   i -= UINT32_ONE;
   boundary bitsetmax_min = getBoundary(i);
   if (BitsetIs(bitsetmax_min.internal, bitsetmax_bits)) {
-    boundary bitsetmax_min1 = getBoundary(i+UINT32_ONE);
-    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - UINT32_ONE) : bitsetmax_min1.min - UINT32_ONE;
+    bitsetmax_min1 = getBoundary(i+UINT32_ONE);
+    return bitsetmax_mz ? math::min((double)0, bitsetmax_min1.min - DOUBLE_ONE) : bitsetmax_min1.min - DOUBLE_ONE;
   }
 
   return DOUBLE_ZERO;
@@ -958,6 +962,18 @@ bool Maybe(v8type const& maybe_this_, v8type const& maybe_that) {
 
   bool maybe_this_range = IsRange(maybe_this_);
   bool maybe_that_range = IsRange(maybe_that);
+  
+  //patrick: moved these out from if statement
+  bitset_t maybe_number_bits = NumberBits(maybe_that.bitset);
+  
+  //double maybe_bitsetmin_maybe_number_bits = BitsetMin(maybe_number_bits);
+  double maybe_bitsetmax_maybe_number_bits = BitsetMax(maybe_number_bits);
+  /*
+  double maybe_this_min = BitsetMin(maybe_this_);
+  double maybe_this_max = BitsetMax(maybe_this_);
+  double maybe_min = math::max(maybe_bitsetmin_maybe_number_bits, maybe_this_min);
+  double maybe_max = math::min(maybe_bitsetmax_maybe_number_bits, maybe_this_max);
+  
   if (maybe_this_range) {
     if (maybe_that_range) {
 
@@ -966,20 +982,17 @@ bool Maybe(v8type const& maybe_this_, v8type const& maybe_that) {
         maybe_pathCond = FALSE;
       }
     }
+  
+    
     if (maybe_that_bitset_1) {
-      bitset_t maybe_number_bits = NumberBits(maybe_that.bitset);
+      
       if (maybe_number_bits == kNone) {
         if(maybe_pathCond){
           maybe_returnVal = FALSE; //return false
           maybe_pathCond = FALSE;
         }
       }
-      double maybe_bitsetmin_maybe_number_bits = BitsetMin(maybe_number_bits);
-      double maybe_bitsetmax_maybe_number_bits = BitsetMax(maybe_number_bits);
-      double maybe_this_min = BitsetMin(maybe_this_);
-      double maybe_this_max = BitsetMax(maybe_this_);
-      double maybe_min = math::max(maybe_bitsetmin_maybe_number_bits, maybe_this_min);
-      double maybe_max = math::min(maybe_bitsetmax_maybe_number_bits, maybe_this_max);
+      
       if(maybe_pathCond){
           maybe_returnVal = maybe_min <= maybe_max; //return maybe_min <= maybe_max;
           maybe_pathCond = FALSE;
@@ -990,6 +1003,7 @@ bool Maybe(v8type const& maybe_this_, v8type const& maybe_that) {
   //if (IsRange(maybe_that)) {
     //return Maybe(maybe_that, maybe_this_);  // This case is handled above.
   //}
+  
   //since we don't handle recursion we do this explicitly
   if (maybe_that_range) {
     if (maybe_this_range) {
@@ -1034,6 +1048,7 @@ bool Maybe(v8type const& maybe_this_, v8type const& maybe_that) {
     maybe_returnVal = SimplyEquals(maybe_this_, maybe_that);
     maybe_pathCond = FALSE;
   }
+  */
   return maybe_returnVal;
 }
 
@@ -1472,7 +1487,7 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   
   bool numberadd_maybe_nan = Maybe(numberadd_lhs, numberadd_nantype) || Maybe(numberadd_rhs, numberadd_nantype);
   
-  
+  /*
   // Addition can yield minus zero only if both inputs can be minus zero.
   bool numberadd_maybe_minuszero = true;
   bool numberadd_maybe_numberadd_lhs_minuszerotype = Maybe(numberadd_lhs, numberadd_minuszerotype);
@@ -1487,7 +1502,7 @@ v8type NumberAdd(v8type numberadd_lhs, v8type numberadd_rhs) {
   } else {
     numberadd_maybe_minuszero = false;
   }
-  /*
+  
   return AnyType();
   // We can give more precise types for integers.
   v8type numberadd_type = noneType();

@@ -58,6 +58,9 @@ kIntegerType = fn "kIntegerType"
 getBoundary:: FunctionDef
 getBoundary = fn "getBoundary"
 
+boundariesSize :: FunctionDef
+boundariesSize = fn "BoundariesSize"
+
 anyType :: FunctionDef
 anyType = fn "AnyType"
 

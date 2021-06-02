@@ -252,7 +252,12 @@ verifyAddRanger =
              -- assert precond
              -- assert not postcond
              -- yay :D
-             , assert_ $ not_ $ ((isInf $ v "lhs_min") .&&. (isInf $ v "rhs_min") .&&. (isInf $ v "lhs_max") .&&. (isInf $ v "rhs_max") .&&. (isNeg $ v "lhs_min") .&&. (isNeg $ v "lhs_max") .&&. (not_ $ isNeg $ v "rhs_min") .&&. (not_ $ isNeg $ v "rhs_max")) `testImplies` (v "result_type" .->. "maybeNaN")
+             , assert_ $ ((not_ $ isNan $ v "lhs_min") .&&. (not_ $ isNan $ v "rhs_min") .&&. (not_ $ isNan $ v "lhs_max") .&&. (not_ $ isNan $ v "rhs_max") .&&. (not_ $ isNegZero $ v "lhs_min") .&&. (not_ $ isNegZero $ v "rhs_min") .&&. (not_ $ isNegZero $ v "lhs_max") .&&. (not_ $ isNegZero $ v "rhs_max") )
+             , assert_ $ not_ $ ((isInf $ v "lhs_min") .&&. (isInf $ v "rhs_min") .&&. (isInf $ v "lhs_max") .&&. (isInf $ v "rhs_max") .&&. (isNeg $ v "lhs_min") .&&. (isNeg $ v "lhs_max") .&&. (not_ $ isNeg $ v "rhs_min") .&&. (not_ $ isNeg $ v "rhs_max")) `testImplies` ((v "result_type" .->. "maybeNaN") .&&. ((v "result_type" .->. "bitset") .==. (n Unsigned 0)))
+             , assert_ $ not_ $ ((isInf $ v "lhs_min") .&&. (isInf $ v "rhs_min") .&&. (isInf $ v "lhs_max") .&&. (isInf $ v "rhs_max") .&&. (isNeg $ v "rhs_min") .&&. (isNeg $ v "rhs_max") .&&. (not_ $ isNeg $ v "lhs_min") .&&. (not_ $ isNeg $ v "lhs_max")) `testImplies` ((v "result_type" .->. "maybeNaN") .&&. ((v "result_type" .->. "bitset") .==. (n Unsigned 0)))
+             , assert_ $ not_ $ (((isInf $ v "lhs_min") .||. ( isInf $ v "lhs_max")) .&&. ((not_ $ isInf $ v "rhs_min") .||. (not_ $ isInf $ v "rhs_max")) .&&. ((isNeg $ v "rhs_min") .||. (isNeg $ v "rhs_max")) .&&. ((not_ $ isNeg $ v "lhs_min") .||. (not_ $ isNeg $ v "lhs_max"))) `testImplies` ((v "result_type" .->. "maybeNaN") .&&. (not_ $ ((v "result_type" .->. "bitset") .==. (n Unsigned 0))))
+             , assert_ $ not_ $ (((not_ $isInf $ v "lhs_min") .||. ( not_ $ isInf $ v "lhs_max")) .&&. ((isInf $ v "rhs_min") .||. (isInf $ v "rhs_max")) .&&. ((not_ $ isNeg $ v "rhs_min") .||. (not_ $ isNeg $ v "rhs_max")) .&&. ((isNeg $ v "lhs_min") .||. (isNeg $ v "lhs_max"))) `testImplies` ((v "result_type" .->. "maybeNaN") .&&. (not_ $ ((v "result_type" .->. "bitset") .==. (n Unsigned 0))))
+
              , expect_ isUnsat $ \r -> showInt32Result "Failed to verify AddRanger" r
              , pop_
              ]
@@ -604,6 +609,7 @@ setupNumberAdd :: FunctionDef
           -> Codegen ()
 setupNumberAdd op fnName fn = do
   defineAll op
+  define limitsIntersect
   let verif = [ declare (c "v8type") "numberadd_lhs"
               , declare (t Double) "numberadd_js_left"
               , declare (c "v8type") "numberadd_rhs"
@@ -644,6 +650,7 @@ defineAll op = do
   define plainNumberType
   define kIntegerType
   define getBoundary
+  define boundariesSize
   define anyType
   define noneType
   define signedAddWouldOverflow
@@ -663,6 +670,8 @@ defineAll op = do
   define bitsetTypeGlb
   define numberBits
   define copy
+  define bitsetMin
+  define bitsetMax
   -- types
   define verifyTypeIntersect
   define typeIntersectAux
