@@ -80,7 +80,7 @@ fInBitset =
              -- if doesn't have kNegative30 set, must be outside of the range [-2^30, -1]
              -- i.e. x < -2^30 || x >= 0
              , declare (t Bool) "kNegative31Bounds"
-             , v "kNegative31Bounds" `assign` (testImplies ((v "fbitset" .&&. kNegative31) .==. n Unsigned 0) ((v "fval" .<. (cast (n Signed (0x40000000)) Double)) .||. (v "fval" .=>. (cast (n Signed (0)) Double))))
+             , v "kNegative31Bounds" `assign` (testImplies ((v "fbitset" .&&. kNegative31) .==. n Unsigned 0) ((v "fval" .<. (cast (n Signed (0xC0000000)) Double)) .||. (v "fval" .=>. (cast (n Signed (0)) Double))))
              -- if doesn't have kOtherSigned32 set, must be outside of the range [-2^31, 2^30-1]
              -- i.e. x < -2^31 || x >= -2^30
              , declare (t Bool) "kOtherSigned32Bounds"
