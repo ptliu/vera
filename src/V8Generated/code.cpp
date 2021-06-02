@@ -891,11 +891,11 @@ bool SimplyEquals(v8type simplyequals_this_, v8type simplyequals_that) {
 
 bool Maybe(v8type maybe_this_, v8type maybe_that) {
   //DisallowGarbageCollection no_gc;
-  bool maybe_returnVal;
+  bool maybe_returnVal = FALSE;
   bool maybe_pathCond = TRUE;
   bitset_t maybe_thisLub = BitsetLub(maybe_this_);
   bitset_t maybe_thatLub = BitsetLub(maybe_that);
-  bitset_t maybe_bitsetIsNone = BitsetIsNone(maybe_thisLub & maybe_thatLub);
+  bool maybe_bitsetIsNone = BitsetIsNone(maybe_thisLub & maybe_thatLub);
   //if (BitsetIsNone(BitsetLub(maybe_this_) & BitsetLub(maybe_that)))
   if (maybe_bitsetIsNone){
     maybe_returnVal = FALSE; //return false
@@ -912,14 +912,15 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   }*/
 
   // T overlaps (T1 \/ ... \/ Tn)  if  (T overlaps T1) \/ ... \/ (T overlaps Tn)
-  if (that.IsUnion()) {
+  /*if (that.IsUnion()) {
     for (int i = 0, n = that.AsUnion()->Length(); i < n; ++i) {
       if (this->Maybe(that.AsUnion()->Get(i))) return true;
     }
     return false;
-  }
+  }*/
 
   // for now, just treat unions as "unbounded union of all types"
+  
   bool maybe_this_union = IsUnion(maybe_this_);
   if (maybe_this_union) {
       if(maybe_pathCond){
@@ -938,6 +939,7 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   }
 
   bool maybe_this_bitset = IsBitset(maybe_this_);
+  /*
   bool maybe_that_bitset = IsBitset(maybe_that);
   
   if (maybe_this_bitset && maybe_that_bitset){
@@ -945,7 +947,6 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
         maybe_returnVal = TRUE; //return true
         maybe_pathCond = FALSE;
     }
-
   } 
 
   bool maybe_this_range = IsRange(maybe_this_);
@@ -1013,19 +1014,19 @@ bool Maybe(v8type maybe_this_, v8type maybe_that) {
   }
 
 //  if (IsBitset(maybe_this_) || IsBitset(maybe_that)) return true;
-/*
+
   if(maybe_this_bitset || maybe_that_bitset){
     if(maybe_pathCond){
         maybe_returnVal = TRUE; //return true
         maybe_pathCond = FALSE;
     }
   }
-*/
+
 
   if(maybe_pathCond){
     maybe_returnVal = SimplyEquals(maybe_this_, maybe_that);
     maybe_pathCond = FALSE;
-  }
+  }*/
   return maybe_returnVal;
 }
 
